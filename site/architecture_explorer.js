@@ -270,7 +270,12 @@ const ArchitectureExplorer=(()=>{
       overview.replaceChildren();overview.hidden=!options.reading;intro.hidden=!!options.reading;
       const reading=trace.reading;
       if(reading){
-        overview.append(el("p",reading.definition,"ax-topic-definition"),el("p",reading.example,"ax-topic-example"),el("p",reading.connection,"ax-topic-connection"));
+        if(reading.lesson_markdown){
+          overview.className="ax-topic-overview markdown ax-lesson-text";
+          LabLearning.markdown(reading.lesson_markdown,overview,reading.lesson_source);
+        }else{
+          overview.append(el("p",reading.definition,"ax-topic-definition"),el("p",reading.example,"ax-topic-example"),el("p",reading.connection,"ax-topic-connection"));
+        }
         root.className="architecture-explorer ax-reviewed"+(reading.view==="reading"?" ax-reading":"");
         flowLabel.textContent="In this lesson";diagramLabel.textContent=reading.diagramLabel||"Worked calculation";
         instructions.textContent=reading.view==="reading"?"Choose a section below. The examples and comparisons are explained separately; they are not stages of one model.":"Select a component, connection or section to inspect the calculation and its explanation.";

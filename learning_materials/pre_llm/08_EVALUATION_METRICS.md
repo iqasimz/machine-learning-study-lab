@@ -8,7 +8,7 @@ The examples show what is counted and divided. Metrics on the same cases are not
 
 ## 1. Choose the quantity before comparing models
 
-The interactive explorer is the primary explanation of classification, multiclass averaging, regression, language-model loss and retrieval metrics. Its cases and denominators are shared by the sidebar and guided course.
+The main explanation in [the shared foundations](../teaching/foundations.md) defines the counted cases and denominators before interpreting a metric. The accompanying interactive examples let you change a threshold or task family and inspect those calculations. The sidebar and Interactive mode serve the same explanation; the notes below extend it with threshold curves and aggregation conventions.
 
 ## 2. Reading threshold curves
 

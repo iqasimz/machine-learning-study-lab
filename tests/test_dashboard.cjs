@@ -168,8 +168,12 @@ async function exercise(empty){
   assert.equal(explorers.length,1,lesson.id+' one canonical reader');
   if(course.docs[lesson.id].reader.reading){
    const edition=course.docs[lesson.id].reader.reading;
-   const intro=descendants(explorers[0]).find(n=>n.className==='ax-topic-overview');
-   assert.equal(intro.hidden,false);assert.ok(content(intro).includes(edition.definition));
+   const intro=descendants(explorers[0]).find(n=>n.className?.split(' ').includes('ax-topic-overview'));
+   assert.equal(intro.hidden,false);
+   if(edition.lesson_markdown){
+    assert.ok(content(intro).length>700,lesson.id+' complete teaching explanation is rendered');
+    assert.ok(descendants(intro).some(n=>n.tag==='a'&&/^https:\/\//.test(n.href)),lesson.id+' primary reading links are visible');
+   }else assert.ok(content(intro).includes(edition.definition));
    assert.equal(descendants(explorers[0]).find(n=>n.className==='ax-diagram-column').hidden,edition.view==='reading');
   }
   assert.ok(content(explorers[0]).length>500,lesson.id+' core explanation');

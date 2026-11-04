@@ -133,28 +133,28 @@
       },
       {
         "id": "P3-b",
-        "prompt": "A percentile bootstrap produces 200 accuracy estimates. What is the usual illustrative 95% percentile interval?",
+        "prompt": "Why does an ordinary nonparametric bootstrap draw n observed cases with replacement instead of inventing new cases?",
         "options": [
           {
-            "text": "The minimum and maximum estimates.",
-            "feedback": "That reports the full observed resample range, not the central 95% percentile interval."
+            "text": "It reconstructs every kind of example missing from the sample.",
+            "feedback": "Resampling cannot create unseen population types or repair an unrepresentative original sample."
           },
           {
-            "text": "The 2.5th and 97.5th percentiles of those estimates.",
-            "feedback": "Take the central 95% of the bootstrap distribution. This conditional procedure still depends on the correct independent resampling unit and does not include all sources of uncertainty."
+            "text": "It draws new size-n samples from the empirical distribution as a stand-in for the unknown population.",
+            "feedback": "Each observed case has mass 1/n in the empirical distribution. Repeated draws approximate sampling variability when the sampling assumptions are appropriate."
           },
           {
-            "text": "The mean accuracy plus/minus 95 percentage points.",
-            "feedback": "95% is a coverage level, not an amount added to the metric."
+            "text": "It automatically refits the model with a different training seed.",
+            "feedback": "The lab resamples fixed evaluation predictions. Training-seed variation requires a separate fitting procedure."
           },
           {
-            "text": "The best 95% of model seeds.",
-            "feedback": "A test-row bootstrap resamples evaluation units, not a collection of independently trained seeds."
+            "text": "It guarantees that every resulting confidence interval contains the true score.",
+            "feedback": "Coverage concerns a repeated sampling procedure under assumptions, not a guarantee for each observed interval."
           }
         ],
         "answer": 1,
-        "explanation": "Take the central 95% of the bootstrap distribution. This conditional procedure still depends on the correct independent resampling unit and does not include all sources of uncertainty.",
-        "skill": "Interpret a bootstrap interval"
+        "explanation": "The bootstrap substitutes the observed empirical distribution for the unknown population. Sampling with replacement mimics new draws from that substitute; the independent unit, representativeness, and interval method still matter.",
+        "skill": "Explain what bootstrap resampling approximates"
       }
     ],
     "P4": [

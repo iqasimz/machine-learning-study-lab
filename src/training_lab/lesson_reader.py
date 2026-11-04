@@ -1,8 +1,9 @@
 """One canonical student view; complete authored Markdown remains recoverable.
 
 This is an explicit editorial map, not a similarity model that silently deletes
-sentences. Core explanations live in explorers. Unique source sections become
-advanced guide entries inside that same explorer.
+sentences. Teaching chapters own the connected main explanation; explorers own
+worked calculations. Unique source sections become depth entries in the same
+reader, rather than a competing copy of the main lesson.
 """
 import hashlib
 import json
@@ -11,6 +12,9 @@ from functools import lru_cache
 from pathlib import Path
 from .artifacts import ROOT
 from .materials import MATERIALS
+from .teaching import explanations
+
+TEACHING = explanations()
 
 ADVANCED = {identifier: {row["section"]: row for row in rows}
             for identifier, rows in json.loads((MATERIALS / "ml_dl/metadata/advanced_sections.json").read_text())["lessons"].items()}
@@ -201,6 +205,11 @@ def view(doc, metadata, parameters, all_metadata, reading=None):
               "sources": source_links, "runtime_fingerprint": runtime_fingerprint(),
               "original_sha256": doc["sha256"]}
     if reading:
-        result["reading"] = reading
+        teaching = TEACHING[identifier]
+        result["reading"] = {**reading, "lesson_markdown": teaching["markdown"],
+                             "lesson_source": teaching["source"], "edition": "2026-11-05"}
+        for title, url in teaching["sources"]:
+            if not any(u == url for _, u in source_links):
+                source_links.append([title, url])
     result["fingerprint"] = hashlib.sha256(json.dumps(result, sort_keys=True).encode()).hexdigest()
     return result

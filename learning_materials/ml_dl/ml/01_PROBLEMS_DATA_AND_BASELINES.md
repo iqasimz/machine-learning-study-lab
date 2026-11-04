@@ -6,7 +6,7 @@ Suppose 20 of 100 cases are positive and 80 are negative. A system that always a
 
 Before choosing a model, decide what must be predicted and what mistakes matter. The next lesson prepares the inputs; later lessons compare methods against a baseline on the same task.
 
-[course map](../COURSE_MAP.md). Required background: P1, P2, P3.
+[course map](../COURSE_MAP.md). Required background: P2 and P3. Tensor axes and numerical values are introduced where they are needed; no separate computer-setup lesson is required.
 
 ## 1. Supervised and unsupervised tasks
 

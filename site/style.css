@@ -318,6 +318,10 @@ th{font-size:11px;font-weight:650;color:#485970;background:#f0f3f8}
 .architecture-explorer p{margin:0 0 12px}
 .ax-intro{max-width:85ch}
 .ax-topic-overview{max-width:78ch;margin:0 0 24px}
+.ax-lesson-text{line-height:1.8}
+.markdown .architecture-explorer .ax-lesson-text h3{margin:1.65em 0 .7em;font-size:1.12rem;letter-spacing:0}
+.ax-lesson-text>p:first-child{font-size:1.07rem}
+.ax-lesson-text .math-block{max-width:100%;overflow-x:auto}
 .ax-topic-definition{font-size:1.07rem;line-height:1.75}
 .ax-topic-example{padding-left:16px;border-left:3px solid #a9bed1}
 .ax-topic-connection{color:#485b6d}

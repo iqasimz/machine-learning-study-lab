@@ -4,6 +4,8 @@ Study machine learning, deep learning, NLP and LLMs, then test the ideas in a lo
 
 The courses combine plain-language explanations, worked equations, selectable architecture diagrams, sources and practice questions. Browse the sidebar freely or follow Interactive mode. The two routes use the same lessons.
 
+Each lesson includes a connected explanation before its worked calculations. The readings draw on textbooks such as *Dive into Deep Learning*, *Think Stats*, *Speech and Language Processing*, and *An Introduction to Statistical Learning*, alongside original papers and official implementation documentation. References are linked within each lesson. The [teaching chapters](learning_materials/teaching/README.md) contain the text served by both course modes.
+
 ## Choose how to use it
 
 - **Online course:** the `site/` folder is a GitHub Pages-ready preview. Courses, diagrams and quizzes work in your browser. It does not train models, detect your GPU, call an inference API or contain somebody else's saved results.

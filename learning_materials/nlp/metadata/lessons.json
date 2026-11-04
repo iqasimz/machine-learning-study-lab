@@ -1,0 +1,645 @@
+{
+  "schema_version": 1,
+  "lessons": [
+    {
+      "id": "N01",
+      "stage": "nlp",
+      "title": "NLP tasks and annotation guidelines",
+      "file": "N01_DEFINE_THE_NLP_TASK_AND_ANNOTATION_POLICY.md",
+      "goal": "An NLP task specifies what a system must predict from language: a document label, a token tag, an answer span, a relation or a generated sequence. Annotation guidelines explain what each label means and which context may be used. A task name such as sentiment or argument identification is not enough to define the correct answer.",
+      "related": [
+        "P4",
+        "P6",
+        "N24"
+      ],
+      "prerequisites": [
+        "P4",
+        "P6"
+      ],
+      "sources": [
+        [
+          "CheckList behavioural testing",
+          "https://aclanthology.org/2020.acl-main.442/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N02",
+      "stage": "nlp",
+      "title": "Text processing, morphology and source offsets",
+      "file": "N02_TEXT_PROCESSING_MORPHOLOGY_AND_SOURCE_OFFSETS.md",
+      "goal": "Text processing changes how language is represented before a model uses it. Normalization, stemming, lemmatization and subword tokenization perform different jobs and may discard different information. Extraction tasks also need a reliable map back to the original text so that a predicted name or answer can be located exactly.",
+      "related": [
+        "P6",
+        "N12",
+        "N17"
+      ],
+      "prerequisites": [
+        "P6",
+        "N01"
+      ],
+      "sources": [
+        [
+          "spaCy linguistic features and tokenization",
+          "https://spacy.io/usage/linguistic-features"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N03",
+      "stage": "nlp",
+      "title": "Word counts, TF-IDF and lexical retrieval",
+      "file": "N03_BAG_OF_WORDS_TF_IDF_AND_LEXICAL_RETRIEVAL.md",
+      "goal": "A bag-of-words representation gives each vocabulary term a feature column and counts its occurrences in a document. TF-IDF weights those counts using term frequency and inverse document frequency, reducing the relative influence of terms that occur across many documents. This supplies sparse features for classification or lexical search without learning contextual word meaning.",
+      "related": [
+        "ML04",
+        "P7",
+        "N04"
+      ],
+      "prerequisites": [
+        "N02",
+        "ML04"
+      ],
+      "sources": [
+        [
+          "scikit-learn text feature extraction",
+          "https://scikit-learn.org/stable/modules/feature_extraction.html#text-feature-extraction"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N04",
+      "stage": "nlp",
+      "title": "Naive Bayes and linear text classifiers",
+      "file": "N04_NAIVE_BAYES_AND_LINEAR_TEXT_CLASSIFIERS.md",
+      "goal": "A text classifier turns a feature representation into a task label. Multinomial Naive Bayes combines class-specific word probabilities; logistic regression combines learned feature weights into a conditional class score. Both can use simple lexical features, but they estimate different quantities and should be evaluated rather than ranked by their complexity.",
+      "related": [
+        "ML04",
+        "ML06",
+        "ML07",
+        "N03"
+      ],
+      "prerequisites": [
+        "N03",
+        "ML04"
+      ],
+      "sources": [
+        [
+          "scikit-learn sparse text classification",
+          "https://scikit-learn.org/stable/auto_examples/text/plot_document_classification_20newsgroups.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N05",
+      "stage": "nlp",
+      "title": "N-gram language models and smoothing",
+      "file": "N05_N_GRAM_LANGUAGE_MODELS_AND_SMOOTHING.md",
+      "goal": "A language model assigns probabilities to text sequences, often by predicting each token from an earlier history. An n-gram model restricts that history to the previous n−1 tokens. Smoothing adjusts count estimates so that unseen continuations can receive probability rather than making an entire held-out sequence impossible.",
+      "related": [
+        "P6",
+        "T1",
+        "P8"
+      ],
+      "prerequisites": [
+        "P6",
+        "P8",
+        "N03"
+      ],
+      "sources": [
+        [
+          "NLTK language-model API",
+          "https://www.nltk.org/api/nltk.lm.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N06",
+      "stage": "nlp",
+      "title": "Static word vectors: Word2vec, GloVe and fastText",
+      "file": "N06_WORD2VEC_GLOVE_AND_SUBWORD_WORD_VECTORS.md",
+      "goal": "A static word embedding assigns a reusable numerical vector to a word or lexical unit. Word2vec, GloVe and fastText learn these vectors from different forms of corpus evidence. Nearby vectors can capture useful regularities, but the same static lookup does not change meaning according to the sentence in which a word appears.",
+      "related": [
+        "P7",
+        "N14",
+        "N15"
+      ],
+      "prerequisites": [
+        "P7",
+        "N03"
+      ],
+      "sources": [
+        [
+          "Word2vec negative sampling paper",
+          "https://arxiv.org/abs/1310.4546"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N07",
+      "stage": "nlp",
+      "title": "Convolutional networks for text",
+      "file": "N07_CNNS_FOR_WORDS_CHARACTERS_AND_SENTENCES.md",
+      "goal": "A text convolutional neural network applies shared filters to nearby positions in a sequence. A filter can detect local patterns across token embeddings or characters, and pooling summarizes responses for a larger unit such as a sentence. Local feature extraction and sentence-level aggregation are separate operations with different information losses.",
+      "related": [
+        "DL05",
+        "N02",
+        "N16"
+      ],
+      "prerequisites": [
+        "N06",
+        "DL05"
+      ],
+      "sources": [
+        [
+          "TextCNN original paper",
+          "https://aclanthology.org/D14-1181/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N08",
+      "stage": "nlp",
+      "title": "Recurrent and bidirectional recurrent networks",
+      "file": "N08_RNNS_AND_BIDIRECTIONAL_RNNS.md",
+      "goal": "A recurrent neural network, or RNN, processes a sequence by updating a hidden state at each position. The state combines the current token with information carried from earlier positions. A bidirectional RNN adds a separate right-to-left pass, allowing each aligned token representation to use both sides of an already available input.",
+      "related": [
+        "DL07",
+        "P5",
+        "N09",
+        "N10"
+      ],
+      "prerequisites": [
+        "DL07",
+        "N06"
+      ],
+      "sources": [
+        [
+          "PyTorch RNN",
+          "https://docs.pytorch.org/docs/stable/generated/torch.nn.RNN.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N09",
+      "stage": "nlp",
+      "title": "LSTMs and bidirectional LSTMs",
+      "file": "N09_LSTMS_AND_BIDIRECTIONAL_LSTMS.md",
+      "goal": "A long short-term memory network, or LSTM, is a recurrent model with a cell state for carried memory and a hidden state exposed to other layers. Gates determine how much old memory to retain, new information to write and memory to expose. A bidirectional LSTM uses two independent such recurrences when both input directions are available.",
+      "related": [
+        "N08",
+        "N10",
+        "DL02"
+      ],
+      "prerequisites": [
+        "N08",
+        "DL02"
+      ],
+      "sources": [
+        [
+          "PyTorch LSTM",
+          "https://docs.pytorch.org/docs/stable/generated/torch.nn.LSTM.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N10",
+      "stage": "nlp",
+      "title": "GRUs and recurrent training",
+      "file": "N10_GRUS_BIGRUS_AND_RECURRENT_TRAINING.md",
+      "goal": "A gated recurrent unit, or GRU, controls a recurrent hidden state without a separate LSTM memory cell. The reset gate controls old-state information used in the candidate; the update gate mixes the candidate with the old state. The exact gate convention and reset placement must be read from the equation, because implementations can differ.",
+      "related": [
+        "N08",
+        "N09",
+        "DL03",
+        "DL13"
+      ],
+      "prerequisites": [
+        "N08",
+        "N09"
+      ],
+      "sources": [
+        [
+          "PyTorch GRU",
+          "https://docs.pytorch.org/docs/stable/generated/torch.nn.GRU.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N11",
+      "stage": "nlp",
+      "title": "Encoder–decoder models, attention and beam search",
+      "file": "N11_ENCODER_DECODER_MODELS_ATTENTION_AND_BEAM_SEARCH.md",
+      "goal": "An encoder–decoder model represents an input sequence and generates a separate output sequence. Attention lets a decoder read different source positions while producing each target token. Beam search is a decoding procedure that keeps several candidate target prefixes; it changes the search, not the learned model weights or the definition of attention.",
+      "related": [
+        "DL08",
+        "T4",
+        "R3",
+        "N18"
+      ],
+      "prerequisites": [
+        "N08",
+        "DL08"
+      ],
+      "sources": [
+        [
+          "Original neural translation attention",
+          "https://arxiv.org/abs/1409.0473"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N12",
+      "stage": "nlp",
+      "title": "Sequence labelling with HMMs, CRFs and Viterbi",
+      "file": "N12_HMMS_CRFS_VITERBI_AND_SEQUENCE_LABELLING.md",
+      "goal": "Sequence labelling assigns a tag to each position while allowing neighboring tags to influence one another. A hidden Markov model, or HMM, uses probabilities for hidden transitions and observed emissions; a conditional random field, or CRF, uses scores to model tag sequences given an input. Viterbi finds a best path, while summing paths supplies a different normalization calculation.",
+      "related": [
+        "N09",
+        "N17",
+        "N24"
+      ],
+      "prerequisites": [
+        "N09"
+      ],
+      "sources": [
+        [
+          "CRF author tutorial",
+          "https://arxiv.org/abs/1011.4088"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N13",
+      "stage": "nlp",
+      "title": "Syntax: dependency and constituency parsing",
+      "file": "N13_SYNTAX_DEPENDENCY_PARSING_AND_CONSTITUENCY.md",
+      "goal": "Syntactic parsing predicts how words form a grammatical structure. A dependency parse connects words through head–dependent links; a constituency parse groups spans into nested phrases. These are alternative representations of a sentence, not successive processing stages or the same object as a list of word-class tags.",
+      "related": [
+        "N12",
+        "DL11",
+        "N17"
+      ],
+      "prerequisites": [
+        "N12"
+      ],
+      "sources": [
+        [
+          "Universal Dependencies guidelines",
+          "https://universaldependencies.org/guidelines.html"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N14",
+      "stage": "nlp",
+      "title": "Contextual token encoders: ELMo and BERT",
+      "file": "N14_ELMO_BERT_AND_CONTEXTUAL_TOKEN_ENCODERS.md",
+      "goal": "A contextual encoder gives a token a representation that depends on its occurrence, not just its word identity. ELMo combines directional recurrent language-model features; BERT uses bidirectional Transformer context and masked-token pretraining. These methods produce token-level features that still need an appropriate head or pooling rule for a downstream task.",
+      "related": [
+        "N08",
+        "N09",
+        "T3",
+        "N15"
+      ],
+      "prerequisites": [
+        "N08",
+        "N09",
+        "DL08"
+      ],
+      "sources": [
+        [
+          "BERT original paper",
+          "https://aclanthology.org/N19-1423/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N15",
+      "stage": "nlp",
+      "title": "Sentence encoders and query–document interaction",
+      "file": "N15_SENTENCE_ENCODERS_BI_ENCODERS_AND_CROSS_ENCODERS.md",
+      "goal": "A sentence encoder represents a larger text unit for comparison rather than assigning one static vector to each word. A bi-encoder computes query and document representations separately; a cross-encoder reads the pair jointly; late interaction keeps token vectors and compares them later. Where the texts first interact determines caching, computation and what information can be compared.",
+      "related": [
+        "P7",
+        "N14",
+        "R4"
+      ],
+      "prerequisites": [
+        "N14",
+        "P7"
+      ],
+      "sources": [
+        [
+          "Sentence-BERT original paper",
+          "https://aclanthology.org/D19-1410/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N16",
+      "stage": "nlp",
+      "title": "Text classification and paired-input inference",
+      "file": "N16_CLASSIFICATION_MULTILABEL_PREDICTION_AND_PAIR_INFERENCE.md",
+      "goal": "Text classification maps a document, token sequence or input pair to a defined label structure. Single-label classification chooses one mutually exclusive class; multilabel classification can assign several labels at once. The target structure determines the loss and decoding rule, not merely how many label names appear in a dataset.",
+      "related": [
+        "ML04",
+        "P8",
+        "N14",
+        "N15"
+      ],
+      "prerequisites": [
+        "N04",
+        "N14"
+      ],
+      "sources": [
+        [
+          "Hugging Face sequence classification guide",
+          "https://huggingface.co/docs/transformers/tasks/sequence_classification"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N17",
+      "stage": "nlp",
+      "title": "Information extraction: entities, relations and events",
+      "file": "N17_ENTITIES_RELATIONS_EVENTS_AND_COREFERENCE.md",
+      "goal": "Information extraction converts text into structured records about mentions, entities, relations and events. A mention is a source span; coreference links mentions intended to refer to the same entity. Relation and event extraction add typed connections or roles. A valid output format does not by itself make these records supported by the text.",
+      "related": [
+        "N02",
+        "N12",
+        "N13",
+        "R3"
+      ],
+      "prerequisites": [
+        "N02",
+        "N12",
+        "N13"
+      ],
+      "sources": [
+        [
+          "spaCy information-extraction pipeline concepts",
+          "https://spacy.io/usage/linguistic-features#named-entities"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N18",
+      "stage": "nlp",
+      "title": "Machine translation and BLEU evaluation",
+      "file": "N18_MACHINE_TRANSLATION_AND_GENERATION_METRICS.md",
+      "goal": "Machine translation produces a target-language sequence intended to preserve a source's meaning. Automatic reference-based metrics compare a candidate with permitted reference translations, but they test different kinds of agreement. BLEU combines clipped n-gram precision with a brevity penalty; the simple example here isolates unigram BLEU-1 rather than implementing standard corpus BLEU.",
+      "related": [
+        "N11",
+        "R3",
+        "P8"
+      ],
+      "prerequisites": [
+        "N11"
+      ],
+      "sources": [
+        [
+          "SacreBLEU official implementation",
+          "https://github.com/mjpost/sacrebleu"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N19",
+      "stage": "nlp",
+      "title": "Question answering, answer spans and abstention",
+      "file": "N19_QUESTION_ANSWERING_READING_SPANS_AND_ABSTENTION.md",
+      "goal": "Question answering predicts an answer to a question under a defined information-access setting. An extractive reader chooses a span in supplied context; a generative system may produce new wording. Answer correctness, source support and deciding when no answer is available are separate requirements, with different evaluation rules.",
+      "related": [
+        "N15",
+        "R4",
+        "P8"
+      ],
+      "prerequisites": [
+        "N15",
+        "N12"
+      ],
+      "sources": [
+        [
+          "SQuAD 2 original paper",
+          "https://aclanthology.org/P18-2124/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N20",
+      "stage": "nlp",
+      "title": "Summarization, dialogue and source faithfulness",
+      "file": "N20_SUMMARIZATION_DIALOGUE_AND_FACTUAL_SUPPORT.md",
+      "goal": "Summarization selects and compresses source content, either by extracting passages or generating new wording. Source faithfulness asks whether the output preserves what the source supports; external truth asks a different question. Dialogue adds an interaction goal: helping a user may require clarification, correction or abstention rather than simply producing agreeable text.",
+      "related": [
+        "N11",
+        "R3",
+        "T8"
+      ],
+      "prerequisites": [
+        "N11"
+      ],
+      "sources": [
+        [
+          "ROUGE original paper",
+          "https://aclanthology.org/W04-1013/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N21",
+      "stage": "nlp",
+      "title": "Inference, discourse and argument mining",
+      "file": "N21_INFERENCE_DISCOURSE_AND_ARGUMENT_MINING.md",
+      "goal": "Language understanding involves more than classifying a sentence in isolation. Natural-language inference compares a premise with a hypothesis; discourse analysis relates text units; argument mining identifies claims, reasons and support or attack relations under a specified scheme. These tasks share language evidence but do not define the same output or universal argument label.",
+      "related": [
+        "N01",
+        "N16",
+        "N17",
+        "P4"
+      ],
+      "prerequisites": [
+        "N01",
+        "N16",
+        "N17"
+      ],
+      "sources": [
+        [
+          "Argument mining survey",
+          "https://aclanthology.org/J19-4006/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N22",
+      "stage": "nlp",
+      "title": "Cross-lingual and cross-domain transfer",
+      "file": "N22_MULTILINGUAL_AND_CROSS_DOMAIN_TRANSFER.md",
+      "goal": "Transfer evaluation tests whether a system developed under one condition works under another. Cross-lingual transfer changes language; cross-domain transfer changes the source or content distribution; annotation-policy changes can alter the label meaning itself. These shifts can coexist, so a score drop alone does not explain its own cause.",
+      "related": [
+        "P4",
+        "N18",
+        "N24"
+      ],
+      "prerequisites": [
+        "P4",
+        "N16",
+        "N18"
+      ],
+      "sources": [
+        [
+          "XLM-R original paper",
+          "https://aclanthology.org/2020.acl-main.747/"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N23",
+      "stage": "nlp",
+      "title": "Long-document encoding and evidence coverage",
+      "file": "N23_LONG_DOCUMENTS_AND_HIERARCHICAL_TEXT_ENCODERS.md",
+      "goal": "A long-document system must specify how distant text can influence a prediction. Chunking encodes local windows and combines their representations; a hierarchical encoder adds a second level; sparse attention changes token-to-token connections within a sequence. These are different information paths, not interchangeable ways of increasing a context-length setting.",
+      "related": [
+        "N07",
+        "N15",
+        "T3",
+        "R4"
+      ],
+      "prerequisites": [
+        "N07",
+        "N15",
+        "DL08"
+      ],
+      "sources": [
+        [
+          "Longformer original paper",
+          "https://arxiv.org/abs/2004.05150"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    },
+    {
+      "id": "N24",
+      "stage": "nlp",
+      "title": "NLP evaluation and a complete study",
+      "file": "N24_EVALUATE_AND_BUILD_AN_NLP_PIPELINE.md",
+      "goal": "An NLP evaluation counts matches between predicted and reference objects under a declared task rule. Token tags, complete entity spans, answer tokens and generated sequences are different objects, even when some metrics share a familiar name. A complete study also records preprocessing, model selection, source groups and failures so the result can be interpreted and reproduced.",
+      "related": [
+        "P3",
+        "P4",
+        "P8",
+        "T8"
+      ],
+      "prerequisites": [
+        "N01",
+        "N12",
+        "N19",
+        "N20",
+        "P8",
+        "P3"
+      ],
+      "sources": [
+        [
+          "seqeval strict sequence evaluation",
+          "https://github.com/chakki-works/seqeval"
+        ],
+        [
+          "Speech and Language Processing — author-hosted draft",
+          "https://web.stanford.edu/~jurafsky/slp3/"
+        ]
+      ]
+    }
+  ]
+}

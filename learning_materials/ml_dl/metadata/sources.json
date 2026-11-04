@@ -1,0 +1,538 @@
+{
+  "schema_version": 1,
+  "checked_on": "2026-11-02",
+  "sources": [
+    {
+      "id": "stanford-cs229",
+      "title": "Stanford CS229, Summer 2026 overview",
+      "url": "https://cs229.stanford.edu/",
+      "kind": "university_course",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Coverage/prerequisites; current detailed materials require Stanford access."
+    },
+    {
+      "id": "stanford-cs230",
+      "title": "Stanford CS230, Fall 2026 syllabus",
+      "url": "https://cs230.stanford.edu/syllabus/",
+      "kind": "university_course",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Progression through neural foundations, optimization, project strategy and architectures; not all linked activities are public."
+    },
+    {
+      "id": "stanford-cs231n",
+      "title": "Stanford CS231n, Spring 2026",
+      "url": "https://cs231n.stanford.edu/",
+      "kind": "university_course",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Vision and practical DL coverage; public notes supplement restricted current recordings."
+    },
+    {
+      "id": "islp",
+      "title": "An Introduction to Statistical Learning, author site",
+      "url": "https://www.statlearning.com/",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Public Python book and lab pointers; link rather than copy chapters."
+    },
+    {
+      "id": "dlbook",
+      "title": "Deep Learning, author site",
+      "url": "https://www.deeplearningbook.org/",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Foundations and specialist branches; online HTML, not permission to redistribute the book."
+    },
+    {
+      "id": "d2l",
+      "title": "Dive into Deep Learning",
+      "url": "https://d2l.ai/",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Executable mathematical explanations; framework examples must be checked against installed versions."
+    },
+    {
+      "id": "sklearn-guide",
+      "title": "scikit-learn user guide",
+      "url": "https://scikit-learn.org/stable/user_guide.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Method coverage and implementation reference; moving stable URL is not a runtime version pin."
+    },
+    {
+      "id": "sklearn-pitfalls",
+      "title": "scikit-learn common pitfalls",
+      "url": "https://scikit-learn.org/stable/common_pitfalls.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Leakage, preprocessing and randomness."
+    },
+    {
+      "id": "sklearn-compose",
+      "title": "scikit-learn pipelines",
+      "url": "https://scikit-learn.org/stable/modules/compose.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Fit transformations inside training folds."
+    },
+    {
+      "id": "sklearn-preprocess",
+      "title": "scikit-learn preprocessing",
+      "url": "https://scikit-learn.org/stable/modules/preprocessing.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Scaling and feature representations."
+    },
+    {
+      "id": "sklearn-linear",
+      "title": "scikit-learn linear models",
+      "url": "https://scikit-learn.org/stable/modules/linear_model.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Regression, regularization, GLMs and logistic models; objective normalization varies across estimators."
+    },
+    {
+      "id": "sklearn-neighbors",
+      "title": "scikit-learn nearest neighbours",
+      "url": "https://scikit-learn.org/stable/modules/neighbors.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Distances, neighbours and local prediction."
+    },
+    {
+      "id": "sklearn-svm",
+      "title": "scikit-learn SVM",
+      "url": "https://scikit-learn.org/stable/modules/svm.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Margins, kernels, C/gamma and complexity."
+    },
+    {
+      "id": "sklearn-nb",
+      "title": "scikit-learn naive Bayes",
+      "url": "https://scikit-learn.org/stable/modules/naive_bayes.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Conditional independence and smoothing."
+    },
+    {
+      "id": "sklearn-lda",
+      "title": "scikit-learn LDA/QDA",
+      "url": "https://scikit-learn.org/stable/modules/lda_qda.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Class-conditional Gaussian assumptions."
+    },
+    {
+      "id": "sklearn-ensemble",
+      "title": "scikit-learn ensembles",
+      "url": "https://scikit-learn.org/stable/modules/ensemble.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Forests, boosting, voting and stacking."
+    },
+    {
+      "id": "sklearn-cv",
+      "title": "scikit-learn cross-validation",
+      "url": "https://scikit-learn.org/stable/modules/cross_validation.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Nested, grouped and temporal evaluation."
+    },
+    {
+      "id": "sklearn-metrics",
+      "title": "scikit-learn metrics",
+      "url": "https://scikit-learn.org/stable/modules/model_evaluation.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Metric definitions and averaging."
+    },
+    {
+      "id": "sklearn-calibration",
+      "title": "scikit-learn calibration",
+      "url": "https://scikit-learn.org/stable/modules/calibration.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Reliability and proper scoring."
+    },
+    {
+      "id": "sklearn-cluster",
+      "title": "scikit-learn clustering",
+      "url": "https://scikit-learn.org/stable/modules/clustering.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "K-means, density and hierarchical approaches."
+    },
+    {
+      "id": "sklearn-pca",
+      "title": "scikit-learn decomposition",
+      "url": "https://scikit-learn.org/stable/modules/decomposition.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "PCA and matrix factorization."
+    },
+    {
+      "id": "sklearn-outliers",
+      "title": "scikit-learn novelty/outlier detection",
+      "url": "https://scikit-learn.org/stable/modules/outlier_detection.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Isolation and anomaly evaluation caveats."
+    },
+    {
+      "id": "sklearn-gp",
+      "title": "scikit-learn Gaussian processes",
+      "url": "https://scikit-learn.org/stable/modules/gaussian_process.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Kernel regression and predictive uncertainty."
+    },
+    {
+      "id": "gpml",
+      "title": "Gaussian Processes for Machine Learning, author site",
+      "url": "https://gaussianprocess.org/gpml/",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Gaussian-process mathematics and assumptions."
+    },
+    {
+      "id": "conformal",
+      "title": "Angelopoulos and Bates, conformal prediction introduction",
+      "url": "https://arxiv.org/abs/2107.07511",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Finite-sample marginal coverage under exchangeability, not arbitrary-shift guarantees."
+    },
+    {
+      "id": "forecasting",
+      "title": "Forecasting: Principles and Practice, third edition",
+      "url": "https://otexts.com/fpp3/",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Temporal validation and forecasting baselines; examples use R, concepts transfer to Python."
+    },
+    {
+      "id": "recommendation",
+      "title": "Google recommendation course: matrix factorization",
+      "url": "https://developers.google.com/machine-learning/recommendation/collaborative/matrix",
+      "kind": "official_course",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Observed interactions, embeddings and ranking."
+    },
+    {
+      "id": "torch-basics",
+      "title": "PyTorch training workflow",
+      "url": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Data, models, autograd, optimization and serialization."
+    },
+    {
+      "id": "torch-conv",
+      "title": "PyTorch 2.9 Conv2d",
+      "url": "https://docs.pytorch.org/docs/2.9/generated/torch.nn.Conv2d.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Convolution shapes and controls; version aligns with existing lab's tested PyTorch family."
+    },
+    {
+      "id": "torch-ce",
+      "title": "PyTorch 2.9 CrossEntropyLoss",
+      "url": "https://docs.pytorch.org/docs/2.9/generated/torch.nn.CrossEntropyLoss.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Logit inputs, targets and loss reduction."
+    },
+    {
+      "id": "torch-transfer",
+      "title": "PyTorch transfer-learning tutorial",
+      "url": "https://docs.pytorch.org/tutorials/beginner/transfer_learning_tutorial.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Frozen backbones versus full fine-tuning."
+    },
+    {
+      "id": "cs231n-training",
+      "title": "CS231n practical neural-network training notes",
+      "url": "https://cs231n.github.io/neural-networks-3/",
+      "kind": "university_notes",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Gradient checks, diagnosis, optimization and model selection."
+    },
+    {
+      "id": "paper-adam",
+      "title": "Adam",
+      "url": "https://arxiv.org/abs/1412.6980",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Moment-based updates; AdamW must not be described as identical L2 regularization."
+    },
+    {
+      "id": "paper-bn",
+      "title": "Batch Normalization",
+      "url": "https://arxiv.org/abs/1502.03167",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Original normalization method; original proposed explanation is not the only established mechanism."
+    },
+    {
+      "id": "paper-resnet",
+      "title": "Deep Residual Learning",
+      "url": "https://arxiv.org/abs/1512.03385",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Residual formulation, not an unconditional claim that more depth helps."
+    },
+    {
+      "id": "paper-transformer",
+      "title": "Attention Is All You Need",
+      "url": "https://arxiv.org/abs/1706.03762",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Use existing T3 explanation for detailed modern decoder arithmetic."
+    },
+    {
+      "id": "paper-simclr",
+      "title": "SimCLR",
+      "url": "https://arxiv.org/abs/2002.05709",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Contrastive representations and augmentation assumptions."
+    },
+    {
+      "id": "paper-vae",
+      "title": "Auto-Encoding Variational Bayes",
+      "url": "https://arxiv.org/abs/1312.6114",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Latent-variable likelihood training."
+    },
+    {
+      "id": "paper-gan",
+      "title": "Generative Adversarial Nets",
+      "url": "https://arxiv.org/abs/1406.2661",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Adversarial generator/discriminator objectives."
+    },
+    {
+      "id": "paper-ddpm",
+      "title": "Denoising Diffusion Probabilistic Models",
+      "url": "https://arxiv.org/abs/2006.11239",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Noise-prediction formulation; full image synthesis is an optional branch."
+    },
+    {
+      "id": "paper-gcn",
+      "title": "Graph Convolutional Networks",
+      "url": "https://arxiv.org/abs/1609.02907",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Graph message passing and transductive split distinctions."
+    },
+    {
+      "id": "receptive-fields",
+      "title": "Computing Receptive Fields of CNNs",
+      "url": "https://distill.pub/2019/computing-receptive-fields/",
+      "kind": "author_article",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Receptive-field derivation and structural diagrams."
+    },
+    {
+      "id": "tf-playground",
+      "title": "TensorFlow Neural Network Playground",
+      "url": "https://playground.tensorflow.org/",
+      "kind": "maintainer_interactive",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Optional external tool for controlled changes; no embed or copied code."
+    },
+    {
+      "id": "cnn-explainer",
+      "title": "CNN Explainer, creator site",
+      "url": "https://poloclub.github.io/cnn-explainer/",
+      "kind": "maintainer_interactive",
+      "checked_on": "2026-11-02",
+      "verification": "landing_only",
+      "note": "Landing URL reachable but no readable body; interactively verify before treating as an assessed activity."
+    },
+    {
+      "id": "uci-iris",
+      "title": "UCI Iris",
+      "url": "https://archive.ics.uci.edu/dataset/53/iris",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Dimensions and CC BY 4.0 notice."
+    },
+    {
+      "id": "uci-wine",
+      "title": "UCI Wine",
+      "url": "https://archive.ics.uci.edu/dataset/109/wine",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Dimensions and CC BY 4.0 notice."
+    },
+    {
+      "id": "uci-wine-quality",
+      "title": "UCI Wine Quality",
+      "url": "https://archive.ics.uci.edu/dataset/186/wine+quality",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Separate red/white files; portal count describes white, not the combined corpus; CC BY 4.0."
+    },
+    {
+      "id": "uci-bike",
+      "title": "UCI Bike Sharing",
+      "url": "https://archive.ics.uci.edu/dataset/275/bike+sharing+dataset",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Hourly/daily scopes, components of target and CC BY 4.0."
+    },
+    {
+      "id": "uci-digits",
+      "title": "UCI Optical Recognition of Handwritten Digits",
+      "url": "https://archive.ics.uci.edu/dataset/80/optical+recognition+of+handwritten+digits",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Full original source scope and CC BY 4.0."
+    },
+    {
+      "id": "sklearn-digits",
+      "title": "scikit-learn load_digits",
+      "url": "https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_digits.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Bundled 1797-example subset, distinct from full UCI 5620-example release."
+    },
+    {
+      "id": "fashion",
+      "title": "Fashion-MNIST original repository",
+      "url": "https://github.com/zalandoresearch/fashion-mnist",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Official train/test structure, image dimensions and project MIT notice."
+    },
+    {
+      "id": "fashion-license",
+      "title": "Fashion-MNIST project license",
+      "url": "https://raw.githubusercontent.com/zalandoresearch/fashion-mnist/master/LICENSE",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Retain copyright and license notice with preparation artifacts."
+    },
+    {
+      "id": "torch-fashion",
+      "title": "Torchvision FashionMNIST loader",
+      "url": "https://docs.pytorch.org/vision/stable/generated/torchvision.datasets.FashionMNIST.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Future loader reference, not installed or invoked."
+    },
+    {
+      "id": "uci-sms",
+      "title": "UCI SMS Spam Collection",
+      "url": "https://archive.ics.uci.edu/dataset/228/sms+spam+collection",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Candidate with personal-content risk and row-count audit required; not default-prepared."
+    },
+    {
+      "id": "sst2",
+      "title": "Stanford SST-2 owner dataset card",
+      "url": "https://huggingface.co/datasets/stanfordnlp/sst2",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Card displays unknown license; held for rights clarification, not approved by public availability."
+    },
+    {
+      "id": "cifar",
+      "title": "Original CIFAR page",
+      "url": "https://www.cs.toronto.edu/~kriz/cifar.html",
+      "kind": "dataset_owner",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Publicly accessible, but this inspection did not settle explicit reuse terms; optional hold."
+    },
+    {
+      "id": "learning-theory",
+      "title": "Understanding Machine Learning: From Theory to Algorithms, author-hosted edition",
+      "url": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/",
+      "verification_url": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf",
+      "kind": "author_book",
+      "checked_on": "2026-11-02",
+      "verification": "linked_pdf_accessed",
+      "note": "Personal-use-only author PDF; link to the author site, do not bundle or redistribute. Finite-class/PAC/VC foundations."
+    },
+    {
+      "id": "paper-adamw",
+      "title": "Decoupled Weight Decay Regularization",
+      "url": "https://arxiv.org/abs/1711.05101",
+      "kind": "author_paper",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Original AdamW distinction: decoupled decay versus L2 penalty in adaptive optimizers."
+    },
+    {
+      "id": "pyg-messagepassing",
+      "title": "PyTorch Geometric MessagePassing API",
+      "url": "https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.MessagePassing.html",
+      "kind": "official_documentation",
+      "checked_on": "2026-11-02",
+      "verification": "page_accessed",
+      "note": "Explains invariant aggregation, source/target conventions and the message/aggregate/update flow. Course reference only; PyG is not required or installed by this release."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "scope": "Advanced sections inside existing lectures; not new courses or training backends",
+  "lessons": {
+    "ML07": [{"section":5,"id":"bayesian-update"},{"section":6,"id":"probabilistic-graphs"}],
+    "ML14": [{"section":5,"id":"factorization"},{"section":6,"id":"retrieval-ranking"},{"section":7,"id":"bandits"},{"section":8,"id":"q-learning"},{"section":9,"id":"actor-critic"}],
+    "ML15": [{"section":6,"id":"approximate-inference"}],
+    "ML16": [{"section":5,"id":"fairness-oversight"},{"section":6,"id":"robustness-reporting"}],
+    "DL05": [{"section":6,"id":"vision-transformer"}],
+    "DL06": [{"section":6,"id":"contrastive-multimodal"}],
+    "DL10": [{"section":5,"id":"vae"},{"section":6,"id":"gan"},{"section":7,"id":"diffusion-training"},{"section":8,"id":"diffusion-sampling"},{"section":9,"id":"latent-diffusion"},{"section":10,"id":"generation-evaluation"}],
+    "DL11": [{"section":6,"id":"graphsage"},{"section":7,"id":"graph-attention"},{"section":8,"id":"graph-predictions"},{"section":9,"id":"graph-transformers"}],
+    "DL12": [{"section":5,"id":"detection"},{"section":6,"id":"segmentation"},{"section":7,"id":"tracking"}],
+    "DL13": [{"section":6,"id":"export-serving"},{"section":7,"id":"monitoring-recovery"}]
+  }
+}

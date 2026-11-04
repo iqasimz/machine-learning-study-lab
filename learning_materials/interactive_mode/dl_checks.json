@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "lessons": {
+    "DL01": [
+      {
+        "id": "DL01-a",
+        "prompt": "A network stacks ten affine layers, each a weighted sum plus a bias, with no activation or other nonlinear operation between them. What changes about the set of input-to-output functions it can represent?",
+        "options": [
+          {
+            "text": "It can represent any curved decision boundary just by adding depth.",
+            "feedback": "Depth alone does not create curvature: composing affine maps still gives an affine map."
+          },
+          {
+            "text": "The composition remains affine, although factorization can change optimization or constraints.",
+            "feedback": "Each successive matrix product and bias can be combined into one affine map; the training problem can still change."
+          },
+          {
+            "text": "It becomes equivalent to a nearest-neighbour classifier.",
+            "feedback": "Nearest neighbours compare a query with stored examples; stacking affine maps does not introduce that operation."
+          },
+          {
+            "text": "It must output zero because the intermediate activations cancel.",
+            "feedback": "Nothing makes the layer outputs cancel. The composite map can have nonzero weights and bias."
+          }
+        ],
+        "answer": 1,
+        "explanation": "A hidden nonlinear activation changes the representable function family. Extra affine layers alone do not supply that nonlinearity.",
+        "skill": "Distinguish representation capacity from depth"
+      },
+      {
+        "id": "DL01-b",
+        "prompt": "A dense network has 3 input features, one hidden layer with 4 units, and 2 output units. Both dense layers have a bias. How many trainable weights and biases are there?",
+        "options": [
+          {
+            "text": "20",
+            "feedback": "This counts the 12 input-to-hidden and 8 hidden-to-output weights, but misses all six biases."
+          },
+          {
+            "text": "24",
+            "feedback": "There are 20 weights and six biases, not four biases. The output layer also has a bias."
+          },
+          {
+            "text": "26",
+            "feedback": "The first layer has 3×4+4=16 parameters; the second has 4×2+2=10; total 26."
+          },
+          {
+            "text": "52",
+            "feedback": "Batch size does not duplicate stored parameters. Count each shared weight and bias once."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Parameter count is input width × output width plus output width for each biased dense layer: 16+10=26.",
+        "skill": "Calculate dense-layer parameters"
+      }
+    ],
+    "DL02": [
+      {
+        "id": "DL02-a",
+        "prompt": "You clear gradients, run the forward pass, calculate a loss, and call loss.backward(). The gradients are finite, but no optimizer step has run. What has happened to the learned weights?",
+        "options": [
+          {
+            "text": "They have not been updated by backward; an optimizer step is still needed.",
+            "feedback": "Backward computes and accumulates derivatives. Updating parameters is the optimizer's separate job."
+          },
+          {
+            "text": "They have moved opposite to the gradient automatically.",
+            "feedback": "Autograd does not apply the learning rate or an optimizer update merely because backward ran."
+          },
+          {
+            "text": "They have become equal to their gradients.",
+            "feedback": "Parameter values and their .grad buffers are different state; backward does not replace one with the other."
+          },
+          {
+            "text": "They have been reset to their initialization.",
+            "feedback": "Clearing gradients clears derivative buffers, not learned parameter values."
+          }
+        ],
+        "answer": 0,
+        "explanation": "A normal loop separates clearing gradients, forward computation, loss, backward, and optimizer.step(). Missing the last operation can produce valid gradients without learning.",
+        "skill": "Separate differentiation from parameter updates"
+      },
+      {
+        "id": "DL02-b",
+        "prompt": "Let a=w×x, z=a+a, and L=z²/2. At w=2 and x=3, what is dL/dw? Both uses of a belong to the same computation graph.",
+        "options": [
+          {
+            "text": "18",
+            "feedback": "This is not the derivative of this graph. The output z is 12 and both paths through a contribute."
+          },
+          {
+            "text": "36",
+            "feedback": "This includes only one of the two uses of a. Their gradient contributions must be added."
+          },
+          {
+            "text": "12",
+            "feedback": "This is dL/dz. You must also multiply through z=2wx to reach w."
+          },
+          {
+            "text": "72",
+            "feedback": "z=12, dL/dz=12, and dz/dw=2x=6, so dL/dw=72."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Shared intermediate values receive the sum of sensitivities from every downstream path. Here dL/dw=(2wx)×(2x)=72.",
+        "skill": "Apply the chain rule across shared paths"
+      }
+    ],
+    "DL03": [
+      {
+        "id": "DL03-a",
+        "prompt": "You freeze all parameters of a pretrained backbone using requires_grad=False, but leave it in training mode. Its BatchNorm layers track running means and variances. Why might its saved state still change?",
+        "options": [
+          {
+            "text": "requires_grad=False also disables every forward operation.",
+            "feedback": "It prevents parameter gradient computation; it does not prevent the forward pass."
+          },
+          {
+            "text": "BatchNorm running statistics are buffers and can still update in training mode.",
+            "feedback": "Freezing learned parameters and freezing mode-dependent running state are different operations."
+          },
+          {
+            "text": "The classifier head rewrites the backbone through its output tensor.",
+            "feedback": "A downstream head does not normally rewrite upstream state merely by reading its features."
+          },
+          {
+            "text": "BatchNorm always uses exactly the same statistics in training and evaluation.",
+            "feedback": "With tracked statistics, training uses batch information and updates buffers; evaluation normally uses saved statistics."
+          }
+        ],
+        "answer": 1,
+        "explanation": "A frozen-feature protocol must specify weights, running state, and train/eval behavior. Disabling parameter gradients alone is not a complete freeze policy.",
+        "skill": "Audit normalization state during freezing"
+      },
+      {
+        "id": "DL03-b",
+        "prompt": "A gradient vector is [6,8]. Before the optimizer transforms it, global L2-norm clipping limits its norm to 2. Ignoring numerical epsilon, which gradient is passed onward?",
+        "options": [
+          {
+            "text": "[2,2]",
+            "feedback": "Norm clipping rescales the whole vector; clipping each coordinate separately would be a different operation."
+          },
+          {
+            "text": "[0.6,0.8]",
+            "feedback": "This vector has norm 1. The requested maximum norm is 2."
+          },
+          {
+            "text": "[1.2,1.6]",
+            "feedback": "The original norm is sqrt(36+64)=10. Multiplying both coordinates by 2/10 gives norm 2."
+          },
+          {
+            "text": "[6,8]",
+            "feedback": "The original norm exceeds the limit, so a rescaling is required."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Global norm clipping preserves this gradient's direction and multiplies its magnitude by 0.2. The subsequent optimizer can transform it further.",
+        "skill": "Calculate gradient-norm clipping"
+      }
+    ],
+    "DL04": [
+      {
+        "id": "DL04-a",
+        "prompt": "Training loss keeps falling while development loss rises for several epochs. Your test split has not been inspected. Which action best preserves an honest evaluation?",
+        "options": [
+          {
+            "text": "Choose the checkpoint with the lowest test loss.",
+            "feedback": "That turns the final test split into selection data and makes its reported score optimistic."
+          },
+          {
+            "text": "Report only the lowest training loss.",
+            "feedback": "Training fit does not establish performance on new examples."
+          },
+          {
+            "text": "Assume more epochs must eventually fix the development loss.",
+            "feedback": "The pattern is consistent with overfitting; more training is not guaranteed to improve it."
+          },
+          {
+            "text": "Use the declared development-based checkpoint rule, and inspect regularization or data issues without selecting on test results.",
+            "feedback": "Development evidence is appropriate for these decisions; the final test remains separate."
+          }
+        ],
+        "answer": 3,
+        "explanation": "A widening train/development gap suggests checking overfitting and distribution differences. Checkpoint selection should follow the development rule, not attractive test examples.",
+        "skill": "Diagnose overfitting without test selection"
+      },
+      {
+        "id": "DL04-b",
+        "prompt": "Five-class label smoothing is defined as target=(1−epsilon)×one_hot+epsilon/5, with epsilon=0.2. What target probability is assigned to the correct class and to each of the four other classes?",
+        "options": [
+          {
+            "text": "0.84 for the correct class and 0.04 for each other class.",
+            "feedback": "The correct class receives 0.8+0.04; the others receive 0.04. The probabilities sum to one."
+          },
+          {
+            "text": "0.80 for the correct class and 0.05 for each other class.",
+            "feedback": "That uses a different smoothing convention distributing epsilon only over incorrect classes, not the convention given."
+          },
+          {
+            "text": "1.00 for the correct class and 0.04 for each other class.",
+            "feedback": "This adds probability without reducing the original one-hot target, giving a total larger than one."
+          },
+          {
+            "text": "0.20 for every class.",
+            "feedback": "That is a uniform target and corresponds to epsilon=1 under the stated formula."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Always name the smoothing convention. Here the uniform component is added to every class, including the correct class: 0.8+0.2/5=0.84.",
+        "skill": "Calculate smoothed training targets"
+      }
+    ],
+    "DL05": [
+      {
+        "id": "DL05-a",
+        "prompt": "A convolutional layer applies the same 3×3 filter at every valid image location. What is the main consequence of that weight sharing?",
+        "options": [
+          {
+            "text": "Its predictions become perfectly invariant to every image translation.",
+            "feedback": "Sharing does not guarantee complete invariance; boundaries, stride, pooling, and the task head still matter."
+          },
+          {
+            "text": "It learns a different independent 3×3 filter at each position.",
+            "feedback": "That would remove the sharing assumption and substantially change parameter count."
+          },
+          {
+            "text": "It detects a repeated local pattern using the same learned rule across locations.",
+            "feedback": "One filter is reused over spatial patches; this encodes locality and a shared pattern detector."
+          },
+          {
+            "text": "It cannot mix information from different input channels.",
+            "feedback": "A standard convolution can mix input channels within each local patch."
+          }
+        ],
+        "answer": 2,
+        "explanation": "A convolution reuses local weights instead of learning an unconstrained dense connection at every spatial position. This is an inductive bias, not a promise of universal translation invariance.",
+        "skill": "Explain convolutional weight sharing"
+      },
+      {
+        "id": "DL05-b",
+        "prompt": "A biased Conv2d receives a 32×32 image with 3 channels and produces 8 channels. Kernel size is 3×3, stride 2, padding 1, dilation 1, and groups 1. Which output size and parameter count are correct?",
+        "options": [
+          {
+            "text": "16×16 spatial output and 224 parameters.",
+            "feedback": "Output length is floor((32+2−2−1)/2+1)=16. Parameters are 8×3×3×3+8=224."
+          },
+          {
+            "text": "32×32 spatial output and 224 parameters.",
+            "feedback": "Padding 1 preserves size at stride 1 for this kernel, not at stride 2."
+          },
+          {
+            "text": "16×16 spatial output and 72 parameters.",
+            "feedback": "72 counts one input channel's weights and omits both the other channels and eight biases."
+          },
+          {
+            "text": "15×15 spatial output and 216 parameters.",
+            "feedback": "This ignores the stated padding in the size calculation and omits the biases."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Spatial output size depends on kernel, padding, stride, and dilation. Stored convolution weights depend on channels, kernel, groups, and bias—not the number of image locations.",
+        "skill": "Calculate convolution shape and parameters"
+      }
+    ],
+    "DL06": [
+      {
+        "id": "DL06-a",
+        "prompt": "You compare a plain CNN initialized randomly with a residual CNN that also starts randomly. Which description is supported by that setup?",
+        "options": [
+          {
+            "text": "It is a clean test of pretrained transfer learning.",
+            "feedback": "Neither model uses pretrained representations, so this is not a transfer-learning comparison."
+          },
+          {
+            "text": "It proves that any quality difference comes only from the shortcut.",
+            "feedback": "The residual model can also differ in depth, parameter count, and compute; these need reporting."
+          },
+          {
+            "text": "It is a comparison of scratch-trained architectures, with depth, size, and compute differences reported.",
+            "feedback": "Both begin without pretraining. Reporting the changed factors keeps the interpretation appropriately limited."
+          },
+          {
+            "text": "It proves residual connections cannot matter unless pretrained weights are used.",
+            "feedback": "Residual connections change computation and gradient paths even when trained from scratch."
+          }
+        ],
+        "answer": 2,
+        "explanation": "A residual path and pretrained exposure are different mechanisms. Randomly initialized residual blocks test an architectural design, not reuse of earlier learned representations.",
+        "skill": "Separate residual architecture from transfer learning"
+      },
+      {
+        "id": "DL06-b",
+        "prompt": "A frozen feature extractor outputs 128 features per image. You train only a new biased linear head for 5 mutually exclusive classes. How many trainable parameters does that head add?",
+        "options": [
+          {
+            "text": "128",
+            "feedback": "This counts features, not the connections from each feature to each class."
+          },
+          {
+            "text": "640",
+            "feedback": "This counts 128×5 weights but omits the five class biases."
+          },
+          {
+            "text": "1,285",
+            "feedback": "A single linear head does not require a second copy of the weight matrix."
+          },
+          {
+            "text": "645",
+            "feedback": "The head has 128×5 weights plus 5 biases, totaling 645."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Frozen backbone parameters remain stored but are not trainable under this policy. The new head contributes 640 weights and five biases.",
+        "skill": "Count trainable parameters in a frozen-feature setup"
+      }
+    ],
+    "DL07": [
+      {
+        "id": "DL07-a",
+        "prompt": "A sequence trainer carries the hidden-state values into the next chunk but detaches that state from the previous computation graph. What does this accomplish?",
+        "options": [
+          {
+            "text": "It keeps a forward summary but stops gradients from flowing back across the chunk boundary.",
+            "feedback": "Detaching separates stored state values from the earlier derivative history; this is truncated backpropagation through time."
+          },
+          {
+            "text": "It resets the hidden state to zero.",
+            "feedback": "Detaching does not reset the state values; explicit reinitialization would do that."
+          },
+          {
+            "text": "It allows gradients through every earlier chunk without storing a graph.",
+            "feedback": "The detached boundary removes that gradient connection rather than preserving unlimited history."
+          },
+          {
+            "text": "It makes a bidirectional model safe for causal forecasting.",
+            "feedback": "Detaching gradients does not remove future information from a bidirectional forward pass."
+          }
+        ],
+        "answer": 0,
+        "explanation": "State carry-over and gradient carry-over are independent choices. A detached state can summarize earlier inputs while bounding backpropagation history and memory.",
+        "skill": "Explain truncated backpropagation through time"
+      },
+      {
+        "id": "DL07-b",
+        "prompt": "For an illustrative LSTM cell update c_new=f×c_old+i×g, hold the gates fixed at f=0.8 and i=0.25. If c_old=1.5 and the candidate g=0.4, what is c_new?",
+        "options": [
+          {
+            "text": "1.6",
+            "feedback": "This treats the old cell as unscaled and does not apply the forget gate."
+          },
+          {
+            "text": "1.3",
+            "feedback": "The retained old content is 0.8×1.5=1.2; new content is 0.25×0.4=0.1; total 1.3."
+          },
+          {
+            "text": "0.9",
+            "feedback": "The two contributions are added, not subtracted."
+          },
+          {
+            "text": "0.3",
+            "feedback": "This is not the stated gated sum. Both retained memory and proposed content contribute."
+          }
+        ],
+        "answer": 1,
+        "explanation": "This arithmetic isolates the cell update. It does not by itself calculate the output hidden state or the full network derivative, which also depends on gates and other operations.",
+        "skill": "Calculate a gated recurrent update"
+      }
+    ],
+    "DL08": [
+      {
+        "id": "DL08-a",
+        "prompt": "In next-token training, you stop scoring a future token by masking its loss, but earlier positions can still attend to its input embedding. Has future-information leakage been prevented?",
+        "options": [
+          {
+            "text": "Yes, because unscored tokens cannot affect the forward pass.",
+            "feedback": "A loss mask changes which outputs are scored, not which inputs attention can read."
+          },
+          {
+            "text": "Yes, provided the future token has zero loss weight.",
+            "feedback": "Zero loss weight does not block that token's key or value from attention."
+          },
+          {
+            "text": "No; removing future tokens from the loss also requires deleting all positional information.",
+            "feedback": "Position information and visibility are separate; a causal attention mask can preserve positions while blocking future access."
+          },
+          {
+            "text": "No; a causal attention mask must separately block unavailable future keys before attention normalization.",
+            "feedback": "Loss masking and information-flow masking perform different jobs and need separate tests."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Earlier representations can exploit unscored future inputs unless the attention visibility rule excludes them. Test causality by changing future inputs and checking earlier outputs.",
+        "skill": "Distinguish attention masks from loss masks"
+      },
+      {
+        "id": "DL08-b",
+        "prompt": "One attention row has scores [ln(3),0,−infinity] after scaling and masking. The corresponding scalar values are [4,8,100]. What is its weighted output after softmax?",
+        "options": [
+          {
+            "text": "37.33",
+            "feedback": "An equal average ignores both the unequal scores and the masked third position."
+          },
+          {
+            "text": "5",
+            "feedback": "Exponentiated scores are [3,1,0], so weights are [0.75,0.25,0] and output is 0.75×4+0.25×8=5."
+          },
+          {
+            "text": "12",
+            "feedback": "Attention takes a normalized weighted sum, not the sum of the two unmasked values."
+          },
+          {
+            "text": "100",
+            "feedback": "The third value has zero attention weight because its score is masked."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Softmax normalizes over permitted keys. A large masked value contributes nothing, and attention weights are mixing coefficients rather than probabilities that statements are true.",
+        "skill": "Calculate masked attention"
+      }
+    ],
+    "DL09": [
+      {
+        "id": "DL09-a",
+        "prompt": "On the same held-out inputs and with reconstruction error measured in the same original units, an autoencoder has lower error than PCA. You have not tested a classifier or retrieval task on either representation. What can you conclude?",
+        "options": [
+          {
+            "text": "The autoencoder is now proven better for classification.",
+            "feedback": "Reconstructing pixels and preserving class-relevant information are different objectives."
+          },
+          {
+            "text": "The autoencoder has learned only human-readable factors.",
+            "feedback": "Reconstruction loss does not establish that its latent features correspond to interpretable factors."
+          },
+          {
+            "text": "It reconstructed better under the stated evaluation; downstream usefulness still needs a separate test.",
+            "feedback": "A fixed downstream probe or controlled fine-tuning comparison can test utility beyond reconstruction."
+          },
+          {
+            "text": "PCA must have been fitted incorrectly.",
+            "feedback": "A more flexible reconstruction model can outperform a linear reference without implying an implementation error."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Report the measured task honestly. Lower reconstruction error supports a reconstruction claim, not an unmeasured transfer, class-prediction, or retrieval claim.",
+        "skill": "Separate representation training loss from downstream utility"
+      },
+      {
+        "id": "DL09-b",
+        "prompt": "An input vector is [1,0,1] and its reconstruction is [0.5,0.2,0.9]. Using the mean of the three squared coordinate errors, what is reconstruction MSE?",
+        "options": [
+          {
+            "text": "0.10",
+            "feedback": "Squared errors are 0.25, 0.04, and 0.01. Their sum is 0.30; dividing by three gives 0.10."
+          },
+          {
+            "text": "0.30",
+            "feedback": "This is the sum of squared errors, not their mean over three coordinates."
+          },
+          {
+            "text": "0.2667",
+            "feedback": "This is the mean absolute error: (0.5+0.2+0.1)/3. MSE squares errors first."
+          },
+          {
+            "text": "0.01",
+            "feedback": "This includes only the third coordinate and omits the other two errors."
+          }
+        ],
+        "answer": 0,
+        "explanation": "State the reduction: mean squared error averages squared differences over the declared coordinates. A different reduction would change the scalar and its gradient scale.",
+        "skill": "Calculate reconstruction error with an explicit reduction"
+      }
+    ],
+    "DL10": [
+      {
+        "id": "DL10-a",
+        "prompt": "A GAN discriminator becomes very accurate at separating real from generated images. What is the most defensible interpretation by itself?",
+        "options": [
+          {
+            "text": "The generator must be producing excellent images.",
+            "feedback": "A discriminator can be accurate precisely because generated examples are easy to distinguish."
+          },
+          {
+            "text": "The generator has definitely memorized all training images.",
+            "feedback": "Discriminator accuracy alone does not identify memorization; that needs separate evidence."
+          },
+          {
+            "text": "The generator must be diverse because two networks were trained.",
+            "feedback": "Two-network training does not prevent mode collapse or establish diversity."
+          },
+          {
+            "text": "The discriminator currently separates the two sources; generator quality, diversity, and memorization need separate checks.",
+            "feedback": "One adversarial component's success is not a standalone certificate of the generator's quality."
+          }
+        ],
+        "answer": 3,
+        "explanation": "GAN objectives are coupled. Inspect generated samples under a fixed rule and use appropriate held-out quality, diversity, and memorization checks rather than treating discriminator accuracy as a universal score.",
+        "skill": "Interpret adversarial training evidence"
+      },
+      {
+        "id": "DL10-b",
+        "prompt": "A stated beta-VAE objective is reconstruction cost + beta×KL. For one example, reconstruction cost is 7 nats, KL is 0.5 nats, and beta=3. What is that objective?",
+        "options": [
+          {
+            "text": "7.5 nats",
+            "feedback": "This would use beta=1 and ignores the specified multiplier of three."
+          },
+          {
+            "text": "8.5 nats",
+            "feedback": "7+3×0.5=8.5. The KL weighting changes the objective; it is not a direct measurement of visual sharpness."
+          },
+          {
+            "text": "22.5 nats",
+            "feedback": "This incorrectly multiplies the reconstruction term by beta as well."
+          },
+          {
+            "text": "6.5 nats",
+            "feedback": "The stated minimized cost adds the weighted KL term; it does not subtract it."
+          }
+        ],
+        "answer": 1,
+        "explanation": "The arithmetic is 7+1.5=8.5 nats. Changing beta changes the trade-off, so arbitrary beta values should not be described as the unchanged original negative-ELBO objective.",
+        "skill": "Calculate and interpret a weighted latent-model objective"
+      }
+    ],
+    "DL11": [
+      {
+        "id": "DL11-a",
+        "prompt": "In a declared transductive node-classification experiment, the full graph and test-node features are available during training, but test labels are withheld. Which addition would cross that information boundary?",
+        "options": [
+          {
+            "text": "Using permitted unlabelled test-node features in message passing.",
+            "feedback": "That access is allowed by the stated transductive protocol, although it would need a different description in an inductive task."
+          },
+          {
+            "text": "Recording whether evaluation uses one known graph or unseen graphs.",
+            "feedback": "This clarifies the access policy; it does not leak a target."
+          },
+          {
+            "text": "Appending the withheld test-node label to each test node's input features.",
+            "feedback": "This supplies the answer as an input and invalidates the intended held-out label evaluation."
+          },
+          {
+            "text": "Comparing with an MLP using the same permitted node attributes.",
+            "feedback": "This is a useful reference for separating attribute information from relational information."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Transductive access does not mean unrestricted access. Permitted graph structure and unlabelled attributes are different from the targets being evaluated.",
+        "skill": "Audit graph access and label leakage"
+      },
+      {
+        "id": "DL11-b",
+        "prompt": "A toy message-passing layer averages a node's own vector [3,0] with its two neighbours [0,3] and [6,3]. There are no learned transformations, and all weights are equal. What is the aggregate?",
+        "options": [
+          {
+            "text": "[3,3]",
+            "feedback": "This averages the neighbours alone, omitting the self vector that the prompt explicitly includes."
+          },
+          {
+            "text": "[9,6]",
+            "feedback": "This is the component-wise sum, not the mean over three vectors."
+          },
+          {
+            "text": "[1,2]",
+            "feedback": "The first components sum to nine, not three, before division."
+          },
+          {
+            "text": "[3,2]",
+            "feedback": "The component-wise sum is [9,6]; dividing by three included vectors gives [3,2]."
+          }
+        ],
+        "answer": 3,
+        "explanation": "The self-inclusion and aggregation rule matter. This equal-weight mean is a toy rule, not automatically the degree-normalized update used by every graph architecture.",
+        "skill": "Calculate a declared message-passing aggregate"
+      }
+    ],
+    "DL12": [
+      {
+        "id": "DL12-a",
+        "prompt": "An image can contain both a bicycle and a pedestrian. You need one presence score for each label, and both labels may be true. Which output/loss design fits that target?",
+        "options": [
+          {
+            "text": "Two independent logits trained with a binary loss for each label.",
+            "feedback": "Multilabel targets allow multiple positive indicators, unlike mutually exclusive softmax classes."
+          },
+          {
+            "text": "One two-class softmax that forces exactly one label per image.",
+            "feedback": "A softmax competition would incorrectly force the two labels to exclude one another."
+          },
+          {
+            "text": "A single number interpreted as the coordinates of both objects.",
+            "feedback": "Object presence and localization are different targets; one scalar cannot encode both stated presence indicators."
+          },
+          {
+            "text": "A per-pixel segmentation mask, because all image tasks require one.",
+            "feedback": "Segmentation needs spatial annotations and answers a different question from image-level presence."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Start from target meaning: several labels can be present, so the outputs should not be forced to sum to one. Localization or segmentation would require additional targets and heads.",
+        "skill": "Match a task head and loss to label semantics"
+      },
+      {
+        "id": "DL12-b",
+        "prompt": "A predicted foreground region contains 8 pixels, the reference region contains 6 pixels, and their intersection contains 4 pixels. What is intersection-over-union (IoU)?",
+        "options": [
+          {
+            "text": "0.50",
+            "feedback": "4/8 is precision for this foreground prediction, not intersection divided by union."
+          },
+          {
+            "text": "0.40",
+            "feedback": "Union size is 8+6−4=10, so IoU=4/10=0.40."
+          },
+          {
+            "text": "0.6667",
+            "feedback": "4/6 is recall against the reference foreground, not IoU."
+          },
+          {
+            "text": "0.5714",
+            "feedback": "2×4/(8+6) is Dice overlap, a different metric from IoU."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Subtract the intersection once when forming the union to avoid counting shared pixels twice. Naming the metric matters because precision, recall, Dice, and IoU use different denominators.",
+        "skill": "Calculate segmentation overlap"
+      }
+    ],
+    "DL13": [
+      {
+        "id": "DL13-a",
+        "prompt": "You save only model weights and later want to reproduce the exact next training update from an interrupted Adam run. What is missing from the continuation contract?",
+        "options": [
+          {
+            "text": "Nothing; weights fully determine the next update for every training setup.",
+            "feedback": "The next data batch, optimizer moments, schedules, and randomness can all affect continuation."
+          },
+          {
+            "text": "Only the final test score.",
+            "feedback": "A test score does not restore the training computation or its state."
+          },
+          {
+            "text": "A screenshot of the learning curve.",
+            "feedback": "A chart records observations, not optimizer buffers or sampler position."
+          },
+          {
+            "text": "Optimizer and scheduler state, random-generator state, data position, and compatible settings as applicable.",
+            "feedback": "These states can change the next gradient or update even when the starting weights match."
+          }
+        ],
+        "answer": 3,
+        "explanation": "An inference weights file and a resumable training checkpoint serve different purposes. Exact continuation needs the relevant state and a tested restoration procedure under stated numerical tolerances.",
+        "skill": "Define a reproducible training checkpoint"
+      },
+      {
+        "id": "DL13-b",
+        "prompt": "You accumulate gradients over two microbatches using per-example mean losses. The first has 6 examples with mean loss 2; the second has 2 examples with mean loss 6. What combined mean matches one batch of all 8 examples?",
+        "options": [
+          {
+            "text": "3",
+            "feedback": "The weighted mean is (6×2+2×6)/8=24/8=3; each example receives equal weight."
+          },
+          {
+            "text": "4",
+            "feedback": "An unweighted average of the two means overweights each example in the smaller microbatch."
+          },
+          {
+            "text": "8",
+            "feedback": "Adding batch means does not account for either their sizes or the total example count."
+          },
+          {
+            "text": "24",
+            "feedback": "This is the total loss sum over the examples, not the requested per-example mean."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Unequal microbatches need size-aware weighting. Averaging their means is equivalent only when their included example counts are equal under the stated objective.",
+        "skill": "Normalize uneven gradient-accumulation batches"
+      }
+    ],
+    "DL14": [
+      {
+        "id": "DL14-a",
+        "prompt": "A pretrained CNN beats a scratch linear classifier after much more tuning. Both use the same final test split. What claim can this comparison support without further controls?",
+        "options": [
+          {
+            "text": "The CNN architecture alone caused the entire gain.",
+            "feedback": "Architecture, prior data exposure, and selection budget changed together; their individual effects are not identified."
+          },
+          {
+            "text": "Pretraining and tuning budget are irrelevant because the test set matches.",
+            "feedback": "Matching the test set does not remove differences in starting information or model-selection work."
+          },
+          {
+            "text": "The selected CNN system performed better under those stated conditions; an architecture-only claim needs additional controls.",
+            "feedback": "This reports the result while keeping prior exposure and tuning differences visible."
+          },
+          {
+            "text": "The result must be discarded because models can never have different resources.",
+            "feedback": "Different-resource comparisons can be informative when their question and limitations are clearly stated."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Fairness depends on the question. A system-quality comparison can allow different resources, but it should not be presented as a controlled test of architecture alone.",
+        "skill": "Keep comparison claims within the tested controls"
+      },
+      {
+        "id": "DL14-b",
+        "prompt": "A dataset has exactly 1,000 training examples. With batch size 128, no dropped cases, no gradient accumulation, and one optimizer update per batch, how many updates occur over 3 complete epochs?",
+        "options": [
+          {
+            "text": "21 updates, because every batch must contain 128 examples.",
+            "feedback": "This drops the final partial batch even though the prompt explicitly retains all cases."
+          },
+          {
+            "text": "24 updates, with 104 examples in each epoch's final batch.",
+            "feedback": "Seven full batches contain 896 examples; the remaining 104 form batch eight. Three epochs give 3×8=24 updates."
+          },
+          {
+            "text": "3 updates, one per epoch.",
+            "feedback": "An epoch contains several batches; the prompt specifies one update per batch."
+          },
+          {
+            "text": "384 updates, because batch size times epochs determines update count.",
+            "feedback": "128×3 counts neither batches nor optimizer steps. Update count depends on dataset size divided into batches."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Use ceil(1,000/128)=8 batches per epoch when retaining the last partial batch. Epochs, updates, and processed examples are different accounting units.",
+        "skill": "Account for actual training updates"
+      }
+    ]
+  }
+}

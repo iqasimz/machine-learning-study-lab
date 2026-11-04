@@ -1,0 +1,180 @@
+"use strict";
+
+// ML/DL views consume recorded artifacts. Explanatory figures are separate static SVGs.
+const ModelLab=(()=>{
+  const $=id=>document.getElementById(id);
+  const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
+  const opt=(value,label)=>{const n=node("option",label);n.value=value;return n;};
+  const fmt=n=>Number.isFinite(n)?Math.abs(n)>0&&Math.abs(n)<.001?n.toExponential(2):n.toFixed(4):"—";
+  const colors=["#3457b5","#a35d25","#28735d","#79649a"];
+  const metricNames={accuracy:"Accuracy",macro_f1:"Macro-F1",balanced_accuracy:"Balanced accuracy",log_loss:"Log loss",brier_multiclass:"Multiclass Brier",ece_10_bins:"Calibration gap (ECE)",mae:"Mean absolute error",rmse:"Root mean squared error",r2:"R²"};
+  const metricConventions={brier_multiclass:"This table uses the unhalved multiclass Brier sum.",ece_10_bins:"This table uses ten fixed confidence bins; the four-case lesson uses two for illustration."};
+  function metricLink(family){const b=node("button","Explore these metrics","text-button");b.onclick=()=>LabLearning.openMetric(family);return b;}
+  const guides={
+    ml:[
+      {name:"Choose settings myself",help:"Change one relevant factor, fit a run, then use the same data and training-row limit for its comparison."},
+      {name:"Feature scaling for nearest neighbours",help:"Run KNN on Wine with standard scaling, then change only scaling to none. Distances depend on units; tree predictions should be less sensitive to monotone rescaling.",task:"classification",dataset:"wine",model:"knn",controls:{scaling:"standard"}},
+      {name:"Linear versus nonlinear SVM",help:"Fit linear SVM on digits, then switch the kernel to RBF. Keep C, scaling and data fixed; flexibility is useful only if development results support it.",task:"classification",dataset:"digits",model:"svm",controls:{kernel:"linear"}},
+      {name:"Decision tree versus random forest",help:"Fit a decision tree, then a random forest with the same depth and leaf rule. Bagging averages different trees rather than simply growing one bigger tree.",task:"classification",dataset:"digits",model:"tree",controls:{depth:8,leaf:3}},
+      {name:"Regression: ridge versus boosting",help:"Begin with ridge on the noisy regression task, then compare boosting. The known mechanism is nonlinear; use Wine Quality afterward for a messier real dataset.",task:"regression",dataset:"curve",model:"ridge",controls:{strength:1}},
+      {name:"Clustering: K-means versus DBSCAN",help:"Fit K-means on the generated clusters, then DBSCAN. Examine density, noise and reference-label agreement without calling these classification accuracies.",task:"clustering",dataset:"clusters",model:"kmeans",controls:{clusters:3}},
+      {name:"PCA: compression versus reconstruction error",help:"Project digits to two components, then ten. More retained variance should reduce reconstruction error, not necessarily improve a downstream prediction.",task:"representation",dataset:"digits",model:"pca",controls:{components:2}}
+    ],
+    dl:[
+      {name:"Choose settings myself",help:"Change architecture or optimization settings, read the learning curves and compare with a simpler model on the same rows."},
+      {name:"Image classification: MLP versus CNN",help:"Fit an MLP on Fashion-MNIST, then a CNN with the same epochs, data and batch size. Epochs match data passes, not parameter count or compute. Prepare the images once if needed.",task:"classification",dataset:"fashion_mnist",model:"mlp",controls:{epochs:5,width:64}},
+      {name:"Check that a small network can learn",help:"Use digits with no dropout or weight decay. If training loss cannot fall, check the learning rate and objective before adding regularization.",task:"classification",dataset:"digits",model:"mlp",controls:{dropout:0,weight_decay:0,epochs:10}},
+      {name:"Compare two learning rates",help:"Train at 0.001, then 0.03 with the same seed. Compare gradient norms, train loss and development loss; fast loss reduction alone does not prove better generalization.",task:"classification",dataset:"digits",model:"mlp",controls:{learning_rate:.001,epochs:10}},
+      {name:"Plain CNN versus residual CNN",help:"Compare CNN and residual CNN. The residual version adds identity paths and more layers; this is not a parameter-matched ablation.",task:"classification",dataset:"fashion_mnist",model:"residual",controls:{epochs:5,width:32}},
+      {name:"Image reconstruction with an autoencoder",help:"Train an autoencoder on images. Compare its reconstruction to a constant mean training image, inspect details it loses and do not interpret reconstruction as classification performance.",task:"representation",dataset:"digits",model:"autoencoder",controls:{epochs:10,width:64}},
+      {name:"Regression: a neural-network baseline",help:"Fit an MLP on the same nonlinear regression fixture used in ML. Compare final MAE in target units, not its internally standardized training loss against another model's unscaled error.",task:"regression",dataset:"curve",model:"mlp",controls:{epochs:20}}
+    ]
+  };
+  let registry,area="ml",view=null,timer=null,busy=false,needsRefresh=false,serial=0,rows=[],activeRun=null,resultsRun=null,job={},lastComparison=null,comparisonSerial=0;
+  const remembered={},selected=new Set();
+  async function request(url,body){const r=await fetch(url,body===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});const d=await r.json();if(!r.ok)throw Error(d.error||"Could not complete the request.");return d;}
+  function table(headings,values){const wrap=node("div",undefined,"table-scroll"),t=node("table"),head=node("thead"),hr=node("tr"),body=node("tbody");headings.forEach(h=>hr.append(node("th",h)));head.append(hr);values.forEach(row=>{const tr=node("tr");row.forEach(v=>tr.append(node("td",String(v))));body.append(tr);});t.append(head,body);wrap.append(t);return wrap;}
+  function details(title,...content){const d=node("details");d.append(node("summary",title),...content);return d;}
+  function method(){return registry.methods.find(m=>m.id===$("model-method").value);}
+  function dataset(){return registry.datasets.find(d=>d.id===$("model-dataset").value);}
+  function keys(){return method().controls.filter(k=>k!=="epsilon"||$("model-task").value==="regression");}
+  function read(){return {area,dataset:$("model-dataset").value,task:$("model-task").value,model:$("model-method").value,controls:Object.fromEntries(keys().map(k=>[k,JSON.parse($("model-control-"+k).value)]))};}
+  function options(select,items,value){select.replaceChildren(...items.map(x=>opt(x.id,x.name)));select.value=items.some(x=>x.id===value)?value:items[0]?.id||"";}
+  function compatibleData(task){return registry.datasets.filter(d=>area==="dl"&&task==="representation"?["digits","fashion_mnist"].includes(d.id):task==="anomaly"?d.id==="clusters":["classification","regression"].includes(task)?d.task===task:d.task!=="regression");}
+  function compatibleModels(task,data){return registry.methods.filter(m=>m.area===area&&m.tasks.includes(task)&&(!["cnn","residual","autoencoder"].includes(m.id)||["digits","fashion_mnist"].includes(data)));}
+  function build(previous){
+    const task=$("model-task").value;
+    options($("model-dataset"),compatibleData(task),previous?.dataset||$("model-dataset").value);
+    options($("model-method"),compatibleModels(task,$("model-dataset").value),previous?.model||$("model-method").value);
+    const m=method(),d=dataset(),host=$("model-settings");host.replaceChildren();
+    for(const key of keys()){
+      const def=registry.controls[key],block=node("div",undefined,"setting"),label=node("label",def.label),select=node("select");select.id="model-control-"+key;label.setAttribute("for",select.id);
+      let choices=def.choices;
+      if(key==="components")choices=choices.filter(v=>v<=({iris:4,clusters:2}[d.id]||64));
+      select.append(...choices.map(v=>opt(JSON.stringify(v),v===null?"No depth limit":String(v))));
+      const value=previous?.controls?.[key]??def.default;select.value=JSON.stringify(choices.includes(value)?value:def.default);
+      const help=node("p",def.definition+" "+def.effect,"field-help");help.id=select.id+"-help";select.setAttribute("aria-describedby",help.id);
+      select.onchange=()=>{remembered[area]=read();dependent();};
+      if(key==="device")for(const n of select.options){const d=JSON.parse(n.value);if(["cuda","mps"].includes(d))n.disabled=!registry.hardware[d]||Boolean(registry.hardware.probe_errors?.[d]);}
+      block.append(label,help,select);if(def.equation)block.append(node("p",def.equation,"field-help equation-label"));host.append(block);
+    }
+    $("model-method-info").replaceChildren(node("h2",m.name),node("p",m.meaning));
+    $("model-data-info").replaceChildren(node("strong",d.name),node("p",d.note),node("p",d.license));
+    if(d.source){const a=node("a","Dataset source and attribution");a.href=d.source;a.target="_blank";a.rel="noopener noreferrer";$("model-data-info").append(a);}
+    $("model-data-action").replaceChildren();
+    if(!d.ready){const download=node("button","Prepare "+d.name+" locally","secondary");download.onclick=async()=>{try{download.disabled=true;job=await request("/api/models/prepare",{dataset:d.prepare_id});$("model-message").textContent="Preparing public data; this does not train a model. The worker can be stopped below.";await refresh();}catch(e){$("model-message").textContent=e.message;download.disabled=false;}};$("model-data-action").append(node("p",d.id==="fashion_mnist"?"One-time download: approximately 30 MB from the original Fashion-MNIST repository. Files are checksum-checked and kept on this computer.":"One-time download: under 1 MB from UCI. Red and white variants remain separate."),download);}
+    remembered[area]=read();dependent();buttons();
+  }
+  function dependent(){const gamma=$("model-control-gamma"),kernel=$("model-control-kernel");if(gamma&&kernel){gamma.disabled=JSON.parse(kernel.value)==="linear";gamma.title=gamma.disabled?"Gamma is unused for a linear kernel.":"Used only by the RBF kernel.";}}
+  function configure(value){
+    const tasks=[...new Set(registry.methods.filter(m=>m.area===area).flatMap(m=>m.tasks))].map(id=>({id,name:{classification:"Predict a category",regression:"Predict a number",clustering:"Discover groups",representation:"Compress and reconstruct",anomaly:"Detect unusual points"}[id]}));
+    options($("model-task"),tasks,value?.task||"classification");build(value||{dataset:area==="dl"&&registry.datasets.find(d=>d.id==="fashion_mnist").ready?"fashion_mnist":"digits",model:area==="dl"?"cnn":"logistic"});
+  }
+  function buttons(){if(!registry)return;$("model-start").disabled=!!job.running||!dataset()?.ready;$("model-stop").disabled=!job.running;}
+  function choices(id,chosen,all=false){const box=$(id),eligible=rows.filter(r=>all||r.settings.area===area),signature=eligible.map(r=>r.id+r.status).join("|");if(box.dataset.signature!==signature){box.replaceChildren(...eligible.map(r=>opt(r.id,`${registry.methods.find(m=>m.id===r.settings.model).name} · ${r.settings.dataset} · ${r.status} · ${r.id}`)));if(!eligible.length)box.append(opt("","No saved runs yet"));box.dataset.signature=signature;}if(eligible.some(r=>r.id===chosen))box.value=chosen;return box.value;}
+  function lossSeries(run){return [{label:"Training",color:colors[1],values:(run?.history||[]).map(r=>({x:r.epoch,y:r.train_loss}))},{label:"Development",color:colors[0],values:(run?.history||[]).map(r=>({x:r.epoch,y:r.dev_loss}))}];}
+  function lossHelp(run){const task=run.manifest.settings.task;return (run.result?.loss_units||{classification:"Cross-entropy: average penalty for low probability on the correct class. Lower is better.",regression:"Mean squared error on targets standardized with training-only mean and scale. Final errors are converted back to the target's original units.",representation:"Mean squared difference between input pixels and reconstructed pixels in the fixed 0–1 range."}[task])+" Training loss is measured with training-mode dropout/normalization; development uses evaluation mode, so a smaller development loss is not automatically leakage.";}
+  function live(run){
+    const m=run?.manifest,isNeural=m?.settings.area==="dl";
+    $("model-phase").textContent=m?`${m.status} · ${m.phase}${m.error?" · "+m.error:""}`:job.running?`Worker active · ${job.kind}`:"No run selected.";
+    if(job.running&&job.id!==m?.id)$("model-phase").textContent=job.kind==="dataset"?"Preparing public data. Stop worker cancels preparation; selected saved measurements remain below.":["run","study"].includes(job.kind)?"An LLM worker is active. Its progress is under LLMs → Train a model; selected saved measurements remain below.":`Another ML/DL run is active (${job.id}). Open its subject's lab for live progress; selected saved measurements remain below.`;
+    const progress=$("model-progress");progress.hidden=!isNeural;if(isNeural)progress.value=Math.min(1,(m.epoch_fraction||m.completed_epochs||0)/Math.max(1,m.requested_epochs||1));
+    $("model-live-stats").replaceChildren(...[["ELAPSED",m?Math.round(m.elapsed_seconds||0)+" s":"—"],["COMPLETED EPOCHS",isNeural?`${m.completed_epochs||0} / ${m.requested_epochs}`:"Single estimator fit"],["WEIGHT UPDATES",m?.updates??"—"],["PARAMETERS",m?.model_parameters?.toLocaleString()||"—"]].map(([label,value])=>{const n=node("div",undefined,"stat");n.append(node("small",label),node("strong",String(value)));return n;}));
+    $("model-live-chart").hidden=!isNeural;
+    $("model-single-fit-help").textContent=isNeural?"An epoch visits each selected training row once. Development loss selects the checkpoint. Recorded TensorBoard events are saved under model_runs/<run>/tensorboard.":"Classical estimators are fitted in one library call. The phase and elapsed time are real; the lab does not invent epoch curves or a percentage for a solver that does not report progress.";
+    if(isNeural){$("model-live-loss-help").textContent=lossHelp(run);chart($("model-live-curve"),lossSeries(run),"epochs");}
+  }
+  function scoreTable(predictions,baseline){
+    const keys=Object.keys(predictions.dev.scores),host=node("div");
+    host.append(node("p",keys.includes("mae")?"MAE is the average error size in the target's units. RMSE gives large mistakes extra weight. Lower is better for both; R² has a different, higher-is-better interpretation.":"Accuracy counts correct cases. Macro-F1 balances precision and recall while giving each class equal weight. Probability losses check how sensible the assigned probabilities are, not just which class won.","plot-help"));
+    host.append(metricLink(keys.includes("mae")?"regression":"multiclass"));
+    host.append(table(["Metric","Better direction","Training","Development","Constant baseline · development"],keys.map(k=>[metricNames[k]||k,LabReadouts.metric(k).higher?"Higher":"Lower",fmt(predictions.train.scores[k]),fmt(predictions.dev.scores[k]),fmt(baseline?.dev?.[k])])));
+    host.append(details("What the other scores measure",...keys.map(k=>node("p",LabReadouts.metric(k).name+": "+LabReadouts.metric(k).meaning))));
+    for(const k of keys)if(metricConventions[k])host.append(node("p",metricConventions[k],"plot-help"));
+    return host;
+  }
+  function image(pixels,shape,label){const wrap=node("figure",undefined,"example-image"),canvas=node("canvas"),side=shape[2];canvas.width=side;canvas.height=side;canvas.setAttribute("role","img");canvas.setAttribute("aria-label",label);const ctx=canvas.getContext("2d"),image=ctx.createImageData(side,side);pixels.forEach((v,i)=>{const gray=Math.round(Math.max(0,Math.min(1,v))*255);image.data[i*4]=gray;image.data[i*4+1]=gray;image.data[i*4+2]=gray;image.data[i*4+3]=255;});ctx.putImageData(image,0,0);wrap.append(canvas,node("figcaption",label));return wrap;}
+  function scatter(points,labels){
+    const wrap=node("div",undefined,"scatter-panel"),canvas=node("canvas");canvas.width=700;canvas.height=300;canvas.setAttribute("role","img");canvas.setAttribute("aria-label","Two-dimensional projection, with cluster or reference labels shown by colour");wrap.append(canvas);const ctx=canvas.getContext("2d");ctx.fillStyle="#fff";ctx.fillRect(0,0,700,300);
+    if(!points.length)return wrap;const xs=points.map(p=>p[0]),ys=points.map(p=>p[1]),minX=Math.min(...xs),minY=Math.min(...ys),rangeX=Math.max(...xs)-minX||1,rangeY=Math.max(...ys)-minY||1;
+    const pointColors=[...colors,"#a52d48","#237f9b","#737d21","#ad5d86","#6d5640","#535e79"];
+    points.forEach((p,i)=>{ctx.fillStyle=labels[i]===-1?"#818b99":pointColors[Math.abs(labels[i]||0)%pointColors.length];ctx.beginPath();ctx.arc(25+(p[0]-minX)/rangeX*650,250-(p[1]-minY)/rangeY*225,2.6,0,2*Math.PI);ctx.fill();});
+    [...new Set(labels)].sort((a,b)=>a-b).forEach((label,i)=>{ctx.fillStyle=label===-1?"#818b99":pointColors[Math.abs(label)%pointColors.length];ctx.fillRect(15+i*62,278,8,8);ctx.font="10px system-ui";ctx.fillText(label===-1?"Noise":String(label),28+i*62,286);});return wrap;
+  }
+  function results(run){
+    const host=$("model-results-content"),inspection=$("model-results-inspection");host.replaceChildren();inspection.replaceChildren();$("model-results-chart").hidden=true;if(!run){host.append(node("p","No saved experiment in this subject yet.","empty"));return;}
+    const m=run.manifest,r=run.result,d=run.data;
+    host.append(node("p",`${m.status} · ${registry.methods.find(x=>x.id===m.settings.model).name} · integrity: ${run.integrity}`,"run-summary"));
+    const reading=LabReadouts.modelResult(run),card=node("section",undefined,"reading-summary");card.append(node("h2",reading.title),node("p",reading.text));host.append(card);
+    host.append(node("p","The file-integrity check detects changed artifacts; PASS does not certify prediction quality. A dash means a measurement was not recorded or is not applicable.","plot-help"));
+    if(m.error)host.append(node("p",m.error,"error"));
+    if(d)host.append(node("h2","Data and evaluation boundary"),node("p",`${d.rows.toLocaleString()} source rows · ${d.features} inputs · ${d.counts.train.toLocaleString()} training / ${d.counts.dev.toLocaleString()} development / ${d.counts.test.toLocaleString()} test.`),node("p",d.split_policy+" "+d.warning,"plot-help"));
+    host.append(details("Settings, versions and artifact identity",node("pre",JSON.stringify({id:m.id,settings:m.settings,versions:m.versions,hardware:m.hardware,preprocessing:m.preprocessing,data_fingerprint:m.data_fingerprint,split_fingerprint:m.split_fingerprint,integrity:run.integrity},null,2))));
+    if(!r)return;
+    if(r.predictions){
+      host.append(node("h2","Development results"),node("p","Training shows fitting; development supports method selection. A constant baseline ignores every feature. Compare the same metric in each column before deciding whether added complexity helps.","topic-flow"),scoreTable(r.predictions,r.baseline));
+      if(r.predictions.dev.per_class){host.append(node("h3","Which classes need attention?"),node("p","Precision asks how many predictions of a class were right; recall asks how many actual cases of that class were found. F1 combines them. Support is the number of reference cases, so check whether a class has enough examples to judge.","plot-help"),table(["Class","Precision","Recall","F1","Reference cases (support)"],r.predictions.dev.per_class.map(row=>[d.class_names?.[row.label]??row.label,fmt(row.precision),fmt(row.recall),fmt(row.f1),row.support])));}
+      const t=r.predictions.test,final=details("Test results — use as an exploratory check, not a tuning target",table(["Metric","This model","Constant baseline"],Object.entries(t.scores).map(([key,val])=>[metricNames[key]||key,fmt(val),fmt(r.baseline?.test?.[key])])));
+      const ci=t.interval;final.append(node("p",`The ${ci.metric} uncertainty interval is ${fmt(ci.low)} to ${fmt(ci.high)}, from ${ci.resamples} resamples of this fitted model's held-out cases. This is not variation across retrained models. ${ci.note}`,"plot-help"));
+      if(run.uncertainty_warning)final.append(node("p",run.uncertainty_warning,"warnings"));
+      if(t.confusion){const names=d.class_names||t.labels.map(String);final.append(node("h3","Which classes were confused?"),node("p","Rows are true labels; columns are predicted labels. Diagonal counts are correct. Off-diagonal counts show the particular confusions hidden by an overall score.","plot-help"),table(["True ↓ / predicted →",...names],t.confusion.map((row,i)=>[names[i],...row])));}
+      else final.append(node("h3","Largest test errors"),node("p","Residual means prediction minus observed target. Large errors are shown below without editing; a low average can still conceal these failures.","plot-help"),table(["Row","Observed","Predicted","Residual"],r.examples.map(e=>[e.row_id,fmt(e.truth),fmt(e.prediction),fmt(e.prediction-e.truth)])));
+      inspection.append(final);
+      inspection.append(node("h2","Inspect actual examples"),node("p","Classification errors appear first, followed by correct cases if fewer errors exist. Regression examples are ordered by absolute error. These examples are not a random sample.","plot-help"));
+      const examples=node("div",undefined,d.image_shape?"image-grid":"");
+      for(const e of r.examples){const names=d.class_names,label=`Row ${e.row_id}: ${names?.[e.truth]??e.truth} → ${names?.[e.prediction]??fmt(e.prediction)}`;if(d.image_shape)examples.append(image(e.features,d.image_shape,label));else examples.append(details(label,table(["Feature","Value"],e.features.map((v,i)=>[d.feature_names?.[i]||"x"+i,fmt(v)]))));}
+      inspection.append(examples);
+    }
+    if(r.representation){const rep=r.representation;host.append(node("h2","Compression and reconstruction"),node("p",rep.units,"topic-terms"),node("p","Fit the compression using training rows, reconstruct separate development/test rows and inspect what is lost. Low reconstruction error does not prove useful classification or semantic understanding.","topic-flow"),table(["Split","Reconstruction MSE"],Object.entries(rep.reconstruction_mse).map(([k,v])=>[k,fmt(v)])));if(rep.constant_image_test_mse!==undefined)host.append(node("p","Constant mean training image · test MSE: "+fmt(rep.constant_image_test_mse),"plot-help"));if(rep.explained_variance_ratio)host.append(node("p","Variance retained per component: "+rep.explained_variance_ratio.map(fmt).join(", "),"plot-help"));if(rep.projection)host.append(scatter(rep.projection,rep.labels),node("p","First two retained coordinates of up to 500 fitting rows, coloured by withheld reference labels. Axis units depend on preprocessing; this display is not a trained classifier.","plot-help"));}
+    if(r.clustering){const c=r.clustering,names={fit_silhouette_excluding_noise:"Fitting silhouette (excluding noise)",fit_adjusted_rand_reference:"Fitting adjusted Rand (reference labels)",test_adjusted_rand_reference:"Test adjusted Rand (reference labels)",noise_fraction:"Fitting noise fraction",groups_excluding_noise:"Groups (excluding noise)"};host.append(node("h2","Cluster geometry and diagnostic labels"),node("p",c.note,"topic-flow"),table(["Diagnostic","Value"],Object.entries(c).filter(([k,v])=>typeof v==="number"||v===null).map(([k,v])=>[names[k]||k,fmt(v)])),node("p","Silhouette compares within-group and between-group distances; higher need not mean useful categories. Adjusted Rand compares groups with withheld reference labels (1 is exact agreement, near 0 is chance-adjusted). Noise fraction is the share labelled −1. These units are not accuracy or loss.","plot-help"),scatter(c.projection,c.assignments));}
+    if(r.anomaly)host.append(node("h2","Anomaly diagnostics"),node("p","ROC-AUC ranks generated uniform-noise points above ordinary cluster points; 0.5 is chance ranking. Flagged fraction depends on the assumed contamination cutoff. The authored noise label is not real-world fraud ground truth.","plot-help"),table(["Split","ROC-AUC","Flagged fraction"],Object.entries(r.anomaly).map(([k,v])=>[k,fmt(v.roc_auc),fmt(v.flagged_fraction)])));
+    if(r.image_examples){const images=node("div",undefined,"image-grid");r.image_examples.forEach(e=>{images.append(image(e.pixels,d.image_shape,"Original · row "+e.row_id),image(e.reconstruction,d.image_shape,"Reconstruction · row "+e.row_id));});inspection.append(node("h2","Original and reconstructed pixels"),images);}
+    if(run.history?.length){$("model-results-chart").hidden=false;$("model-result-loss-help").textContent=lossHelp(run)+` Best development epoch: ${r.best_epoch}. Final evaluation uses that checkpoint, not necessarily the last one.`;chart($("model-result-curve"),lossSeries(run),"epochs");inspection.append(details("Recorded epoch measurements",table(["Epoch","Train loss","Dev loss","Rate","Gradient norm before clipping","Seconds"],run.history.map(x=>[x.epoch,fmt(x.train_loss),fmt(x.dev_loss),fmt(x.learning_rate),fmt(x.mean_gradient_norm_before_clipping),fmt(x.elapsed_seconds)]))));}
+    if(r.feature_importance||r.coefficients)inspection.append(details(r.feature_importance?"Feature importance (not causal)":"Learned coefficients",node("p",r.importance_note||"Coefficient units depend on preprocessing and class coding. Correlated features make individual weights difficult to interpret.","plot-help"),node("pre",JSON.stringify(r.feature_importance||r.coefficients,null,2))));
+    if(m.architecture)inspection.append(details("Exact neural layers",node("p","Read the input/output sizes in sequence. Normalization and dropout add behaviour beyond the plain weighted sum; their training and evaluation modes differ.","plot-help"),node("pre",m.architecture)));
+    if(r.estimator_parameters)inspection.append(details("Exact estimator settings and fitted preprocessing",node("p","Visible controls are a supported subset. These saved backend settings include fixed choices such as solver, covariance form and iteration limits. The scaler's center and scale were fitted on training rows only.","plot-help"),node("pre",JSON.stringify({estimator:r.estimator_parameters,preprocessing:r.fitted_preprocessing,intercept:r.intercept},null,2))));
+    if(r.warnings?.length)inspection.append(node("p",r.warnings.join("\n"),"warnings"));
+    inspection.append(node("p","Artifacts are saved under model_runs/"+m.id+". "+(r.persistence_note||"Neural weights are saved with their settings and preprocessing, alongside separate results and split identities."),"plot-help"));
+  }
+  function clearComparison(){comparisonSerial++;lastComparison=null;$("model-compare-output").replaceChildren();$("model-compare-chart").hidden=true;$("model-comparison-metric-label").hidden=true;$("model-compare-error").textContent="";}
+  function comparisonChoices(){
+    const host=$("model-compare-choices"),ready=rows.filter(r=>r.status==="MEASURED"),allowed=new Set(ready.map(r=>r.id));
+    for(const id of selected)if(!allowed.has(id)){selected.delete(id);clearComparison();}
+    const update=()=>{$("model-compare-start").disabled=selected.size<2||selected.size>4;$("model-selection-help").textContent=ready.length<2?"Two completed runs are needed. Train a baseline and a changed method or setting before comparing.":`${selected.size} selected. Choose two to four runs with the same task, dataset and split rows.`;};
+    host.replaceChildren(...ready.map(r=>{const label=node("label",undefined,"compare-choice"),box=node("input");box.type="checkbox";box.value=r.id;box.checked=selected.has(r.id);box.onchange=()=>{box.checked?selected.add(r.id):selected.delete(r.id);clearComparison();update();};label.append(box,node("span",`${registry.methods.find(m=>m.id===r.settings.model).name} · ${r.settings.task} · ${r.settings.dataset} · ${r.id}`));return label;}));
+    if(!ready.length)host.append(node("p","No completed runs yet. This list uses measured experiments, not the course's illustrative calculations.","empty"));update();
+  }
+  function drawComparison(){if(!lastComparison)return;const c=lastComparison,host=$("model-compare-output"),picked=$("model-comparison-metric").value;host.replaceChildren(node("p",c.warnings.join(" "),"warnings"));$("model-comparison-metric-label").hidden=!["classification","regression"].includes(c.task);if(["classification","regression"].includes(c.task)){const available=[...new Set(c.rows.flatMap(r=>Object.keys(r.scores.dev)))];options($("model-comparison-metric"),available.map(id=>({id,name:metricNames[id]||id})),available.includes(picked)?picked:c.task==="classification"?"macro_f1":"mae");const metric=$("model-comparison-metric").value;host.append(metricLink(c.task==="regression"?"regression":"multiclass"),...(metricConventions[metric]?[node("p",metricConventions[metric],"plot-help")]:[]),table(["Run / model","Development","Change from first row","Test","Fitting + evaluation seconds","Neural parameters"],c.rows.map(r=>[r.id+" / "+r.settings.model,fmt(r.scores.dev[metric]),LabReadouts.difference(r.scores.dev[metric],c.rows[0].scores.dev[metric]),fmt(r.scores.test[metric]),fmt(r.seconds),r.parameters??"Not applicable"])));}
+    else if(c.task==="representation")host.append(table(["Run / model","Dev reconstruction MSE","Test reconstruction MSE","Units"],c.rows.map(r=>[r.id+" / "+r.settings.model,fmt(r.scores.reconstruction_mse.dev),fmt(r.scores.reconstruction_mse.test),r.scores.units])));
+    else if(c.task==="clustering")host.append(table(["Run / model","Fitting silhouette","Fitting adjusted Rand","Test adjusted Rand","Noise fraction"],c.rows.map(r=>[r.id+" / "+r.settings.model,fmt(r.scores.fit_silhouette_excluding_noise),fmt(r.scores.fit_adjusted_rand_reference),fmt(r.scores.test_adjusted_rand_reference),fmt(r.scores.noise_fraction)])));
+    else host.append(table(["Run / model","Dev ROC-AUC","Test ROC-AUC","Test flagged fraction"],c.rows.map(r=>[r.id+" / "+r.settings.model,fmt(r.scores.dev.roc_auc),fmt(r.scores.test.roc_auc),fmt(r.scores.test.flagged_fraction)])));
+    host.append(node("h2","What changed?"),node("p","The model names are shown above. The table below lists only control values that differ. Equal epochs do not mean equal compute, and a single score difference does not supply an uncertainty interval.","plot-help"));
+    const changedKeys=[...new Set(c.rows.flatMap(r=>Object.keys(r.settings.controls)))].filter(key=>new Set(c.rows.map(r=>JSON.stringify(r.settings.controls[key]))).size>1);
+    if(changedKeys.length)host.append(table(["Setting",...c.rows.map(r=>r.settings.model)],changedKeys.map(key=>[registry.controls[key]?.label||key,...c.rows.map(r=>r.settings.controls[key]===undefined?"Not applicable":String(r.settings.controls[key]))])));
+    else host.append(node("p","No recorded control values differ. Model choice, training randomness or execution conditions can still differ; inspect the saved run details before explaining a score gap.","plot-help"));
+    const reading=LabReadouts.modelComparison(c,$("model-comparison-metric").value),card=node("section",undefined,"reading-summary");card.append(node("h2",reading.title),node("p",reading.text));host.prepend(card);
+    const curves=c.rows.filter(r=>r.history.length);$("model-compare-chart").hidden=curves.length<2||!["classification","regression"].includes(c.task);
+    if(!$("model-compare-chart").hidden){chart($("model-comparison-curve"),curves.map((r,i)=>({color:colors[i],values:r.history.map(v=>({x:v.epoch,y:v.dev_loss}))})),"epochs");$("model-comparison-legend").replaceChildren(...curves.map((r,i)=>node("span",r.settings.model+" · "+r.id,"series-"+i)));}
+  }
+  async function refresh(){if(!view)return;if(busy){needsRefresh=true;return;}busy=true;const token=serial;try{const priorJob=job;[rows,job]=await Promise.all([request("/api/models/runs"),request("/api/job")]);if(token!==serial)return;
+      if(priorJob.running&&priorJob.kind==="dataset"&&!job.running){registry=await request("/api/models/catalog");if(view==="lab")build(remembered[area]);$("model-message").textContent=job.exit_code===0?"Dataset preparation finished. You can now train.":"Dataset preparation stopped or failed. Retry to prepare missing files.";}
+      if(view==="lab"){if(job.running&&job.kind==="model")activeRun=job.id;activeRun=choices("model-monitor",activeRun);const run=activeRun?await request("/api/models/run/"+encodeURIComponent(activeRun)):null;if(token!==serial)return;live(run);buttons();}
+      if(view==="results"){resultsRun=choices("model-results-run",resultsRun);const run=resultsRun?await request("/api/models/run/"+encodeURIComponent(resultsRun)):null;if(token!==serial)return;results(run);}
+      if(view==="compare")comparisonChoices();
+    }catch(e){if(token===serial)$(view==="lab"?"model-message":view==="results"?"model-results-error":"model-compare-error").textContent=e.message;}finally{busy=false;if(needsRefresh&&view){needsRefresh=false;refresh();}}}
+  function hide(){view=null;serial++;comparisonSerial++;if(timer)clearInterval(timer);timer=null;}
+  async function show(subject,page){hide();area=subject;view=page;const prior=remembered[area];if(page==="lab"){options($("model-guide"),guides[area].map((g,i)=>({id:String(i),name:g.name})),"0");$("model-guide-help").textContent=guides[area][0].help;configure(prior);$("model-message").textContent="";$("model-scope").textContent=registry.scope;$("model-protocol").textContent=registry.protocol;}if(page==="compare"){lastComparison=null;$("model-compare-output").replaceChildren();$("model-compare-chart").hidden=true;}
+    await refresh();timer=setInterval(()=>{if(!document.hidden&&view==="lab")refresh();},1600);
+  }
+  async function init(){registry=await request("/api/models/catalog");
+    $("model-task").onchange=()=>build();$("model-dataset").onchange=()=>build();$("model-method").onchange=()=>build();
+    $("model-guide").onchange=()=>{const g=guides[area][Number($("model-guide").value)];$("model-guide-help").textContent=g.help;if(g.task)configure(g);};
+    $("model-start").onclick=async()=>{try{$("model-start").disabled=true;const s=read();remembered[area]=s;job=await request("/api/models/train",{settings:s});activeRun=job.id;$("model-message").textContent="Local training started. Closing the tab does not cancel it; Stop worker stops the owned process.";await refresh();}catch(e){$("model-message").textContent=e.message;}finally{buttons();}};
+    $("model-stop").onclick=async()=>{try{await request("/api/cancel",{});$("model-message").textContent="Stopping the active local worker…";await refresh();}catch(e){$("model-message").textContent=e.message;}};
+    $("model-monitor").onchange=()=>{activeRun=$("model-monitor").value;refresh();};$("model-results-run").onchange=()=>{resultsRun=$("model-results-run").value;refresh();};
+    $("model-compare-start").onclick=async()=>{const token=++comparisonSerial;try{$("model-compare-error").textContent="";const result=await request("/api/models/compare",{runs:[...selected]});if(token!==comparisonSerial)return;lastComparison=result;drawComparison();}catch(e){if(token===comparisonSerial)$("model-compare-error").textContent=e.message;}};
+    $("model-comparison-metric").onchange=drawComparison;
+    window.addEventListener("resize",()=>{if(view==="lab")refresh();if(view==="results")refresh();if(view==="compare")drawComparison();});
+  }
+  return {init,show,hide};
+})();

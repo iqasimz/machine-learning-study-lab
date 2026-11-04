@@ -1,0 +1,499 @@
+{
+  "schema_version": 1,
+  "lessons": {
+    "P1": {
+      "connect": "Before learning an algorithm, separate the program you write from the process and hardware that execute it.",
+      "purpose": "Follow Python, environments and tensors as parts of one running experiment, so later errors have somewhere concrete to live.",
+      "takeaway": "A reproducible result needs known code, dependencies, data and execution—not just a saved output."
+    },
+    "P2": {
+      "connect": "The program now has numerical inputs. We need a language for their shape and for how a change travels through a calculation.",
+      "purpose": "Models work with numbers arranged in lists and tables. A vector is an ordered list of features, such as a flower's length and width. A matrix holds several such lists or the weights that combine them. Calculus tells us how changing one weight would change a prediction or its error.",
+      "takeaway": "A prediction is a weighted sum; the chain rule traces how a weight changes its error.",
+      "connection": "This introduces the arithmetic used by linear regression and neural networks. The gradient calculated here becomes an input to an optimizer in the next training lesson."
+    },
+    "P3": {
+      "connect": "A numerical prediction is not yet an account of uncertainty. We need probabilities, losses and statistical evidence.",
+      "purpose": "Probability describes how likely different outcomes are. Statistics uses a finite set of observations to estimate quantities such as a model's accuracy. These are related but different: a model's confidence in one prediction is not the same as our uncertainty about an accuracy measured on a small test set.",
+      "takeaway": "A model's probability, entropy and uncertainty in a measured test score are different quantities.",
+      "connection": "First distinguish probability, prediction loss and entropy. Then study resampling and confidence intervals as a separate question about the evidence in a dataset."
+    },
+    "P4": {
+      "connect": "We can calculate predictions and losses. Now decide which data may influence the model and which data may support a claim.",
+      "purpose": "A model learns from training examples, but we want it to work on new examples. That is generalization. To check it honestly, separate data used to learn weights, data used to choose settings, and data reserved for the final evaluation.",
+      "takeaway": "Use training data to fit, validation data to choose, and reserved test data to assess the final procedure.",
+      "connection": "This is a study plan, not a model architecture. the complete-experiment lesson later applies these boundaries to a complete experiment with saved settings, predictions and results."
+    },
+    "P5": {
+      "connect": "With the evaluation boundary in place, we can follow what learning actually does to a network.",
+      "purpose": "Training adjusts a model's learned numbers so its predictions better match examples. The usual loop is: calculate a prediction, measure its error with a loss function, compute how each weight affects the loss, and use an optimizer to update the weights. A neural network repeats this idea across many connected layers.",
+      "takeaway": "The forward pass predicts, the backward pass calculates gradients, and the optimizer changes weights.",
+      "connection": "the vectors and gradients lesson explains the derivative behind the gradient. This lesson uses it to update a model; DL later adds nonlinear layers and many weights without changing the basic loop."
+    },
+    "ML01": {
+      "connect": "The shared foundations explained how learning works. The ML path begins one step earlier: what decision should a prediction support?",
+      "purpose": "Machine learning fits a rule from examples rather than writing every decision by hand. In supervised learning, each training example has input features and a target: classification predicts a category, while regression predicts a number. Unsupervised learning instead looks for patterns without these target labels.",
+      "takeaway": "Define the prediction task and compare against a useful simple baseline.",
+      "connection": "Before choosing a model, decide what must be predicted and what mistakes matter. The next lesson prepares the inputs; later lessons compare methods against a baseline on the same task."
+    },
+    "ML02": {
+      "connect": "A well-defined task gives us rows and targets. Algorithms still depend on how those rows become usable features.",
+      "purpose": "Most models need inputs in a consistent numerical form. Preprocessing handles missing values, represents categories and puts numerical measurements on suitable scales. Some transformations learn statistics from data, so they must be fitted on training data and reused unchanged on new cases.",
+      "takeaway": "Learn preprocessing only from permitted training data and reuse it unchanged on evaluation inputs.",
+      "connection": "This example focuses on standardization. The additional notes explain missing-value handling, categories and complete pipelines; distance-based and regularized methods are especially sensitive to feature units."
+    },
+    "ML03": {
+      "connect": "Prepared numerical features let us begin with the simplest useful predictor: a weighted sum.",
+      "purpose": "Linear regression predicts a number by adding weighted feature contributions and, usually, a constant intercept. Fitting chooses weights that reduce prediction errors on training examples. Ridge regression adds a cost for large weights, which can make the fit less sensitive to limited or correlated data.",
+      "takeaway": "Linear regression fits weighted numerical predictions; low training error alone does not establish generalization.",
+      "connection": "The diagram shows the small closed-form calculation, not the only way to fit regression. the loss and optimization lesson explains gradient-based fitting; the regularization lesson explains how validation chooses penalty strength."
+    },
+    "ML04": {
+      "connect": "A weighted sum predicts a number. For a category, we need to turn scores into class probabilities and a decision.",
+      "purpose": "Classification predicts a category rather than a numerical measurement. Binary logistic regression first calculates a weighted score, then maps it to a probability for one of two classes. A separate decision threshold turns that probability into a yes/no prediction.",
+      "takeaway": "Logistic regression supplies probabilities; thresholds supply decisions and do not change the trained probabilities.",
+      "connection": "Linear regression in the linear regression lesson predicts a number directly. Logistic regression adds a probability mapping and a classification loss. The threshold controls the action, while the loss can be used to fit the probabilities."
+    },
+    "ML05": {
+      "connect": "Both linear prediction families can fit noise. We now separate fitting weights from selecting how flexible the model should be.",
+      "purpose": "A model can fit its training examples closely but perform poorly on new data. Regularization discourages some kinds of overly flexible fit, for example by penalizing large coefficients. Model selection uses validation data to choose how much regularization or complexity to allow.",
+      "takeaway": "Regularization changes the fitting objective; validation evidence chooses its strength.",
+      "connection": "the linear regression lesson showed a coefficient actually changing when ridge strength changes. Here we separate the data-loss term, penalty term and validation choice so they are not confused."
+    },
+    "ML06": {
+      "connect": "Regularized linear models give a useful reference. What if nearby examples or curved boundaries better express the task?",
+      "purpose": "Nearest-neighbour prediction compares a new example with stored training examples and uses the answers of the closest ones. It is a local rule: the prediction depends on nearby cases rather than one fitted line. A support vector machine, or SVM, is a different method that learns a separating boundary with a margin.",
+      "takeaway": "Nearest neighbours vote using nearby cases; SVMs fit a margin boundary. Neither is a stage of the other.",
+      "connection": "Feature scaling from the features and preprocessing lesson affects distances. This lesson compares two uses of similarity while keeping their prediction mechanisms distinct."
+    },
+    "ML07": {
+      "connect": "We have classified using distances and boundaries. A different route is to model what features look like within each class.",
+      "purpose": "Naive Bayes predicts a class by combining how common the class is with how likely the observed features are within that class. For example, a word can be more common in spam than ordinary email. With several features, the model simplifies the calculation by treating them as independent once the class is known; that is the 'naive' assumption.",
+      "takeaway": "Naive Bayes combines class priors with feature likelihoods, then normalizes across classes.",
+      "connection": "Unlike logistic regression, which directly fits a class probability from features, Naive Bayes models feature probabilities within each class. Both can classify; they make different modelling assumptions."
+    },
+    "ML08": {
+      "connect": "The previous methods use global feature geometry or distributions. A tree instead divides the space through decisions.",
+      "purpose": "A decision tree predicts by asking feature questions, such as whether a measurement is below a cutoff. Each answer sends an example down one branch until a leaf returns a prediction. A random forest trains many varied trees and combines their predictions, making the result less dependent on one particular tree.",
+      "takeaway": "A prediction follows one path in a tree; a forest combines predictions from multiple varied trees.",
+      "connection": "This diagram evaluates a candidate training split. Its two branches meet only to calculate split quality; a prediction for one new case would follow one branch, not average the two leaves. The forest note explains how multiple trees are combined."
+    },
+    "ML09": {
+      "connect": "A forest combines largely independent trees. Another ensemble can improve by repeatedly correcting its current prediction.",
+      "purpose": "Gradient boosting builds a predictor in stages. Each new small model tries to correct errors made by the current combined model. For squared-error regression, the correction can be trained on the remaining differences between targets and predictions. This differs from a random forest, whose trees are trained without sequentially correcting a running prediction.",
+      "takeaway": "Boosting adds sequential corrections based on the updated model's errors.",
+      "connection": "A forest combines varied trees; boosting combines a sequence of corrections. Smaller corrections often need more stages, so learning rate and stage count should be considered together."
+    },
+    "ML10": {
+      "connect": "We can fit several credible models. We need to decide what their results measure and how uncertain those comparisons are.",
+      "purpose": "Two models can make the same yes/no decisions but assign different probabilities. Calibration asks whether those probabilities agree with observed frequencies: among predictions made with about 80% confidence, roughly 80% should be correct in an appropriate evaluation population. Decision costs ask a separate question: how harmful are false alarms and missed cases?",
+      "takeaway": "Evaluate probability reliability separately from classification decisions and error-cost choices.",
+      "connection": "The shared metrics lesson owns precision, recall and F1. Here we compare probability quality, a reliability estimate and a cost-based action rule; these are related questions, not one calculation feeding the next."
+    },
+    "ML11": {
+      "connect": "So far targets tell us which answer is right. What can we learn when no target is provided for fitting?",
+      "purpose": "Clustering groups examples without using target class labels. K-means describes each group by a center, assigns training points to their nearest center, then moves each center to the mean of its assigned points. Repeating these two steps seeks compact groups; it does not establish that the groups are meaningful real-world categories.",
+      "takeaway": "K-means alternates training-point assignments and center means, without target labels.",
+      "connection": "Classification uses known labels; clustering does not. The additional notes compare K-means with Gaussian mixtures, which allow soft membership, and DBSCAN, which groups by density."
+    },
+    "ML12": {
+      "connect": "Discovering groups uses the geometry of the inputs. We can also compress that geometry or look for unusual points.",
+      "purpose": "Dimensionality reduction replaces many input features with fewer coordinates. Principal component analysis, or PCA, chooses directions that preserve as much training-data variance as possible. Reconstructing an input from those fewer coordinates shows information that was lost. A large reconstruction error can be an anomaly signal, but does not prove that an example is invalid.",
+      "takeaway": "PCA preserves training variance, not necessarily all information useful for a prediction target.",
+      "connection": "PCA compresses inputs without using class labels. Low-variance information can still matter for prediction, so preserving variance is not the same as preserving everything useful to a target task."
+    },
+    "ML13": {
+      "connect": "Ordinary holdouts assume an appropriate independent split. Time creates a stricter information boundary.",
+      "purpose": "Forecasting predicts a future value using information available when the prediction is made. A time series is a sequence of observations ordered in time, such as daily demand. A forecast origin is the prediction time; the horizon is how far ahead we predict. These boundaries determine which inputs are legitimate.",
+      "takeaway": "A forecast must use only inputs available at its stated prediction time.",
+      "connection": "Ordinary random row splits can be misleading when future observations help predict the past. Forecasting instead tests a procedure across appropriate time cutoffs."
+    },
+    "ML14": {
+      "connect": "Forecasting made prediction time explicit. Recommendation and sequential action also make the feedback process part of the task.",
+      "purpose": "A recommender ranks items, such as films or products, for a user. A simple model scores how well learned user and item vectors match. When today's choice also affects future outcomes, we need a sequential-decision view rather than treating each recommendation as an isolated ranking problem.",
+      "takeaway": "Item compatibility scores and discounted action returns are different quantities for different decisions.",
+      "connection": "The common question is which action to choose. Ranking predicts relative preference; sequential methods additionally model feedback and consequences over time. These examples share a page for comparison, not because they form one pipeline."
+    },
+    "ML15": {
+      "connect": "The methods and protocols now need a broader account of what can be expected beyond the observed sample.",
+      "purpose": "Generalization means performing well on new examples, not only examples used for fitting. A score may change because the new population contains a different mixture of easy and difficult cases. Distribution shift is the broader name for a change between the data used to develop a model and the data where it is evaluated or used.",
+      "takeaway": "An overall score can change when the population mix changes, even if group errors stay fixed.",
+      "connection": "The direct weighted average is the simplest explanation. Importance weighting is an equivalent way to express it using the original population. Learning-theory and uncertainty notes discuss other questions; they are not later operations on this average."
+    },
+    "ML16": {
+      "connect": "We have the building blocks: problem, representation, method, selection and evidence. Now assemble one defensible study.",
+      "purpose": "A complete experiment compares models under a clear task, data split and metric. Fit a simple baseline, choose candidate pipelines using validation evidence, and evaluate the final choice on reserved test data. Save enough information for someone else to check how the result was produced.",
+      "takeaway": "Save the split, settings, fitted pipeline, predictions and metric definitions needed to check the result.",
+      "lab": {
+        "page": "ml-lab",
+        "challenge": "Fit logistic regression and a random forest on digits with the same training-row limit and split. Compare development macro-F1 and log loss, then inspect specific errors. If the ranking changes with the metric, explain why. Opening the lab below does not start fitting."
+      },
+      "connection": "the training/validation split lesson introduced the split boundaries. This capstone turns them into concrete outputs: data-split IDs, fitted preprocessing/model, chosen settings, per-example predictions and a result report."
+    },
+    "DL01": {
+      "connect": "Shared foundations showed one neural update. We now build representations rather than specifying all features by hand.",
+      "purpose": "A neural network combines learned weighted sums with nonlinear functions. A multilayer perceptron, or MLP, uses dense layers: each output feature reads all features in the preceding layer. Hidden layers create intermediate representations that can support a more flexible prediction rule than one linear transformation.",
+      "takeaway": "An MLP combines weighted sums and nonlinearities; more hidden units are features, not extra training examples.",
+      "connection": "Linear regression combines inputs once. An MLP inserts intermediate features and nonlinearities; the prediction, loss and gradient-update principles from the foundations still apply."
+    },
+    "DL02": {
+      "connect": "A network is a chain of tensor operations. To train it, we must calculate how each learned number affects the loss.",
+      "purpose": "Backpropagation calculates how each trainable weight affects a loss by following the model's operations backwards. It applies the chain rule and adds contributions when a weight affects the loss through several paths. Automatic differentiation records these operations for you; the optimizer, not backpropagation itself, changes the weights.",
+      "takeaway": "Backpropagation computes and accumulates gradients; the optimizer changes weights separately.",
+      "connection": "The foundations introduced one gradient. This example shows why different weights receive different gradients, and why clearing or accumulating gradient buffers is a separate programming decision."
+    },
+    "DL03": {
+      "connect": "Correct gradients give a direction, not a complete training recipe.",
+      "purpose": "An optimizer turns gradients into parameter updates. Plain stochastic gradient descent, or SGD, subtracts a learning-rate-scaled gradient. Adam keeps moving averages of gradients and squared gradients to adapt update sizes. Initialization chooses the starting weights; a schedule changes learning rate over time. These are related choices, not interchangeable methods.",
+      "takeaway": "SGD and Adam use gradients differently; initialization, schedules and decay are separate choices.",
+      "connection": "Backpropagation supplies gradients. This lesson explains how optimizer rules use them, then the deeper notes cover initialization, clipping, normalization, schedules and failure diagnosis."
+    },
+    "DL04": {
+      "connect": "A stable optimizer can still memorize training data or fail to learn enough.",
+      "purpose": "Regularization changes training to discourage a model from relying too strongly on limited or accidental patterns. Dropout is one method: during training it randomly masks activation values, encouraging the network to cope without any particular selected feature. It does not permanently delete weights, and it is not a guaranteed improvement.",
+      "takeaway": "Keep probability and drop probability are complements. Evaluation mode and gradient tracking are different controls.",
+      "connection": "Regularization was introduced in ML. Here we distinguish a particular dropout sample, its expectation over many masks and evaluation-mode behaviour; those are three related explanations, not a serial architecture."
+    },
+    "DL05": {
+      "connect": "Dense networks ignore the special neighbourhood structure of an image.",
+      "purpose": "A convolutional neural network, or CNN, learns local pattern detectors and reuses their weights across image positions. Each filter produces a feature map. Stacking convolutions and nonlinearities lets later features combine earlier patterns; pooling can reduce spatial resolution, and a final head maps the remaining features to task outputs.",
+      "takeaway": "CNN filters share local weights; channels, spatial size, class scores and training updates have different roles.",
+      "connection": "A dense layer combines all input features at once; a convolution first combines local patches with shared weights. The final dense head still uses the weighted-sum and classification ideas introduced earlier."
+    },
+    "DL06": {
+      "connect": "Convolution supplies useful structure. Deeper transformations and pretrained features introduce different routes to improving it.",
+      "purpose": "A residual block adds its input to a transformed version of that input: output = input + correction. This shortcut lets information and gradients use a direct path around the transformation. Transfer learning is a separate choice: reuse a pretrained model and decide which parameters to freeze or adapt. Residual architectures can be trained from scratch or transferred.",
+      "takeaway": "Residual addition changes connectivity. Freezing or fine-tuning changes which parameters can update.",
+      "connection": "The CNN lesson stacks transformations. A residual connection changes how those transformations are connected; freezing changes which weights an optimizer may update. Keep these two decisions separate."
+    },
+    "DL07": {
+      "connect": "Images have spatial neighbourhoods; sequences have a history that unfolds over time.",
+      "purpose": "A recurrent neural network (RNN) processes an ordered sequence by updating a state at each position. The same cell weights are reused over time, so the current output can depend on earlier inputs. A vanilla RNN has one hidden-state update; a gated recurrent unit (GRU) controls how new and old states are mixed, and long short-term memory (LSTM) additionally maintains a separate cell-memory state.",
+      "takeaway": "Recurrent positions share weights; forward state carry and backward gradient history are separate.",
+      "connection": "This is the DL overview of shared weights and sequence history. The NLP course provides the detailed RNN/BiRNN, GRU/BiGRU and LSTM/BiLSTM gate/state walkthroughs, so their full architecture explanations are not duplicated here."
+    },
+    "DL08": {
+      "connect": "Recurrence compresses history into a state. Attention lets a position read selected information from other permitted positions.",
+      "purpose": "Attention updates a representation by taking a weighted combination of value vectors. A query is compared with keys to calculate matching scores; after masking forbidden positions, softmax turns those scores into mixing weights. The values supply the content being combined. Attention weights are not automatically explanations of truth or model correctness.",
+      "takeaway": "Query/key scores become mixing weights over allowed positions; those weights combine value vectors.",
+      "connection": "Recurrent cells carry information through a sequence state. Attention provides another way to combine information across positions. The LLM Transformer lesson shows how heads, projections, residuals and feed-forward layers surround this operation."
+    },
+    "DL09": {
+      "connect": "Classification trains representations through labels. We can also create a learning signal from the inputs themselves.",
+      "purpose": "An autoencoder learns to encode an input into a representation and decode it back into a reconstruction. A bottleneck can limit how much information passes through, but accurate copying alone does not prove the representation is useful for another task. Self-supervised learning is broader: its training targets are derived from the data rather than supplied as separate human labels.",
+      "takeaway": "Reconstruction and contrastive objectives are distinct. Always state whether squared errors are summed or averaged.",
+      "connection": "PCA also compresses and reconstructs using a linear subspace. Autoencoders can learn nonlinear mappings; contrastive and masked-prediction methods ask them to preserve different information."
+    },
+    "DL10": {
+      "connect": "A deterministic reconstruction model is only one way to describe data generation.",
+      "purpose": "A generative model learns a way to produce new samples with patterns resembling its training data. The main families use different mechanisms: a variational autoencoder, or VAE, encodes a distribution over latent codes and decodes samples; a generative adversarial network (GAN) trains a generator against a real/fake discriminator; diffusion learns to remove controlled noise. Their objectives are not interchangeable quality scores.",
+      "takeaway": "VAE prior penalties, GAN adversarial losses and diffusion noise losses are not one common quality score.",
+      "connection": "Autoencoders introduced a code and reconstruction. This lesson distinguishes probabilistic codes, adversarial learning and denoising, before comparing what each objective actually encourages."
+    },
+    "DL11": {
+      "connect": "Sequences and images supplied predefined relationships. Graphs make those relationships an explicit input.",
+      "purpose": "A graph represents objects as nodes and relationships as edges. A graph neural network, or GNN, updates node features by collecting messages from connected neighbours. Its calculation therefore depends on both the feature values and which connections are present; merely listing nodes in a table would omit important information.",
+      "takeaway": "Graph topology and aggregation affect updates; graph readout is a separate choice from neighbour aggregation.",
+      "connection": "CNNs share local filters on a regular image grid. Message-passing GNNs generalize local information exchange to an explicit graph; neighbour order should not arbitrarily change an invariant aggregation."
+    },
+    "DL12": {
+      "connect": "An encoder's representation is not yet the final task output.",
+      "purpose": "A prediction head maps learned features to the outputs a task needs. One class for a whole example, one label for each token, a numerical value and a segmentation map need different shapes and objectives. The head, target alignment, loss reduction and evaluation metric must agree with one another.",
+      "takeaway": "Output shape, target alignment, loss reduction and evaluation metric must match the task.",
+      "connection": "Earlier architectures produce features. This lesson connects those features to an actual prediction task without treating softmax as the right operation for every output. The shared metrics lesson explains general evaluation; a deeper note adds segmentation-specific IoU and Dice."
+    },
+    "DL13": {
+      "connect": "A correct neural experiment must also fit in memory and survive real execution.",
+      "purpose": "Training is a repeated procedure: fetch a batch, calculate predictions and loss, compute gradients and update trainable parameters. The data loader, device, optimizer state and checkpoint rules are part of that procedure, not extra neural-network layers. Validation checks a model without fitting on those cases; saving state makes selected results or later resumption possible.",
+      "takeaway": "Fetch a batch, forward, backward and update; validate separately and save enough state for the intended use.",
+      "connection": "The earlier lessons explain individual model operations. Here we connect them to data movement, training/evaluation modes, gradient clearing, periodic validation and recoverable state."
+    },
+    "DL14": {
+      "connect": "We can now build and run neural alternatives. The final question is whether they improve the original decision.",
+      "purpose": "A useful neural-model experiment asks whether it improves a real outcome over a strong classical alternative. Both candidates need the same target definition and held-out evaluation cases. Their preprocessing and fitting procedures may differ, but each must use legitimate training information and a declared selection budget.",
+      "takeaway": "A neural gain needs a strong matched baseline, held-out evidence and an explicit comparison budget.",
+      "lab": {
+        "page": "dl-lab",
+        "challenge": "Compare an MLP and CNN on the same Fashion-MNIST fitting subset and held-out rows. Hold epochs and batch size fixed, record parameter count and time, and explain why equal epochs are not equal compute. Opening the lab does not train or download anything."
+      },
+      "connection": "The ML capstone defined a complete experiment. This DL capstone applies that plan to a cross-family comparison, including tuning effort, errors, uncertainty and compute cost rather than just architecture labels."
+    },
+    "P6": {
+      "connect": "The shared foundations explained vectors and prediction targets. This lesson explains how text becomes the discrete inputs for those calculations; the following NLP lessons define what a system should predict from them.",
+      "purpose": "Natural language processing, or NLP, builds systems that analyze or produce human language. A model first needs a numerical input: tokenization splits text into chosen units, and a vocabulary assigns each unit an integer ID. These units are not necessarily words, and the IDs do not represent meaning by their numerical size.",
+      "takeaway": "Tokenization defines pieces and IDs; the saved tokenizer and task objective determine how they become model inputs and targets.",
+      "connection": "The shared foundations explained vectors and prediction targets. This lesson explains how text becomes the discrete inputs for those calculations; the following NLP lessons define what a system should predict from them."
+    },
+    "P7": {
+      "connect": "Token IDs identify discrete pieces; embeddings supply numerical representations on which models and search systems can operate. This lesson introduces retrieval geometry before later lessons compare how lexical and neural encoders learn their representations.",
+      "purpose": "An embedding represents an object, such as a token, sentence or document, as a numerical vector. A retrieval system compares a query with candidate documents and returns a ranked list. Vector similarity can help find related text, but it does not establish that the text answers the question or supports a claim.",
+      "takeaway": "Embedding similarity ranks candidate text; relevance and source support still require separate checks.",
+      "connection": "Token IDs identify discrete pieces; embeddings supply numerical representations on which models and search systems can operate. This lesson introduces retrieval geometry before later lessons compare how lexical and neural encoders learn their representations."
+    },
+    "T0": {
+      "connect": "The foundations and DL course introduced loss, gradients and updates. This lesson assembles them for token sequences, keeping the repeated training path separate from periodic validation, checkpoint selection and fixed-weight use.",
+      "purpose": "Training changes a language model's parameters using examples. A batch supplies input tokens and known targets; the model predicts, a loss measures mistakes, backpropagation computes gradients and an optimizer updates the parameters. Validation and generation use the model differently: they do not apply these training updates.",
+      "takeaway": "The forward pass predicts, backward computes gradients and the optimizer updates; validation and generation do not train on their targets.",
+      "lab": {
+        "page": "train",
+        "challenge": "Open the LLM lab and identify where its data, targets, loss, updates and development checkpoint checks appear. Use a scratch run only if you choose to start one. Merely following this link does not start training."
+      },
+      "connection": "The foundations and DL course introduced loss, gradients and updates. This lesson assembles them for token sequences, keeping the repeated training path separate from periodic validation, checkpoint selection and fixed-weight use."
+    },
+    "T1": {
+      "connect": "The complete training loop can optimize different objectives. Define their information access before comparing losses or downstream behavior; a language-model objective alone does not establish instruction following or safe deployment.",
+      "purpose": "A training objective defines what the model predicts, which information it may use and how mistakes are scored. Causal language modelling predicts successors from prefixes; masked modelling reconstructs selected tokens from permitted surrounding text; encoder–decoder learning predicts a target sequence conditioned on a source. These are different prediction problems, not interchangeable names for pretraining.",
+      "takeaway": "Objectives differ in visible context and predicted targets; lower prediction loss does not certify useful or safe behavior.",
+      "connection": "The complete training loop can optimize different objectives. Define their information access before comparing losses or downstream behavior; a language-model objective alone does not establish instruction following or safe deployment."
+    },
+    "T2": {
+      "connect": "An objective defines the intended prediction problem. The data pipeline must implement that problem without leaking evaluation examples, changing tokenizer meanings or introducing unintended cross-document targets.",
+      "purpose": "A language-model data pipeline converts permitted source material into the exact token inputs and prediction targets seen during training. It includes extraction, duplicate grouping, splits, tokenization, packing and masks. Corpus descriptions alone are insufficient: the resulting batches must preserve the intended information and evaluation boundaries.",
+      "takeaway": "Source grouping, tokenizer compatibility and separate visibility/target masks determine what the model actually learns.",
+      "connection": "An objective defines the intended prediction problem. The data pipeline must implement that problem without leaking evaluation examples, changing tokenizer meanings or introducing unintended cross-document targets."
+    },
+    "T3": {
+      "connect": "The data lesson produced aligned token inputs. This walkthrough follows their full computation while keeping tensor axes, residual paths and attention/vocabulary normalizations distinct. The deeper notes separately explain real grouped-query dimensions and other positional methods.",
+      "purpose": "A decoder Transformer predicts a token from a permitted prefix by repeatedly transforming one vector per input position. Attention mixes information between allowed positions, while feed-forward layers transform features within each position. Residual connections preserve direct paths around these transformations. Training compares predictions with known targets; generation instead chooses and appends tokens with fixed parameters.",
+      "takeaway": "Attention mixes allowed positions, the MLP transforms features, and residuals preserve forward paths; generation and training use separate branches.",
+      "connection": "The data lesson produced aligned token inputs. This walkthrough follows their full computation while keeping tensor axes, residual paths and attention/vocabulary normalizations distinct. The deeper notes separately explain real grouped-query dimensions and other positional methods."
+    },
+    "T4": {
+      "connect": "The detailed decoder provided one concrete architecture. This lesson varies the structure while keeping visibility, shape, state, active computation and cache costs distinct, with positional and multimodal extensions in the deeper notes.",
+      "purpose": "An architecture defines which representations interact and what state is carried through a model. Encoders, causal decoders and encoder–decoders differ in information access and output interface; expert layers and state-space operations change other parts of the computation. These categories can overlap within one model, so architecture names are not an ordered quality ranking.",
+      "takeaway": "Architecture families change visibility, stored state or active computation and can overlap; they are not a universal quality ranking.",
+      "connection": "The detailed decoder provided one concrete architecture. This lesson varies the structure while keeping visibility, shape, state, active computation and cache costs distinct, with positional and multimodal extensions in the deeper notes."
+    },
+    "T5": {
+      "connect": "The training loop identified where gradients are accumulated and applied. This lesson derives their weighting on one worker; the distributed lesson later adds the separate convention used to combine workers.",
+      "purpose": "Gradient accumulation combines several small forward/backward calculations before one optimizer update. The loss weighting must match the intended objective, especially when microbatches contain different numbers of valid targets. Numerical stability, clipping, scheduling and diagnostics are additional training choices, not substitutes for correctly aligned data and targets.",
+      "takeaway": "Weight microbatch losses by their intended valid-target contribution and apply one optimizer update at the declared boundary.",
+      "connection": "The training loop identified where gradients are accumulated and applied. This lesson derives their weighting on one worker; the distributed lesson later adds the separate convention used to combine workers."
+    },
+    "T6": {
+      "connect": "The training loop explains what values exist and when. This lesson counts their storage and work before scaling, while keeping the detailed prepared-model count, scaling laws and hardware bottlenecks in the deeper explanations.",
+      "purpose": "A model's parameter count, raw weight storage, training-state memory and compute budget measure different things. Training can require gradients, optimizer history, activations and temporary workspaces beyond the weights. Resource estimates are conditional accounting tools; measured peak memory and throughput must establish whether a real configuration fits and runs usefully.",
+      "takeaway": "Raw weights, training state, activations, cache and runtime overhead are different resource terms; estimates require measurement.",
+      "connection": "The training loop explains what values exist and when. This lesson counts their storage and work before scaling, while keeping the detailed prepared-model count, scaling laws and hardware bottlenecks in the deeper explanations."
+    },
+    "T7": {
+      "connect": "Microbatch accumulation combined evidence on one worker. This lesson adds communication and a reducer convention across workers; multiplying device counts alone does not establish either a correct gradient or a speedup.",
+      "purpose": "Distributed training divides data, arithmetic or stored state across cooperating processes. Data parallelism uses model replicas on different examples and combines gradients; tensor, pipeline and state-sharding schemes divide other objects. Correct loss normalization and communication are required before more devices can be treated as a performance improvement.",
+      "takeaway": "Distributed reduction must reconstruct the intended global objective under the actual reducer convention.",
+      "connection": "Microbatch accumulation combined evidence on one worker. This lesson adds communication and a reducer convention across workers; multiplying device counts alone does not establish either a correct gradient or a speedup."
+    },
+    "T8": {
+      "connect": "After fitting and resource accounting, evaluate the artifact against its intended use. Shared metrics supply the formulas; this lesson connects matched protocols, uncertainty and mechanism claims without treating one as a substitute for another.",
+      "purpose": "LLM evaluation tests a specified claim, such as better token prediction, task accuracy, source support, robustness or efficiency. Interpretability asks different questions about computation and mechanism. A score gain, an attention picture and a controlled intervention provide different evidence; none alone establishes every claim about useful or reliable behavior.",
+      "takeaway": "Scores, uncertainty, inspection and intervention provide different evidence and require bounded conclusions.",
+      "connection": "After fitting and resource accounting, evaluate the artifact against its intended use. Shared metrics supply the formulas; this lesson connects matched protocols, uncertainty and mechanism claims without treating one as a substitute for another."
+    },
+    "R1": {
+      "connect": "A trained base can be adapted rather than learned from scratch. First decide whether the failure needs changed weights, retrieved information or an external action; this lesson then explains the parameter boundary of one adaptation method.",
+      "purpose": "Supervised fine-tuning adapts a pretrained model using demonstrations of desired outputs. Low-rank adaptation, or LoRA, changes selected projections through small trainable matrix factors while keeping their base weights frozen. These choices concern the training signal and trainable parameters; they do not remove the base model or guarantee better behavior.",
+      "takeaway": "LoRA adds a low-rank trainable correction beside a frozen base; training-state savings do not remove base computation or guarantee quality.",
+      "lab": {
+        "page": "train",
+        "challenge": "Inspect an existing LoRA run's base-versus-selected losses and unedited before/after responses. Find one property the loss does not establish, such as factual correctness. Start another run only if you deliberately choose to train."
+      },
+      "connection": "A trained base can be adapted rather than learned from scratch. First decide whether the failure needs changed weights, retrieved information or an external action; this lesson then explains the parameter boundary of one adaptation method."
+    },
+    "R2": {
+      "connect": "SFT imitates demonstrated answers. Preference training compares or scores alternatives and can still use backpropagation to change policy weights. Feedback quality, rollout/reference roles and independent evaluation matter as much as the objective name.",
+      "purpose": "Preference and reward methods adapt which responses a language model favors. Direct preference optimization, or DPO, fits labelled response pairs relative to a reference model. Proximal policy optimization, or PPO, uses sampled behavior and an advantage-based surrogate. Group relative policy optimization, or GRPO, derives a comparison signal from responses sampled for the same prompt. Their signals and complete objectives differ.",
+      "takeaway": "DPO fits preference pairs, PPO uses a clipped sampled-policy surrogate, and GRPO builds group-relative signals; none is fully specified by its acronym.",
+      "connection": "SFT imitates demonstrated answers. Preference training compares or scores alternatives and can still use backpropagation to change policy weights. Feedback quality, rollout/reference roles and independent evaluation matter as much as the objective name."
+    },
+    "R3": {
+      "connect": "Training changes the predictor; inference can instead change its input or selection procedure. This lesson separates those controls before retrieval and tool systems add external evidence, actions and permission boundaries.",
+      "purpose": "Prompting changes the input on which a model conditions; decoding changes how its token scores become outputs. Neither ordinarily updates learned weights. Intermediate reasoning, tool use and structured outputs add distinct procedures or constraints that must be evaluated for usefulness, source support and cost rather than assumed to make answers reliable.",
+      "takeaway": "Prompts and decoding alter conditioning and token selection without ordinarily changing weights; valid structure is not verified meaning.",
+      "connection": "Training changes the predictor; inference can instead change its input or selection procedure. This lesson separates those controls before retrieval and tool systems add external evidence, actions and permission boundaries."
+    },
+    "R4": {
+      "connect": "Prompting determines what context the model receives. RAG adds a source-selection system whose permissions, coverage and freshness must be evaluated separately from how the model uses the selected evidence.",
+      "purpose": "Retrieval-augmented generation, or RAG, supplies external evidence to a model at use time. Ingestion builds a versioned, permission-aware source index; a query-time pipeline retrieves candidates, assembles context and generates an answer. Finding similar text and checking support are different tasks, and retrieval does not ordinarily update the generator's weights.",
+      "takeaway": "RAG needs compatible, current and permission-aware evidence plus independent support checks on the generated answer.",
+      "connection": "Prompting determines what context the model receives. RAG adds a source-selection system whose permissions, coverage and freshness must be evaluated separately from how the model uses the selected evidence."
+    },
+    "R5": {
+      "connect": "Retrieval supplies information. Tools can also change state outside a model, so a proposed JSON call must be distinguished from authority, actual execution and a confirmed outcome. These boundaries matter even when the model sounds confident.",
+      "purpose": "A tool-using system turns a model's proposed action into a request that application code must validate, authorize and execute under limits. An agent can choose some next actions from observations; a workflow fixes more of the sequence. Model Context Protocol, or MCP, standardizes an integration boundary but does not supply planning, correctness or universal permission.",
+      "takeaway": "A proposed action must be validated and authorized before dispatch; denial produces no execution result.",
+      "connection": "Retrieval supplies information. Tools can also change state outside a model, so a proposed JSON call must be distinguished from authority, actual execution and a confirmed outcome. These boundaries matter even when the model sounds confident."
+    },
+    "R6": {
+      "connect": "The Transformer explained autoregressive generation with fixed parameters. Serving turns that computation into a resource-bounded service; cache accounting, throughput and user-visible latency should not be confused with the forward layers themselves.",
+      "purpose": "Inference uses a model's parameters to calculate outputs, while serving adds request admission, scheduling, state management and delivery. Prefill processes the known prompt; autoregressive decoding processes successive chosen tokens. A key/value cache can reuse earlier attention projections, but its memory, compatibility and privacy constraints remain separate from model-weight storage.",
+      "takeaway": "Prefill, repeated decode, cache storage and service metrics describe different execution and accounting questions.",
+      "connection": "The Transformer explained autoregressive generation with fixed parameters. Serving turns that computation into a resource-bounded service; cache accounting, throughput and user-visible latency should not be confused with the forward layers themselves."
+    },
+    "R7": {
+      "connect": "Serving separated weights, cache and runtime memory. This lesson approximates stored numerical values while keeping value error, actual memory savings, hardware support and task quality as separate outcomes.",
+      "purpose": "Compression changes a model or its representation to reduce selected storage or execution costs. Quantization approximates numerical values using a declared code range and scale; pruning and distillation use different mechanisms. Smaller values or files do not automatically produce a faster, fitting or equally capable deployed model.",
+      "takeaway": "Quantization approximates values under a declared format; storage savings, supported kernels and task quality require separate checks.",
+      "connection": "Serving separated weights, cache and runtime memory. This lesson approximates stored numerical values while keeping value error, actual memory savings, hardware support and task quality as separate outcomes."
+    },
+    "R8": {
+      "connect": "Generation, retrieval and tools introduced different sources of failure. This lesson joins their evaluation and operating boundaries while preserving independent enforcement outside the model and honest reporting of incomplete tasks.",
+      "purpose": "A deployed LLM system must satisfy task-quality, access, reliability and resource requirements across its components, not just produce fluent model outputs. Release evaluation, authorization, budget enforcement, monitoring and recovery address different failure paths. They are coordinated controls rather than one model-forward chain or a certificate of complete safety.",
+      "takeaway": "Task quality, authority, budgets, monitoring and recovery are complementary controls, not one automatic safety guarantee.",
+      "connection": "Generation, retrieval and tools introduced different sources of failure. This lesson joins their evaluation and operating boundaries while preserving independent enforcement outside the model and honest reporting of incomplete tasks."
+    },
+    "R9": {
+      "connect": "Evaluation and operations require evidence beyond plausible mechanism names. This final lesson uses one exact steering example and keeps editing, unlearning, merging, continual learning and privacy as distinct deeper branches.",
+      "purpose": "Research methods can change data, parameters, activations, decoding or system operations, and those interventions support different claims. Activation steering changes selected runtime representations while keeping model weights fixed. A local output change demonstrates sensitivity under that intervention, not that a named concept has been isolated or reliable behavior achieved everywhere.",
+      "takeaway": "A local activation effect is not proof of an isolated concept or robust control; test specificity, side effects and transfer.",
+      "connection": "Evaluation and operations require evidence beyond plausible mechanism names. This final lesson uses one exact steering example and keeps editing, unlearning, merging, continual learning and privacy as distinct deeper branches."
+    },
+    "P8": {
+      "connection": "The examples show what is counted and divided. Metrics on the same cases are not separate processing stages: precision does not become an input to recall. the calibration lesson separately studies whether probabilities are reliable and how decision costs affect a cutoff.",
+      "purpose": "A metric turns predictions and known answers into a number that summarizes one aspect of performance. Different metrics answer different questions: accuracy counts correct decisions, recall counts recovered positives, and a numerical error measures distance from a target value. Choose a metric to match the task and the consequences of mistakes, not because it gives the largest-looking score.",
+      "takeaway": "State what is counted and which denominator the metric uses before comparing scores."
+    },
+    "N01": {
+      "purpose": "An NLP task specifies what a system must predict from language: a document label, a token tag, an answer span, a relation or a generated sequence. Annotation guidelines explain what each label means and which context may be used. A task name such as sentiment or argument identification is not enough to define the correct answer.",
+      "connect": "After deciding how text is represented, decide what counts as a correct output. The same text can support different tasks or guidelines, so this choice must come before classifier architecture and score comparisons.",
+      "connection": "After deciding how text is represented, decide what counts as a correct output. The same text can support different tasks or guidelines, so this choice must come before classifier architecture and score comparisons.",
+      "takeaway": "Define the prediction unit, allowed context and annotation policy before interpreting model performance."
+    },
+    "N02": {
+      "purpose": "Text processing changes how language is represented before a model uses it. Normalization, stemming, lemmatization and subword tokenization perform different jobs and may discard different information. Extraction tasks also need a reliable map back to the original text so that a predicted name or answer can be located exactly.",
+      "connect": "An annotation policy defines which distinctions matter. Preprocessing must preserve those distinctions and the required source anchors before feature extraction, token tagging or span evaluation can be trusted.",
+      "connection": "An annotation policy defines which distinctions matter. Preprocessing must preserve those distinctions and the required source anchors before feature extraction, token tagging or span evaluation can be trusted.",
+      "takeaway": "Text transformations must preserve the task's meaning and the mapping back to original source positions."
+    },
+    "N03": {
+      "purpose": "A bag-of-words representation gives each vocabulary term a feature column and counts its occurrences in a document. TF-IDF weights those counts using term frequency and inverse document frequency, reducing the relative influence of terms that occur across many documents. This supplies sparse features for classification or lexical search without learning contextual word meaning.",
+      "connect": "Once text has been processed consistently, counts provide a transparent first representation. These features can feed the text classifiers in the next lesson or support lexical retrieval, offering a baseline before neural encoders.",
+      "connection": "Once text has been processed consistently, counts provide a transparent first representation. These features can feed the text classifiers in the next lesson or support lexical retrieval, offering a baseline before neural encoders.",
+      "takeaway": "TF-IDF builds fixed weighted vocabulary features; a classifier or retrieval rule supplies their downstream score."
+    },
+    "N04": {
+      "purpose": "A text classifier turns a feature representation into a task label. Multinomial Naive Bayes combines class-specific word probabilities; logistic regression combines learned feature weights into a conditional class score. Both can use simple lexical features, but they estimate different quantities and should be evaluated rather than ranked by their complexity.",
+      "connect": "The previous lesson constructed sparse document features. This lesson attaches a class-prediction rule and shows why a baseline includes fitted parameters, preprocessing and independent evaluation—not simply a small architecture.",
+      "connection": "The previous lesson constructed sparse document features. This lesson attaches a class-prediction rule and shows why a baseline includes fitted parameters, preprocessing and independent evaluation—not simply a small architecture.",
+      "takeaway": "Naive Bayes and logistic regression combine lexical evidence differently; independent evaluation establishes their usefulness."
+    },
+    "N05": {
+      "purpose": "A language model assigns probabilities to text sequences, often by predicting each token from an earlier history. An n-gram model restricts that history to the previous n−1 tokens. Smoothing adjusts count estimates so that unseen continuations can receive probability rather than making an entire held-out sequence impossible.",
+      "connect": "Text classification predicts labels; this lesson predicts the next token from counts. It introduces the same conditional-probability target that later recurrent and large language models learn with richer representations.",
+      "connection": "Text classification predicts labels; this lesson predicts the next token from counts. It introduces the same conditional-probability target that later recurrent and large language models learn with richer representations.",
+      "takeaway": "Smoothing redistributes probability over a fixed vocabulary and prevents some unseen events from receiving zero probability."
+    },
+    "N06": {
+      "purpose": "A static word embedding assigns a reusable numerical vector to a word or lexical unit. Word2vec, GloVe and fastText learn these vectors from different forms of corpus evidence. Nearby vectors can capture useful regularities, but the same static lookup does not change meaning according to the sentence in which a word appears.",
+      "connect": "Lexical counts keep explicit vocabulary columns. Word embeddings instead learn a compact shared feature space, preparing the transition to text CNNs and recurrent models that operate on sequences of vectors.",
+      "connection": "Lexical counts keep explicit vocabulary columns. Word embeddings instead learn a compact shared feature space, preparing the transition to text CNNs and recurrent models that operate on sequences of vectors.",
+      "takeaway": "Static vectors learn lexical regularities from corpus context, but do not adapt one word's lookup to its sentence occurrence."
+    },
+    "N07": {
+      "purpose": "A text convolutional neural network applies shared filters to nearby positions in a sequence. A filter can detect local patterns across token embeddings or characters, and pooling summarizes responses for a larger unit such as a sentence. Local feature extraction and sentence-level aggregation are separate operations with different information losses.",
+      "connect": "Static embeddings represent individual tokens; a text CNN combines neighbouring tokens into learned local patterns. The shared DL convolution lesson explains spatial mechanics, while this lesson focuses on language sequence axes and pooling.",
+      "connection": "Static embeddings represent individual tokens; a text CNN combines neighbouring tokens into learned local patterns. The shared DL convolution lesson explains spatial mechanics, while this lesson focuses on language sequence axes and pooling.",
+      "takeaway": "Shared text filters detect local patterns; pooling summarizes their locations and loses information about order or position."
+    },
+    "N08": {
+      "purpose": "A recurrent neural network, or RNN, processes a sequence by updating a hidden state at each position. The state combines the current token with information carried from earlier positions. A bidirectional RNN adds a separate right-to-left pass, allowing each aligned token representation to use both sides of an already available input.",
+      "connect": "A text CNN reads local windows. An RNN reuses a transition along the sequence instead; bidirectionality changes which input context is available, not how backpropagation computes gradients during training.",
+      "connection": "A text CNN reads local windows. An RNN reuses a transition along the sequence instead; bidirectionality changes which input context is available, not how backpropagation computes gradients during training.",
+      "takeaway": "Bidirectional recurrence combines independent prefix and suffix states aligned to the same original token."
+    },
+    "N09": {
+      "purpose": "A long short-term memory network, or LSTM, is a recurrent model with a cell state for carried memory and a hidden state exposed to other layers. Gates determine how much old memory to retain, new information to write and memory to expose. A bidirectional LSTM uses two independent such recurrences when both input directions are available.",
+      "connect": "An ordinary RNN repeatedly transforms its carried state. LSTM adds an additive gated memory path to address some training difficulties; the earlier rules for bidirectional alignment, padding and terminal summaries still apply.",
+      "connection": "An ordinary RNN repeatedly transforms its carried state. LSTM adds an additive gated memory path to address some training difficulties; the earlier rules for bidirectional alignment, padding and terminal summaries still apply.",
+      "takeaway": "LSTM cell memory and hidden output have different jobs; bidirectionality is a separate context-access choice."
+    },
+    "N10": {
+      "purpose": "A gated recurrent unit, or GRU, controls a recurrent hidden state without a separate LSTM memory cell. The reset gate controls old-state information used in the candidate; the update gate mixes the candidate with the old state. The exact gate convention and reset placement must be read from the equation, because implementations can differ.",
+      "connect": "LSTM introduced gated memory and exposed hidden state. GRU merges these into one carried state, while the same choices about directions, padding, gradient history and sequence summaries remain separate training decisions.",
+      "connection": "LSTM introduced gated memory and exposed hidden state. GRU merges these into one carried state, while the same choices about directions, padding, gradient history and sequence summaries remain separate training decisions.",
+      "takeaway": "GRU reset controls the candidate's recurrent contribution; the displayed update convention determines how old state is retained."
+    },
+    "N11": {
+      "purpose": "An encoder–decoder model represents an input sequence and generates a separate output sequence. Attention lets a decoder read different source positions while producing each target token. Beam search is a decoding procedure that keeps several candidate target prefixes; it changes the search, not the learned model weights or the definition of attention.",
+      "connect": "Recurrent encoders supply sequence states; an encoder–decoder uses source states to support another sequence's predictions. Distinguish source conditioning from candidate search before considering translation and other generation tasks.",
+      "connection": "Recurrent encoders supply sequence states; an encoder–decoder uses source states to support another sequence's predictions. Distinguish source conditioning from candidate search before considering translation and other generation tasks.",
+      "takeaway": "Attention provides source information to the decoder; beam search separately chooses among candidate output sequences."
+    },
+    "N12": {
+      "purpose": "Sequence labelling assigns a tag to each position while allowing neighboring tags to influence one another. A hidden Markov model, or HMM, uses probabilities for hidden transitions and observed emissions; a conditional random field, or CRF, uses scores to model tag sequences given an input. Viterbi finds a best path, while summing paths supplies a different normalization calculation.",
+      "connect": "An encoder can produce per-token evidence without deciding a complete output structure. This lesson adds dependencies between adjacent output tags and separates structured decoding from training and task-specific span evaluation.",
+      "connection": "An encoder can produce per-token evidence without deciding a complete output structure. This lesson adds dependencies between adjacent output tags and separates structured decoding from training and task-specific span evaluation.",
+      "takeaway": "Viterbi maximizes path scores and backtracks; path-sum normalization is a separate calculation used for probabilities and training."
+    },
+    "N13": {
+      "purpose": "Syntactic parsing predicts how words form a grammatical structure. A dependency parse connects words through head–dependent links; a constituency parse groups spans into nested phrases. These are alternative representations of a sentence, not successive processing stages or the same object as a list of word-class tags.",
+      "connect": "Sequence labelling assigns tags along input order. Parsing adds a tree structure between or around those positions. Its constraints and evaluation must therefore match the chosen grammatical representation.",
+      "connection": "Sequence labelling assigns tags along input order. Parsing adds a tree structure between or around those positions. Its constraints and evaluation must therefore match the chosen grammatical representation.",
+      "takeaway": "Dependency links and constituent phrases are different tree representations, with their own constraints and scoring rules."
+    },
+    "N14": {
+      "purpose": "A contextual encoder gives a token a representation that depends on its occurrence, not just its word identity. ELMo combines directional recurrent language-model features; BERT uses bidirectional Transformer context and masked-token pretraining. These methods produce token-level features that still need an appropriate head or pooling rule for a downstream task.",
+      "connect": "Static word vectors reuse one lexical lookup, while recurrent and attention mechanisms can incorporate context. This lesson connects those mechanisms to pretraining objectives and explains why token encodings are not automatically good sentence-similarity embeddings.",
+      "connection": "Static word vectors reuse one lexical lookup, while recurrent and attention mechanisms can incorporate context. This lesson connects those mechanisms to pretraining objectives and explains why token encodings are not automatically good sentence-similarity embeddings.",
+      "takeaway": "Contextual pretraining supplies token states; downstream prediction and sentence similarity need appropriate heads and objectives."
+    },
+    "N15": {
+      "purpose": "A sentence encoder represents a larger text unit for comparison rather than assigning one static vector to each word. A bi-encoder computes query and document representations separately; a cross-encoder reads the pair jointly; late interaction keeps token vectors and compares them later. Where the texts first interact determines caching, computation and what information can be compared.",
+      "connect": "A contextual token encoder supplies per-position vectors. Turning those into retrieval scores requires a deliberate pooling, training and interaction design, extending the earlier embedding geometry rather than treating every encoder as an interchangeable search model.",
+      "connection": "A contextual token encoder supplies per-position vectors. Turning those into retrieval scores requires a deliberate pooling, training and interaction design, extending the earlier embedding geometry rather than treating every encoder as an interchangeable search model.",
+      "takeaway": "Where two texts first interact determines which representations can be cached and how relevance is scored."
+    },
+    "N16": {
+      "purpose": "Text classification maps a document, token sequence or input pair to a defined label structure. Single-label classification chooses one mutually exclusive class; multilabel classification can assign several labels at once. The target structure determines the loss and decoding rule, not merely how many label names appear in a dataset.",
+      "connect": "Encoders and lexical pipelines create representations; a classifier turns them into task outputs. This lesson connects the output head to label semantics before the course moves to richer span and relation structures.",
+      "connection": "Encoders and lexical pipelines create representations; a classifier turns them into task outputs. This lesson connects the output head to label semantics before the course moves to richer span and relation structures.",
+      "takeaway": "Exclusive classes and overlapping labels require different objectives and decoding rules."
+    },
+    "N17": {
+      "purpose": "Information extraction converts text into structured records about mentions, entities, relations and events. A mention is a source span; coreference links mentions intended to refer to the same entity. Relation and event extraction add typed connections or roles. A valid output format does not by itself make these records supported by the text.",
+      "connect": "Classification assigns a label to a chosen unit. Extraction adds boundaries and links between units, so reliable source offsets and task-specific validation become essential in addition to a good encoder.",
+      "connection": "Classification assigns a label to a chosen unit. Extraction adds boundaries and links between units, so reliable source offsets and task-specific validation become essential in addition to a good encoder.",
+      "takeaway": "Grounded mention spans, reference links and semantic support are distinct requirements for reliable extraction."
+    },
+    "N18": {
+      "purpose": "Machine translation produces a target-language sequence intended to preserve a source's meaning. Automatic reference-based metrics compare a candidate with permitted reference translations, but they test different kinds of agreement. BLEU combines clipped n-gram precision with a brevity penalty; the simple example here isolates unigram BLEU-1 rather than implementing standard corpus BLEU.",
+      "connect": "Encoder–decoder attention and search explain how a translation may be produced. This lesson asks how to evaluate the resulting text without confusing lexical overlap with preserved meaning or full translation quality.",
+      "connection": "Encoder–decoder attention and search explain how a translation may be produced. This lesson asks how to evaluate the resulting text without confusing lexical overlap with preserved meaning or full translation quality.",
+      "takeaway": "BLEU overlap and brevity scoring provide limited evidence; translation meaning and scorer conventions still need checking."
+    },
+    "N19": {
+      "purpose": "Question answering predicts an answer to a question under a defined information-access setting. An extractive reader chooses a span in supplied context; a generative system may produce new wording. Answer correctness, source support and deciding when no answer is available are separate requirements, with different evaluation rules.",
+      "connect": "Translation metrics compare generated wording with references. Question answering additionally needs a question, a permissible evidence source and an answerability decision; it must not reuse an unrelated classification or entity-matching score.",
+      "connection": "Translation metrics compare generated wording with references. Question answering additionally needs a question, a permissible evidence source and an answerability decision; it must not reuse an unrelated classification or entity-matching score.",
+      "takeaway": "Valid answer spans, token overlap, exact match and no-answer decisions answer different evaluation questions."
+    },
+    "N20": {
+      "purpose": "Summarization selects and compresses source content, either by extracting passages or generating new wording. Source faithfulness asks whether the output preserves what the source supports; external truth asks a different question. Dialogue adds an interaction goal: helping a user may require clarification, correction or abstention rather than simply producing agreeable text.",
+      "connect": "Generation scores and QA matching test limited forms of agreement. This lesson examines their blind spots and connects language-model outputs to source claims and actual interaction usefulness, without treating style as correctness.",
+      "connection": "Generation scores and QA matching test limited forms of agreement. This lesson examines their blind spots and connects language-model outputs to source claims and actual interaction usefulness, without treating style as correctness.",
+      "takeaway": "A fluent, high-overlap or agreeable output can still reverse source meaning or fail the user's goal."
+    },
+    "N21": {
+      "purpose": "Language understanding involves more than classifying a sentence in isolation. Natural-language inference compares a premise with a hypothesis; discourse analysis relates text units; argument mining identifies claims, reasons and support or attack relations under a specified scheme. These tasks share language evidence but do not define the same output or universal argument label.",
+      "connect": "Source faithfulness asks whether a statement is supported; this lesson distinguishes semantic inference, discourse roles and argumentative structure. It also shows why a successful intermediate representation must be tested against the actual target guideline.",
+      "connection": "Source faithfulness asks whether a statement is supported; this lesson distinguishes semantic inference, discourse roles and argumentative structure. It also shows why a successful intermediate representation must be tested against the actual target guideline.",
+      "takeaway": "Argument roles, binary target policies and support relations are different objects; an intermediate representation must be tested within its scope."
+    },
+    "N22": {
+      "purpose": "Transfer evaluation tests whether a system developed under one condition works under another. Cross-lingual transfer changes language; cross-domain transfer changes the source or content distribution; annotation-policy changes can alter the label meaning itself. These shifts can coexist, so a score drop alone does not explain its own cause.",
+      "connect": "Earlier lessons fixed targets, representations and evaluation units. Transfer now asks which parts remain compatible across conditions, including whether a base multilingual model had already encountered target-language text during pretraining.",
+      "connection": "Earlier lessons fixed targets, representations and evaluation units. Transfer now asks which parts remain compatible across conditions, including whether a base multilingual model had already encountered target-language text during pretraining.",
+      "takeaway": "A transfer score gap can reflect language, domain or target-definition changes; preserve the source–target axes and adaptation boundaries."
+    },
+    "N23": {
+      "purpose": "A long-document system must specify how distant text can influence a prediction. Chunking encodes local windows and combines their representations; a hierarchical encoder adds a second level; sparse attention changes token-to-token connections within a sequence. These are different information paths, not interchangeable ways of increasing a context-length setting.",
+      "connect": "The earlier sequence encoders assumed the relevant input was accessible. Long documents expose a new failure: evidence can be lost at truncation or window boundaries before an otherwise capable model can combine it.",
+      "connection": "The earlier sequence encoders assumed the relevant input was accessible. Long documents expose a new failure: evidence can be lost at truncation or window boundaries before an otherwise capable model can combine it.",
+      "takeaway": "Evidence coverage, repeated token processing and cross-position connectivity depend on the chosen long-document design."
+    },
+    "N24": {
+      "purpose": "An NLP evaluation counts matches between predicted and reference objects under a declared task rule. Token tags, complete entity spans, answer tokens and generated sequences are different objects, even when some metrics share a familiar name. A complete study also records preprocessing, model selection, source groups and failures so the result can be interpreted and reproduced.",
+      "connect": "The task lessons introduced distinct outputs and error sources. This final lesson connects them to the shared metric formulas and an executable research workflow without inventing one universal NLP accuracy.",
+      "connection": "The task lessons introduced distinct outputs and error sources. This final lesson connects them to the shared metric formulas and an executable research workflow without inventing one universal NLP accuracy.",
+      "takeaway": "Define the matching object and denominator before interpreting an NLP metric; preserve the complete pipeline and per-case evidence."
+    }
+  }
+}

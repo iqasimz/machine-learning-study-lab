@@ -1,0 +1,1305 @@
+{
+  "schema_version": 1,
+  "lessons": {
+    "P1": [
+      {
+        "id": "P1-a",
+        "prompt": "A Python script runs in one terminal but raises 'module not found' in another. What should you check first?",
+        "options": [
+          {
+            "text": "Which Python interpreter and environment each terminal is using.",
+            "feedback": "Different interpreters can have different installed packages. Identify the interpreter and environment before reinstalling or changing research code."
+          },
+          {
+            "text": "Rewrite the model architecture.",
+            "feedback": "The failure occurs during import, before the model architecture can be evaluated."
+          },
+          {
+            "text": "Increase GPU memory.",
+            "feedback": "Missing imports are not normally repaired by allocating more device memory."
+          },
+          {
+            "text": "Rename the training dataset.",
+            "feedback": "A dataset name does not select the Python environment that supplies the missing package."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Different interpreters can have different installed packages. Identify the interpreter and environment before reinstalling or changing research code.",
+        "skill": "Diagnose execution environments"
+      },
+      {
+        "id": "P1-b",
+        "prompt": "A float32 tensor has shape [2,3,4]. Count its raw values and storage, ignoring object/allocator overhead.",
+        "options": [
+          {
+            "text": "9 values and 36 bytes.",
+            "feedback": "Shape dimensions multiply; adding 2+3+4 does not count the tensor entries."
+          },
+          {
+            "text": "24 values and 96 bytes.",
+            "feedback": "2×3×4=24 stored values; 32 bits is four bytes, so raw storage is 96 bytes. Actual process memory has additional overhead."
+          },
+          {
+            "text": "24 values and 24 bytes.",
+            "feedback": "Float32 uses four bytes per value, not one byte."
+          },
+          {
+            "text": "96 values and 384 bytes.",
+            "feedback": "96 is the byte count after multiplying 24 entries by four bytes, not the number of entries."
+          }
+        ],
+        "answer": 1,
+        "explanation": "2×3×4=24 stored values; 32 bits is four bytes, so raw storage is 96 bytes. Actual process memory has additional overhead.",
+        "skill": "Calculate tensor storage"
+      }
+    ],
+    "P2": [
+      {
+        "id": "P2-a",
+        "prompt": "You multiply X:[5,3] by W:[3,2]. What does the resulting shape mean?",
+        "options": [
+          {
+            "text": "Three examples with five output features.",
+            "feedback": "The contracted axis is the inner width 3; it is not the number of surviving examples."
+          },
+          {
+            "text": "Two examples with three output features.",
+            "feedback": "The left matrix's example axis remains 5 after the multiplication."
+          },
+          {
+            "text": "Five examples, each with two output features.",
+            "feedback": "The shared inner axis is summed out: [5,3]×[3,2] produces [5,2]. Track what each axis represents, not only its size."
+          },
+          {
+            "text": "The multiplication is invalid.",
+            "feedback": "The inner dimensions both equal 3, so this product is well-defined."
+          }
+        ],
+        "answer": 2,
+        "explanation": "The shared inner axis is summed out: [5,3]×[3,2] produces [5,2]. Track what each axis represents, not only its size.",
+        "skill": "Track matrix axes"
+      },
+      {
+        "id": "P2-b",
+        "prompt": "For L(w)=½(wx−y)² with x=2, y=1 and w=1, what is dL/dw?",
+        "options": [
+          {
+            "text": "1.",
+            "feedback": "Prediction error is 1, but its sensitivity to w is multiplied by x=2."
+          },
+          {
+            "text": "4.",
+            "feedback": "The factor ½ cancels the derivative's factor 2; do not count it twice."
+          },
+          {
+            "text": "0.5.",
+            "feedback": "0.5 is the loss value here, not its derivative with respect to the weight."
+          },
+          {
+            "text": "2.",
+            "feedback": "Prediction is 2 and residual is 1. The chain rule gives dL/dw=(wx−y)x=1×2=2."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Prediction is 2 and residual is 1. The chain rule gives dL/dw=(wx−y)x=1×2=2.",
+        "skill": "Apply the chain rule"
+      }
+    ],
+    "P3": [
+      {
+        "id": "P3-a",
+        "prompt": "A classifier gives the predicted class probability 0.9. What does that number alone establish?",
+        "options": [
+          {
+            "text": "The model assigned 90% probability under its current scoring procedure.",
+            "feedback": "A model probability describes its assigned distribution. Calibration and reliability require additional evidence on appropriate data."
+          },
+          {
+            "text": "This particular answer is guaranteed correct.",
+            "feedback": "A high probability can be wrong; probability is not a guarantee for one case."
+          },
+          {
+            "text": "A 95% confidence interval contains 0.9.",
+            "feedback": "An interval is produced by a specified estimation procedure; it is not implicit in a prediction score."
+          },
+          {
+            "text": "Its probabilities are calibrated.",
+            "feedback": "Calibration requires comparing predicted probabilities with outcomes over suitable examples."
+          }
+        ],
+        "answer": 0,
+        "explanation": "A model probability describes its assigned distribution. Calibration and reliability require additional evidence on appropriate data.",
+        "skill": "Separate probability and evidence"
+      },
+      {
+        "id": "P3-b",
+        "prompt": "A percentile bootstrap produces 200 accuracy estimates. What is the usual illustrative 95% percentile interval?",
+        "options": [
+          {
+            "text": "The minimum and maximum estimates.",
+            "feedback": "That reports the full observed resample range, not the central 95% percentile interval."
+          },
+          {
+            "text": "The 2.5th and 97.5th percentiles of those estimates.",
+            "feedback": "Take the central 95% of the bootstrap distribution. This conditional procedure still depends on the correct independent resampling unit and does not include all sources of uncertainty."
+          },
+          {
+            "text": "The mean accuracy plus/minus 95 percentage points.",
+            "feedback": "95% is a coverage level, not an amount added to the metric."
+          },
+          {
+            "text": "The best 95% of model seeds.",
+            "feedback": "A test-row bootstrap resamples evaluation units, not a collection of independently trained seeds."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Take the central 95% of the bootstrap distribution. This conditional procedure still depends on the correct independent resampling unit and does not include all sources of uncertainty.",
+        "skill": "Interpret a bootstrap interval"
+      }
+    ],
+    "P4": [
+      {
+        "id": "P4-a",
+        "prompt": "You repeatedly choose prompts because they score best on the test set. How should you describe that set afterward?",
+        "options": [
+          {
+            "text": "It remains independent because model weights were frozen.",
+            "feedback": "Selection can overfit evaluation feedback without updating neural weights."
+          },
+          {
+            "text": "It becomes training data only if copied into the prompt.",
+            "feedback": "Directly copying examples is not the only way evaluation information influences a system."
+          },
+          {
+            "text": "It has influenced selection and is no longer an untouched final check.",
+            "feedback": "The information boundary includes prompt and system selection. Repeated test-guided choices turn that feedback into development information."
+          },
+          {
+            "text": "Its score is automatically invalid for every purpose.",
+            "feedback": "It can still describe exploratory performance; the problem is claiming untouched confirmatory evidence."
+          }
+        ],
+        "answer": 2,
+        "explanation": "The information boundary includes prompt and system selection. Repeated test-guided choices turn that feedback into development information.",
+        "skill": "Recognize selection leakage"
+      },
+      {
+        "id": "P4-b",
+        "prompt": "For a positive class, true positives=8, false positives=4 and false negatives=2. What are precision and recall?",
+        "options": [
+          {
+            "text": "Precision 8/10; recall 8/12.",
+            "feedback": "These denominators are reversed: precision conditions on predicted positives, recall on actual positives."
+          },
+          {
+            "text": "Both are 8/14.",
+            "feedback": "False positives and false negatives play different roles in the two denominators."
+          },
+          {
+            "text": "Both are 0.8.",
+            "feedback": "Recall is 0.8, but false positives lower precision to approximately 0.667."
+          },
+          {
+            "text": "Precision 8/12; recall 8/10.",
+            "feedback": "Precision=TP/(TP+FP)=8/12. Recall=TP/(TP+FN)=8/10. They ask different questions about the same predictions."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Precision=TP/(TP+FP)=8/12. Recall=TP/(TP+FN)=8/10. They ask different questions about the same predictions.",
+        "skill": "Calculate class metrics"
+      }
+    ],
+    "P5": [
+      {
+        "id": "P5-a",
+        "prompt": "What changes a neural parameter in a standard training loop?",
+        "options": [
+          {
+            "text": "The optimizer step uses the computed gradient to update the parameter.",
+            "feedback": "Forward computes outputs, the loss scores them, backward computes gradients, and the optimizer applies the update rule."
+          },
+          {
+            "text": "The forward pass itself.",
+            "feedback": "The forward pass computes values using current parameters; it does not normally optimize them."
+          },
+          {
+            "text": "Calling backward alone.",
+            "feedback": "Backward computes or accumulates gradients. A separate update operation is required."
+          },
+          {
+            "text": "Evaluating on the test set.",
+            "feedback": "Evaluation should not update weights or select training checkpoints from test feedback."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Forward computes outputs, the loss scores them, backward computes gradients, and the optimizer applies the update rule.",
+        "skill": "Separate derivatives and updates"
+      },
+      {
+        "id": "P5-b",
+        "prompt": "For one SGD update w_new=w−ηg, w=3, gradient g=4 and η=0.1, what is w_new?",
+        "options": [
+          {
+            "text": "3.4.",
+            "feedback": "Gradient descent subtracts the gradient-scaled change rather than adding it."
+          },
+          {
+            "text": "2.6.",
+            "feedback": "Subtract 0.1×4=0.4 from 3. This is one illustrative SGD update, not Adam's adaptive rule."
+          },
+          {
+            "text": "−1.",
+            "feedback": "That subtracts the full gradient and ignores the learning rate."
+          },
+          {
+            "text": "0.4.",
+            "feedback": "0.4 is the change magnitude, not the updated parameter value."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Subtract 0.1×4=0.4 from 3. This is one illustrative SGD update, not Adam's adaptive rule.",
+        "skill": "Compute a weight update"
+      }
+    ],
+    "P6": [
+      {
+        "id": "P6-a",
+        "prompt": "Why must you inspect a model's chat template as well as the visible message text?",
+        "options": [
+          {
+            "text": "Templates retrain the tokenizer on every request.",
+            "feedback": "A chat template formats messages; it does not ordinarily fit a new tokenizer."
+          },
+          {
+            "text": "All models use identical role tokens.",
+            "feedback": "Role formatting and special tokens depend on the model and tokenizer configuration."
+          },
+          {
+            "text": "The template adds structure and tokens that affect the actual model input.",
+            "feedback": "Visible messages are not necessarily the full token sequence. Check role delimiters, special tokens and truncation using the actual tokenizer/template."
+          },
+          {
+            "text": "Templates prove that hidden instructions are harmless.",
+            "feedback": "Formatting cannot by itself establish instruction safety or permission boundaries."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Visible messages are not necessarily the full token sequence. Check role delimiters, special tokens and truncation using the actual tokenizer/template.",
+        "skill": "Inspect actual language inputs"
+      },
+      {
+        "id": "P6-b",
+        "prompt": "Under a byte tokenizer that assigns one token per UTF-8 byte and adds no special tokens, an emoji occupies four bytes. How many tokens does it use?",
+        "options": [
+          {
+            "text": "One.",
+            "feedback": "One visible character need not be one byte or one tokenizer token."
+          },
+          {
+            "text": "Two.",
+            "feedback": "That confuses possible UTF-16 code units with the stated UTF-8 byte-token rule."
+          },
+          {
+            "text": "It cannot be represented.",
+            "feedback": "A byte-level vocabulary can represent UTF-8 text through its bytes; visual glyph count is irrelevant here."
+          },
+          {
+            "text": "Four.",
+            "feedback": "The question specifies one token per UTF-8 byte, so four bytes require four tokens. A subword tokenizer may use a different count."
+          }
+        ],
+        "answer": 3,
+        "explanation": "The question specifies one token per UTF-8 byte, so four bytes require four tokens. A subword tokenizer may use a different count.",
+        "skill": "Distinguish bytes and tokens"
+      }
+    ],
+    "P7": [
+      {
+        "id": "P7-a",
+        "prompt": "A document has high cosine similarity to a query. What should happen next?",
+        "options": [
+          {
+            "text": "Check relevance, source quality and access before using it as evidence.",
+            "feedback": "Vector similarity supplies candidates. Evidence quality, relevance and permission remain separate checks before generation."
+          },
+          {
+            "text": "Treat its claims as verified facts.",
+            "feedback": "Similarity ranks representations; it does not verify the document's claims."
+          },
+          {
+            "text": "Assume the query and document are paraphrases.",
+            "feedback": "Related vectors can reflect topic overlap or model bias without equivalent meaning."
+          },
+          {
+            "text": "Update the generator's model weights automatically.",
+            "feedback": "Retrieving a document normally adds input evidence, not a weight update."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Vector similarity supplies candidates. Evidence quality, relevance and permission remain separate checks before generation.",
+        "skill": "Separate retrieval from truth"
+      },
+      {
+        "id": "P7-b",
+        "prompt": "For a=[1,0] and b=[1,1], what is cosine similarity?",
+        "options": [
+          {
+            "text": "1.",
+            "feedback": "The dot product is 1, but b has norm √2, so normalization changes the result."
+          },
+          {
+            "text": "1/√2, approximately 0.707.",
+            "feedback": "a·b=1, ‖a‖=1 and ‖b‖=√2. Divide the dot product by both norms."
+          },
+          {
+            "text": "0.",
+            "feedback": "The vectors share a nonzero component and are not orthogonal."
+          },
+          {
+            "text": "√2.",
+            "feedback": "Cosine divides by the product of norms; multiplying instead gives the wrong scale."
+          }
+        ],
+        "answer": 1,
+        "explanation": "a·b=1, ‖a‖=1 and ‖b‖=√2. Divide the dot product by both norms.",
+        "skill": "Calculate normalized similarity"
+      }
+    ],
+    "T0": [
+      {
+        "id": "T0-a",
+        "prompt": "Which information is available during ordinary next-token training but not supplied as a gold continuation at generation time?",
+        "options": [
+          {
+            "text": "The tokenizer vocabulary.",
+            "feedback": "The generator still needs its vocabulary and tokenization at inference."
+          },
+          {
+            "text": "All model weights.",
+            "feedback": "Inference uses learned weights; it does not discard the model."
+          },
+          {
+            "text": "The observed next tokens used as training targets.",
+            "feedback": "Training compares predictions with observed targets. Generation appends selected predictions instead of reading a supplied gold continuation."
+          },
+          {
+            "text": "Only the operating system.",
+            "feedback": "The operating system does not define the training-versus-generation information boundary."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Training compares predictions with observed targets. Generation appends selected predictions instead of reading a supplied gold continuation.",
+        "skill": "Trace training and generation"
+      },
+      {
+        "id": "T0-b",
+        "prompt": "Ten training rows are visited once per epoch with batch size four, no dropped rows and no accumulation. How many optimizer updates occur in three epochs?",
+        "options": [
+          {
+            "text": "Six.",
+            "feedback": "The final two-row batch is retained, giving three updates per epoch rather than two."
+          },
+          {
+            "text": "Thirty.",
+            "feedback": "There is one update per batch here, not one per example."
+          },
+          {
+            "text": "Eight.",
+            "feedback": "Each epoch has ceil(10/4)=3 updates, so the stated protocol totals 9."
+          },
+          {
+            "text": "Nine.",
+            "feedback": "Batches have sizes 4,4,2. Three batches per epoch over three epochs produce nine weight updates."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Batches have sizes 4,4,2. Three batches per epoch over three epochs produce nine weight updates.",
+        "skill": "Count batches and updates"
+      }
+    ],
+    "T1": [
+      {
+        "id": "T1-a",
+        "prompt": "What does improving next-token loss on held-out text directly support?",
+        "options": [
+          {
+            "text": "Better probability assignment to observed tokens under that matched text/tokenizer protocol.",
+            "feedback": "A matched held-out loss measures the training objective on the declared evaluation text. Broader quality requires separate tasks and evidence."
+          },
+          {
+            "text": "A guarantee of factual accuracy.",
+            "feedback": "Token likelihood and factual correctness are different properties."
+          },
+          {
+            "text": "Proof that the system is safe to use tools.",
+            "feedback": "Tool authority and action safety are not established by a text-prediction score."
+          },
+          {
+            "text": "Equal quality across all languages.",
+            "feedback": "A score on one held-out distribution does not establish performance on every language."
+          }
+        ],
+        "answer": 0,
+        "explanation": "A matched held-out loss measures the training objective on the declared evaluation text. Broader quality requires separate tasks and evidence.",
+        "skill": "Bound an objective-based claim"
+      },
+      {
+        "id": "T1-b",
+        "prompt": "A correct next token receives probability 0.25. What is its negative log-likelihood in natural-log units?",
+        "options": [
+          {
+            "text": "0.25.",
+            "feedback": "That is the assigned probability, not its negative logarithm."
+          },
+          {
+            "text": "−ln(0.25)=ln(4), approximately 1.386.",
+            "feedback": "Loss penalizes assigning low probability to the observed token: −ln(¼)=ln 4. Units and logarithm base must be stated."
+          },
+          {
+            "text": "4.",
+            "feedback": "Four is the inverse probability, or the perplexity for this single target."
+          },
+          {
+            "text": "−1.386.",
+            "feedback": "Log probability is negative; negative log-likelihood changes its sign."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Loss penalizes assigning low probability to the observed token: −ln(¼)=ln 4. Units and logarithm base must be stated.",
+        "skill": "Calculate token loss"
+      }
+    ],
+    "T2": [
+      {
+        "id": "T2-a",
+        "prompt": "Why deduplicate related documents before constructing evaluation splits?",
+        "options": [
+          {
+            "text": "To guarantee all remaining examples are independent.",
+            "feedback": "Deduplication helps but does not remove every author, topic or source relationship."
+          },
+          {
+            "text": "To remove the need for a test set.",
+            "feedback": "A cleaned dataset still needs an evaluation protocol."
+          },
+          {
+            "text": "To reduce near-identical content crossing the fitting/evaluation boundary.",
+            "feedback": "Related content can make held-out performance easier than the intended generalization task. Deduplication and appropriate grouping serve different but complementary roles."
+          },
+          {
+            "text": "To fit the tokenizer on all documents safely.",
+            "feedback": "A tokenizer learned from held-out content can still cross the declared boundary."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Related content can make held-out performance easier than the intended generalization task. Deduplication and appropriate grouping serve different but complementary roles.",
+        "skill": "Protect the data boundary"
+      },
+      {
+        "id": "T2-b",
+        "prompt": "Two documents contain 3 and 4 token IDs. You create next-token pairs within each document and use no cross-document pairs. How many target pairs are available?",
+        "options": [
+          {
+            "text": "Six.",
+            "feedback": "That would include one boundary-crossing pair in the concatenated seven-token sequence."
+          },
+          {
+            "text": "Seven.",
+            "feedback": "A length-n document provides n−1 adjacent input/target pairs under the stated rule."
+          },
+          {
+            "text": "One.",
+            "feedback": "Each document contains several adjacent positions; the task is not one target per document."
+          },
+          {
+            "text": "Five.",
+            "feedback": "Within-document counts are 3−1=2 and 4−1=3, totaling five. Packing must preserve the intended boundary/mask rule."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Within-document counts are 3−1=2 and 4−1=3, totaling five. Packing must preserve the intended boundary/mask rule.",
+        "skill": "Count valid targets"
+      }
+    ],
+    "T3": [
+      {
+        "id": "T3-a",
+        "prompt": "A causal attention mask forbids a future key. Where should that restriction enter the calculation?",
+        "options": [
+          {
+            "text": "Before softmax, by excluding its attention score from normalization.",
+            "feedback": "Masking a score before normalization assigns no attention probability to the forbidden key and renormalizes the permitted keys."
+          },
+          {
+            "text": "After selecting the next output token.",
+            "feedback": "That is too late: forbidden information may already have affected the representation."
+          },
+          {
+            "text": "By setting only its final output weight to zero without renormalizing.",
+            "feedback": "That generally leaves a row that no longer sums to one and is a different calculation."
+          },
+          {
+            "text": "Only in the tokenizer.",
+            "feedback": "Tokenization does not enforce which attention positions can read one another."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Masking a score before normalization assigns no attention probability to the forbidden key and renormalizes the permitted keys.",
+        "skill": "Apply causal masking"
+      },
+      {
+        "id": "T3-b",
+        "prompt": "For B=2, heads=3, query length=4 and key length=4, what shape does the full per-head attention score tensor have?",
+        "options": [
+          {
+            "text": "[2,4,3].",
+            "feedback": "That loses the separate query and key position axes."
+          },
+          {
+            "text": "[2,3,4,4].",
+            "feedback": "Every batch and head has a query-by-key matrix. Dot products contract the key-feature axis, not the position axes."
+          },
+          {
+            "text": "[3,4,4].",
+            "feedback": "That omits the batch axis B=2."
+          },
+          {
+            "text": "[2,3,16,16].",
+            "feedback": "The two position axes each remain length 4; they are not individually multiplied together."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Every batch and head has a query-by-key matrix. Dot products contract the key-feature axis, not the position axes.",
+        "skill": "Track attention score axes"
+      }
+    ],
+    "T4": [
+      {
+        "id": "T4-a",
+        "prompt": "Why report both total parameters and active parameters for a mixture-of-experts model?",
+        "options": [
+          {
+            "text": "Inactive experts are deleted from the checkpoint.",
+            "feedback": "Routing usually skips their computation for that token; it does not delete their learned weights."
+          },
+          {
+            "text": "Active parameter count exactly equals total deployment memory.",
+            "feedback": "Memory also includes stored weights, state, activations and runtime allocations."
+          },
+          {
+            "text": "Only a subset of experts may execute per token, while all expert weights still need storage or placement.",
+            "feedback": "Sparse activation can reduce per-token computation relative to total capacity without removing the need to store or manage inactive expert weights."
+          },
+          {
+            "text": "All experts always perform the same computation.",
+            "feedback": "Sparse routing is specifically a way to select a subset under an architecture's routing rule."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Sparse activation can reduce per-token computation relative to total capacity without removing the need to store or manage inactive expert weights.",
+        "skill": "Separate capacity, compute and storage"
+      },
+      {
+        "id": "T4-b",
+        "prompt": "A model has 12 query heads and 4 KV heads, each of width 64. How many features does each key projection output?",
+        "options": [
+          {
+            "text": "768.",
+            "feedback": "That uses the query-head count rather than the stated KV-head count."
+          },
+          {
+            "text": "64.",
+            "feedback": "That counts one KV head instead of all four."
+          },
+          {
+            "text": "3072.",
+            "feedback": "That multiplies query-head and KV-head counts together even though the key projection uses only KV heads."
+          },
+          {
+            "text": "256.",
+            "feedback": "The key projection has 4×64=256 output features; query projection width is 12×64=768. This is grouped-query sharing, not equal head counts."
+          }
+        ],
+        "answer": 3,
+        "explanation": "The key projection has 4×64=256 output features; query projection width is 12×64=768. This is grouped-query sharing, not equal head counts.",
+        "skill": "Calculate grouped-query widths"
+      }
+    ],
+    "T5": [
+      {
+        "id": "T5-a",
+        "prompt": "Training loss falls while development loss rises over successive epochs. What is the most defensible next action?",
+        "options": [
+          {
+            "text": "Investigate overfitting and checkpoint selection while checking the protocol and curves.",
+            "feedback": "The curve suggests a generalization problem but does not identify its sole cause. Check data boundaries and use development evidence for selection."
+          },
+          {
+            "text": "Declare the larger epoch count better.",
+            "feedback": "Improving fitting loss does not by itself establish better held-out behaviour."
+          },
+          {
+            "text": "Tune until test loss improves.",
+            "feedback": "Using the final test for these choices changes its role into development feedback."
+          },
+          {
+            "text": "Conclude the optimizer is mathematically broken.",
+            "feedback": "The pattern can occur with a functioning optimizer that fits training-specific details."
+          }
+        ],
+        "answer": 0,
+        "explanation": "The curve suggests a generalization problem but does not identify its sole cause. Check data boundaries and use development evidence for selection.",
+        "skill": "Diagnose rather than overclaim"
+      },
+      {
+        "id": "T5-b",
+        "prompt": "Two microbatches have 12 and 4 valid targets, with mean losses 2 and 4. What is the combined mean loss over valid targets?",
+        "options": [
+          {
+            "text": "3.",
+            "feedback": "That gives the two unequal-sized microbatches equal weight."
+          },
+          {
+            "text": "2.5.",
+            "feedback": "(12×2+4×4)/(12+4)=40/16=2.5. Weight gradients consistently if the intended objective is the global valid-target mean."
+          },
+          {
+            "text": "6.",
+            "feedback": "Adding means ignores the total target count and is not a global mean."
+          },
+          {
+            "text": "2.",
+            "feedback": "That drops the four-target microbatch entirely."
+          }
+        ],
+        "answer": 1,
+        "explanation": "(12×2+4×4)/(12+4)=40/16=2.5. Weight gradients consistently if the intended objective is the global valid-target mean.",
+        "skill": "Weight accumulation correctly"
+      }
+    ],
+    "T6": [
+      {
+        "id": "T6-a",
+        "prompt": "Why is parameter-count-times-weight-dtype an incomplete training memory estimate?",
+        "options": [
+          {
+            "text": "Parameters have no stored values during training.",
+            "feedback": "Their numerical values are needed by the forward calculation and update."
+          },
+          {
+            "text": "Only the KV cache matters during training.",
+            "feedback": "KV cache discussions mainly concern autoregressive serving; training has other major allocations."
+          },
+          {
+            "text": "Gradients, optimizer state, activations and temporary buffers also occupy memory.",
+            "feedback": "Weight storage is one allocation category. Batch size, sequence length, optimizer and checkpointing affect other allocations."
+          },
+          {
+            "text": "Optimizer state replaces the original weights.",
+            "feedback": "It supplements rather than eliminates parameter storage."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Weight storage is one allocation category. Batch size, sequence length, optimizer and checkpointing affect other allocations.",
+        "skill": "Account for memory owners"
+      },
+      {
+        "id": "T6-b",
+        "prompt": "For one million float32 parameters, estimate weights + equally sized gradients + two float32 Adam moments, ignoring every other allocation.",
+        "options": [
+          {
+            "text": "4 MB.",
+            "feedback": "Four megabytes covers weights alone under this simplified accounting."
+          },
+          {
+            "text": "8 MB.",
+            "feedback": "That covers two float32-sized arrays, but the scenario has four."
+          },
+          {
+            "text": "16 MiB exactly.",
+            "feedback": "The stated count gives 16,000,000 bytes, which is not exactly 16×2²⁰ bytes."
+          },
+          {
+            "text": "16 MB in decimal units.",
+            "feedback": "Four arrays × one million values × four bytes = 16,000,000 bytes, or 16 decimal MB. Activations and runtime overhead are excluded."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Four arrays × one million values × four bytes = 16,000,000 bytes, or 16 decimal MB. Activations and runtime overhead are excluded.",
+        "skill": "Calculate training-state storage"
+      }
+    ],
+    "T7": [
+      {
+        "id": "T7-a",
+        "prompt": "A distributed setup averages each worker's mean loss, but workers have unequal valid-target counts. What should you check?",
+        "options": [
+          {
+            "text": "Whether the reduction implements the intended global target-weighted objective.",
+            "feedback": "Equal averaging of unequal-target worker means can change the objective. Count valid targets and account for the distributed gradient reduction convention."
+          },
+          {
+            "text": "Only whether the workers use the same GPU model.",
+            "feedback": "Matching hardware does not correct unequal statistical weighting."
+          },
+          {
+            "text": "Whether every worker reports the same file size.",
+            "feedback": "File sizes are not necessarily the counts of valid prediction targets."
+          },
+          {
+            "text": "Whether test performance can choose the reduction rule.",
+            "feedback": "The objective should be specified from the task, not chosen by exploiting a final test score."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Equal averaging of unequal-target worker means can change the objective. Count valid targets and account for the distributed gradient reduction convention.",
+        "skill": "Preserve the objective across workers"
+      },
+      {
+        "id": "T7-b",
+        "prompt": "Four data-parallel workers each process microbatches of 8 examples and accumulate 2 microbatches per optimizer update. What is the effective example batch size?",
+        "options": [
+          {
+            "text": "16 examples.",
+            "feedback": "That is one worker's accumulated batch, before combining four workers."
+          },
+          {
+            "text": "64 examples.",
+            "feedback": "4 workers × 8 examples × 2 accumulation microbatches = 64 examples per synchronized update. Token counts can still vary across examples."
+          },
+          {
+            "text": "32 examples.",
+            "feedback": "That omits the accumulation factor of two."
+          },
+          {
+            "text": "128 examples.",
+            "feedback": "There are four workers, not an additional unexplained factor of two."
+          }
+        ],
+        "answer": 1,
+        "explanation": "4 workers × 8 examples × 2 accumulation microbatches = 64 examples per synchronized update. Token counts can still vary across examples.",
+        "skill": "Count distributed batch contributions"
+      }
+    ],
+    "T8": [
+      {
+        "id": "T8-a",
+        "prompt": "Two systems report lower token loss with different tokenizers. What can you conclude from those numbers alone?",
+        "options": [
+          {
+            "text": "The smaller number always identifies the better language model.",
+            "feedback": "Different token units can change average loss without the intended quality improvement."
+          },
+          {
+            "text": "The larger vocabulary necessarily wins.",
+            "feedback": "Vocabulary size alone does not determine text prediction quality or evaluation comparability."
+          },
+          {
+            "text": "They are not automatically comparable because the target units differ.",
+            "feedback": "Loss per token depends on what a token is. Hold the protocol fixed or use a justified common unit before interpreting a ranking."
+          },
+          {
+            "text": "No common-unit comparison can ever be attempted.",
+            "feedback": "Matched text and byte-based or task-level measures can help, with explicit context and budget caveats."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Loss per token depends on what a token is. Hold the protocol fixed or use a justified common unit before interpreting a ranking.",
+        "skill": "Check metric comparability"
+      },
+      {
+        "id": "T8-b",
+        "prompt": "For a paired bootstrap comparison of two models on the same test examples, how should each resample be constructed?",
+        "options": [
+          {
+            "text": "Sample unrelated indices separately for the models.",
+            "feedback": "That discards the pairing between their results on the same examples."
+          },
+          {
+            "text": "Pick whichever indices maximize the preferred model's score.",
+            "feedback": "That is selective evaluation rather than uncertainty estimation."
+          },
+          {
+            "text": "Resample only the examples one model got right.",
+            "feedback": "That changes the target evaluation population and biases the comparison."
+          },
+          {
+            "text": "Use the same sampled example indices for both models, then compute their metric difference.",
+            "feedback": "Pairing retains example difficulty and shared error structure. Resample the correct independent unit; test-row bootstrap still omits training and selection variability."
+          }
+        ],
+        "answer": 3,
+        "explanation": "Pairing retains example difficulty and shared error structure. Resample the correct independent unit; test-row bootstrap still omits training and selection variability.",
+        "skill": "Design paired uncertainty"
+      }
+    ],
+    "R1": [
+      {
+        "id": "R1-a",
+        "prompt": "What remains frozen in ordinary LoRA adaptation?",
+        "options": [
+          {
+            "text": "The original targeted weight matrices, while added low-rank factors are optimized.",
+            "feedback": "LoRA parameterizes an update through smaller learned factors while preserving the base weights. The full base model is still required for use."
+          },
+          {
+            "text": "Every activation in the network.",
+            "feedback": "Activations still change with inputs and with the adapter's contribution."
+          },
+          {
+            "text": "The loss value for all batches.",
+            "feedback": "The loss is recalculated and can change during training."
+          },
+          {
+            "text": "The tokenizer is automatically trained with the adapter.",
+            "feedback": "LoRA itself changes selected weight updates, not necessarily tokenizer training."
+          }
+        ],
+        "answer": 0,
+        "explanation": "LoRA parameterizes an update through smaller learned factors while preserving the base weights. The full base model is still required for use.",
+        "skill": "Distinguish base and adapter"
+      },
+      {
+        "id": "R1-b",
+        "prompt": "For an update ΔW=BA with W shaped [100,200], B:[100,4] and A:[4,200], how many factor parameters are trained, ignoring biases?",
+        "options": [
+          {
+            "text": "20,000.",
+            "feedback": "That is the full dense matrix size, not the factorized adapter size."
+          },
+          {
+            "text": "1,200.",
+            "feedback": "100×4+4×200=400+800=1,200 trainable factors. The original 20,000 base weights remain stored."
+          },
+          {
+            "text": "800.",
+            "feedback": "That counts A but omits B's 100×4 entries."
+          },
+          {
+            "text": "2,400.",
+            "feedback": "That doubles the two-factor total without another stated adapter."
+          }
+        ],
+        "answer": 1,
+        "explanation": "100×4+4×200=400+800=1,200 trainable factors. The original 20,000 base weights remain stored.",
+        "skill": "Calculate adapter parameters"
+      }
+    ],
+    "R2": [
+      {
+        "id": "R2-a",
+        "prompt": "What distinguishes DPO's basic training signal from ordinary supervised fine-tuning on one target response?",
+        "options": [
+          {
+            "text": "It only adds a retrieval index.",
+            "feedback": "Retrieval is an inference-time evidence mechanism, not DPO's preference-pair objective."
+          },
+          {
+            "text": "It guarantees the chosen response is factually correct.",
+            "feedback": "Preference labels can reflect other properties or contain errors."
+          },
+          {
+            "text": "It uses chosen/rejected response pairs to change their relative likelihood under a preference objective.",
+            "feedback": "DPO learns from relative preferences, typically with a reference-policy formulation. It is not identical to demonstration-only likelihood training."
+          },
+          {
+            "text": "It is merely a new sampling temperature.",
+            "feedback": "A decoding temperature changes token selection without the preference training update described here."
+          }
+        ],
+        "answer": 2,
+        "explanation": "DPO learns from relative preferences, typically with a reference-policy formulation. It is not identical to demonstration-only likelihood training.",
+        "skill": "Identify preference-learning signals"
+      },
+      {
+        "id": "R2-b",
+        "prompt": "A GRPO-style group has rewards [1,2,3]. Using group-mean centering only and no standard-deviation division, what are the centered rewards?",
+        "options": [
+          {
+            "text": "[1,2,3].",
+            "feedback": "Those are the raw rewards; centering subtracts the group mean."
+          },
+          {
+            "text": "[0,1,2].",
+            "feedback": "That subtracts the minimum reward, not the stated group mean."
+          },
+          {
+            "text": "[1/6,2/6,3/6].",
+            "feedback": "That normalizes a sum into proportions rather than mean-centering rewards."
+          },
+          {
+            "text": "[−1,0,1].",
+            "feedback": "The mean is 2, so subtracting it yields [−1,0,1]. Implementations may add standardization and other terms; this example states only the centering operation."
+          }
+        ],
+        "answer": 3,
+        "explanation": "The mean is 2, so subtracting it yields [−1,0,1]. Implementations may add standardization and other terms; this example states only the centering operation.",
+        "skill": "Calculate a group-relative signal"
+      }
+    ],
+    "R3": [
+      {
+        "id": "R3-a",
+        "prompt": "A decoder guarantees output matching a JSON schema. What remains unproven?",
+        "options": [
+          {
+            "text": "That field contents are true, relevant and authorized for the intended action.",
+            "feedback": "Syntactic constraints, schema validity, semantic correctness and action authority are separate layers. Validate the property you actually need."
+          },
+          {
+            "text": "Whether the output follows the enforced schema.",
+            "feedback": "Schema structure is precisely the stated guarantee; semantic properties are different."
+          },
+          {
+            "text": "Whether JSON has any syntax rules.",
+            "feedback": "JSON syntax and schema constraints are defined independently of factual correctness."
+          },
+          {
+            "text": "Whether the model's weights changed during this response.",
+            "feedback": "Constrained decoding ordinarily changes output selection, not model parameters."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Syntactic constraints, schema validity, semantic correctness and action authority are separate layers. Validate the property you actually need.",
+        "skill": "Bound structured-output guarantees"
+      },
+      {
+        "id": "R3-b",
+        "prompt": "Raw logits are [2,0]. With positive temperature T=2, what logits are passed to softmax under the usual logits/T rule?",
+        "options": [
+          {
+            "text": "[4,0].",
+            "feedback": "The stated rule divides by temperature rather than multiplying."
+          },
+          {
+            "text": "[1,0].",
+            "feedback": "Divide both scores by 2. Their difference shrinks, producing a flatter probability distribution without retraining weights."
+          },
+          {
+            "text": "[2,2].",
+            "feedback": "Temperature rescales each score; it does not add probability mass directly to the lower score."
+          },
+          {
+            "text": "[0.5,0.5].",
+            "feedback": "Those would be probabilities, not the rescaled logits requested."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Divide both scores by 2. Their difference shrinks, producing a flatter probability distribution without retraining weights.",
+        "skill": "Trace temperature scaling"
+      }
+    ],
+    "R4": [
+      {
+        "id": "R4-a",
+        "prompt": "An exact vector index finds the nearest embeddings, but answers remain wrong. What should you investigate?",
+        "options": [
+          {
+            "text": "Conclude retrieval is perfect for the user task.",
+            "feedback": "Exact nearest-neighbour computation does not establish semantic relevance or answer support."
+          },
+          {
+            "text": "Only increase the model's temperature.",
+            "feedback": "Sampling changes do not repair missing, misleading or unauthorized evidence."
+          },
+          {
+            "text": "Embedding relevance, chunks, source permissions/freshness and how the generator uses evidence.",
+            "feedback": "Search correctness is only one subsystem. End-to-end answer quality depends on the representation, evidence and generation procedure."
+          },
+          {
+            "text": "Treat every nearest document as a fact.",
+            "feedback": "Retrieved text can be wrong or unrelated despite its geometric rank."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Search correctness is only one subsystem. End-to-end answer quality depends on the representation, evidence and generation procedure.",
+        "skill": "Diagnose a RAG pipeline"
+      },
+      {
+        "id": "R4-b",
+        "prompt": "A context window allows 2,048 tokens. Instructions use 300, query 100 and reserved output 400, with no other overhead. What remains for retrieved text?",
+        "options": [
+          {
+            "text": "1,648 tokens.",
+            "feedback": "That subtracts instructions and query but forgets the reserved output."
+          },
+          {
+            "text": "2,048 tokens.",
+            "feedback": "That assigns the entire context to evidence and omits other required content."
+          },
+          {
+            "text": "1,348 tokens.",
+            "feedback": "Subtract the stated query budget as well as instructions and output."
+          },
+          {
+            "text": "1,248 tokens.",
+            "feedback": "2,048−300−100−400=1,248. Real templates, tool schemas and formatting may consume additional budget."
+          }
+        ],
+        "answer": 3,
+        "explanation": "2,048−300−100−400=1,248. Real templates, tool schemas and formatting may consume additional budget.",
+        "skill": "Budget retrieval context"
+      }
+    ],
+    "R5": [
+      {
+        "id": "R5-a",
+        "prompt": "An LLM proposes a valid tool call to delete a file. What must determine whether it executes?",
+        "options": [
+          {
+            "text": "Application-enforced permissions and the required approval policy.",
+            "feedback": "Tool contracts validate structure; the application must independently enforce authority, scope, budgets and any required human approval."
+          },
+          {
+            "text": "The model saying it is confident.",
+            "feedback": "Model confidence does not grant authority over user files."
+          },
+          {
+            "text": "JSON validation alone.",
+            "feedback": "Valid fields are not evidence that the requested action is authorized."
+          },
+          {
+            "text": "Another agent restating the request.",
+            "feedback": "Repeated instructions do not replace an independent permission boundary."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Tool contracts validate structure; the application must independently enforce authority, scope, budgets and any required human approval.",
+        "skill": "Separate proposals from authority"
+      },
+      {
+        "id": "R5-b",
+        "prompt": "A workflow allows one initial tool attempt and at most two retries for the same operation. How many total attempts are permitted?",
+        "options": [
+          {
+            "text": "Two.",
+            "feedback": "Two is the retry count; the initial attempt is additional."
+          },
+          {
+            "text": "Three.",
+            "feedback": "One initial attempt plus two retries gives three total. The application should enforce a shared budget rather than trusting the model to count."
+          },
+          {
+            "text": "Four.",
+            "feedback": "There is no third retry in the stated policy."
+          },
+          {
+            "text": "Unlimited if the model changes the wording.",
+            "feedback": "Renaming a request must not bypass the application's operation-level attempt budget."
+          }
+        ],
+        "answer": 1,
+        "explanation": "One initial attempt plus two retries gives three total. The application should enforce a shared budget rather than trusting the model to count.",
+        "skill": "Enforce bounded recovery"
+      }
+    ],
+    "R6": [
+      {
+        "id": "R6-a",
+        "prompt": "What is the difference between prefill and autoregressive decode?",
+        "options": [
+          {
+            "text": "Decode retrains the model on the user's prompt.",
+            "feedback": "Ordinary inference produces outputs without optimizer updates."
+          },
+          {
+            "text": "Prefill is only network transmission time.",
+            "feedback": "It includes model computation over the supplied prompt, not just transport."
+          },
+          {
+            "text": "Prefill processes the supplied prompt; decode produces subsequent tokens step by step.",
+            "feedback": "Separating these stages helps interpret first-token latency, output-token latency and cache memory."
+          },
+          {
+            "text": "The KV cache stores permanent new knowledge.",
+            "feedback": "It stores reusable inference state for a request, not trained parameter updates."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Separating these stages helps interpret first-token latency, output-token latency and cache memory.",
+        "skill": "Identify serving stages"
+      },
+      {
+        "id": "R6-b",
+        "prompt": "Use bytes=2×B×L×T×H_kv×d_head×s. For B=1, L=2, T=10, H_kv=2, d_head=4 and s=2 bytes, what is raw KV-cache storage?",
+        "options": [
+          {
+            "text": "320 bytes.",
+            "feedback": "That omits the leading factor two for separate key and value caches."
+          },
+          {
+            "text": "1,280 bytes.",
+            "feedback": "That doubles a factor already accounted for by keys/values or element size."
+          },
+          {
+            "text": "40 bytes.",
+            "feedback": "That ignores layers, key/value heads, head width and element size."
+          },
+          {
+            "text": "640 bytes.",
+            "feedback": "2×1×2×10×2×4×2=640 raw bytes. Allocator, metadata and other model allocations are excluded."
+          }
+        ],
+        "answer": 3,
+        "explanation": "2×1×2×10×2×4×2=640 raw bytes. Allocator, metadata and other model allocations are excluded.",
+        "skill": "Calculate cache memory"
+      }
+    ],
+    "R7": [
+      {
+        "id": "R7-a",
+        "prompt": "Why might quantized weights fail to reduce measured request latency?",
+        "options": [
+          {
+            "text": "The runtime may lack efficient kernels, or a different stage may dominate latency.",
+            "feedback": "Measure kernels, data movement, prompt/decode stages and actual workload. A smaller file alone is not a speed benchmark."
+          },
+          {
+            "text": "Fewer bits always guarantee proportionally faster requests.",
+            "feedback": "Storage size does not determine the entire runtime computation and queueing cost."
+          },
+          {
+            "text": "Quantization necessarily removes the attention mechanism.",
+            "feedback": "Quantization changes numerical representation, not automatically the architecture."
+          },
+          {
+            "text": "Output quality is irrelevant once memory is reduced.",
+            "feedback": "A deployment trade-off must still check quality on representative inputs."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Measure kernels, data movement, prompt/decode stages and actual workload. A smaller file alone is not a speed benchmark.",
+        "skill": "Evaluate compression trade-offs"
+      },
+      {
+        "id": "R7-b",
+        "prompt": "One million weights stored at 4 bits each, ignoring scale/zero-point metadata and packing overhead, occupy how many decimal bytes?",
+        "options": [
+          {
+            "text": "4,000,000 bytes.",
+            "feedback": "That treats four bits as four bytes."
+          },
+          {
+            "text": "500,000 bytes.",
+            "feedback": "1,000,000×4/8=500,000 raw bytes. Real quantized formats need additional metadata and may use different runtime storage."
+          },
+          {
+            "text": "1,000,000 bytes.",
+            "feedback": "That assumes eight bits per weight instead of four."
+          },
+          {
+            "text": "250,000 bytes.",
+            "feedback": "Two weights fit in a byte at four bits each, not four weights."
+          }
+        ],
+        "answer": 1,
+        "explanation": "1,000,000×4/8=500,000 raw bytes. Real quantized formats need additional metadata and may use different runtime storage.",
+        "skill": "Calculate quantized weight storage"
+      }
+    ],
+    "R8": [
+      {
+        "id": "R8-a",
+        "prompt": "A new system passes the offline evaluation set. What is still required before treating it as reliable in operation?",
+        "options": [
+          {
+            "text": "Nothing; offline success covers all future requests.",
+            "feedback": "A fixed test cannot enumerate every changed input, failure, attack or dependency."
+          },
+          {
+            "text": "Only a larger marketing benchmark number.",
+            "feedback": "A score does not replace operational safeguards and incident recovery."
+          },
+          {
+            "text": "A controlled rollout, monitoring, permission checks and a recovery/rollback plan.",
+            "feedback": "Operation introduces distribution changes and infrastructure/security failures. Reliability needs ongoing evidence and bounded rollout, not only one offline result."
+          },
+          {
+            "text": "Disable traces because the model is now trusted.",
+            "feedback": "Appropriately privacy-aware traces help diagnose failures; passing a test does not eliminate the need for evidence."
+          }
+        ],
+        "answer": 2,
+        "explanation": "Operation introduces distribution changes and infrastructure/security failures. Reliability needs ongoing evidence and bounded rollout, not only one offline result.",
+        "skill": "Connect evaluation and operation"
+      },
+      {
+        "id": "R8-b",
+        "prompt": "For an illustrative price of $2 per million input tokens and $4 per million output tokens, 1,000 input and 200 output tokens cost what, excluding every other cost?",
+        "options": [
+          {
+            "text": "$0.0008.",
+            "feedback": "That counts output tokens only and omits the input charge."
+          },
+          {
+            "text": "$2.80.",
+            "feedback": "The stated prices are per million tokens; the unit conversion is missing."
+          },
+          {
+            "text": "$0.0020.",
+            "feedback": "That counts input tokens only and omits output."
+          },
+          {
+            "text": "$0.0028.",
+            "feedback": "$2×1000/1,000,000 + $4×200/1,000,000 = $0.0028. These are invented teaching prices, not a current provider quote."
+          }
+        ],
+        "answer": 3,
+        "explanation": "$2×1000/1,000,000 + $4×200/1,000,000 = $0.0028. These are invented teaching prices, not a current provider quote.",
+        "skill": "Keep cost units explicit"
+      }
+    ],
+    "R9": [
+      {
+        "id": "R9-a",
+        "prompt": "An unfamiliar method reports a large gain. What is the most useful first research question?",
+        "options": [
+          {
+            "text": "What changed, what stayed fixed, and which comparison separates the proposed mechanism from alternatives?",
+            "feedback": "Classify the intervention and evidence before judging the story. Reproducibility, matched controls and claim boundaries remain necessary for novel methods."
+          },
+          {
+            "text": "Does its name contain a popular architecture term?",
+            "feedback": "A method name does not establish its mechanism or evidence quality."
+          },
+          {
+            "text": "Can the best reported score replace all controls?",
+            "feedback": "Controls are needed to interpret why a score changed."
+          },
+          {
+            "text": "Can the result be generalized to every NLP dataset?",
+            "feedback": "A bounded experiment does not establish a distribution-free conclusion."
+          }
+        ],
+        "answer": 0,
+        "explanation": "Classify the intervention and evidence before judging the story. Reproducibility, matched controls and claim boundaries remain necessary for novel methods.",
+        "skill": "Evaluate a research claim"
+      },
+      {
+        "id": "R9-b",
+        "prompt": "A steering intervention changes activations during inference while leaving stored model weights unchanged. What is the defensible description?",
+        "options": [
+          {
+            "text": "Ordinary gradient fine-tuning must have occurred.",
+            "feedback": "The scenario explicitly states that stored weights were not updated."
+          },
+          {
+            "text": "An inference-time activation intervention, not a completed weight fine-tuning step.",
+            "feedback": "Activation interventions can change behaviour without weight retraining. Test their targeted effect, specificity and robustness rather than inferring them from the intervention label."
+          },
+          {
+            "text": "The change is necessarily robust across every prompt.",
+            "feedback": "A local behaviour change does not establish robustness or preserved capabilities."
+          },
+          {
+            "text": "The intervention proves which circuit is causally responsible for every answer.",
+            "feedback": "A specific manipulation needs controls and outcomes; it does not prove an unrestricted mechanism claim."
+          }
+        ],
+        "answer": 1,
+        "explanation": "Activation interventions can change behaviour without weight retraining. Test their targeted effect, specificity and robustness rather than inferring them from the intervention label.",
+        "skill": "Locate an intervention in the lifecycle"
+      }
+    ]
+  }
+}

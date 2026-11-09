@@ -2,7 +2,7 @@
 
 Schema version 1. All files are UTF-8 JSON. The 30 lesson records now say **integrated_course** with website_integrated=true. Parameter, dataset and experiment records retain broader design contracts; they must not be mistaken for the executable runtime registry.
 
-The authoritative running choices are training_lab/model_lab.py and /api/models/catalog. Actual download receipts live under model_data/ and fitted evidence under model_runs/ in the project. Historical design rows do not replace observed byte hashes, split fingerprints or measurements. Implementation report.
+The authoritative executable choices are training_lab/model_lab.py and /api/models/catalog. Actual download receipts live under model_data/ and fitted evidence under model_runs/ in a local installation. Curriculum metadata does not replace observed byte hashes, split fingerprints or measurements.
 
 ## Files and invariants
 

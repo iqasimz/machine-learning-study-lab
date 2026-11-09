@@ -22,15 +22,15 @@ These supplement the original lesson drafts; a learner should not need to purcha
 
 [CS230 syllabus](https://cs230.stanford.edu/syllabus/) and [CS231n](https://cs231n.stanford.edu/): inspect the foundations → optimization → project strategy → architectures progression. Use the public [CS231n training notes](https://cs231n.github.io/neural-networks-3/) for gradient checks and failure diagnosis; do not imply access to restricted current lecture videos.
 
-[PyTorch basics](https://docs.pytorch.org/tutorials/beginner/basics/intro.html): trace data, Dataset/DataLoader, model, autograd, optimizer and saved state. Compare its actual loop with our stage-2 contract rather than paste it into the app without review.
+[PyTorch basics](https://docs.pytorch.org/tutorials/beginner/basics/intro.html): trace data, Dataset/DataLoader, model, autograd, optimizer and saved state. Compare the order of its training loop with the code shown in the local DL lab.
 
 ## Optional visual companions
 
-[TensorFlow Playground](https://playground.tensorflow.org/): try a nonlinear two-class pattern, compare no hidden layer with a small hidden representation, then change one setting. Predict the boundary/fit trade-off before running. This is an optional external learning tool, not our training backend or permission to restore animation to our website.
+[TensorFlow Playground](https://playground.tensorflow.org/): try a nonlinear two-class pattern, compare no hidden layer with a small hidden representation, then change one setting. Predict the boundary/fit trade-off before running. This is an optional external learning tool, not this lab's training backend.
 
 [CNN Explainer](https://poloclub.github.io/cnn-explainer/): candidate visual companion for convolution/activation/pooling. Its landing URL was reachable but not text-readable in this review; manually verify interaction/accessibility before assigning it as required work. No claim that its UI was tested here.
 
-[Receptive-field derivation](https://distill.pub/2019/computing-receptive-fields/): trace the single-path receptive-field example after DL05, then compare a residual branch. Our future site should show the necessary static snapshot and its explanation, not import an animated or externally hosted experience.
+[Receptive-field derivation](https://distill.pub/2019/computing-receptive-fields/): trace the single-path receptive-field example after DL05, then compare a residual branch. Calculate which input pixels can influence one output location before considering the whole network.
 
 ## Three connected stories
 

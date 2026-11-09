@@ -11,13 +11,13 @@ from training_lab import curriculum, guided_course as c
 class GuidedCourseTests(unittest.TestCase):
     def test_four_sections_have_one_common_foundation(self):
         index=c.catalog();paths={p["id"]:p for p in index["paths"]}
-        self.assertEqual(list(paths),["basics","ml","dl","nlp","llm"])
-        self.assertEqual({k:len(p["lessons"]) for k,p in paths.items()},{"basics":5,"ml":16,"dl":14,"nlp":26,"llm":18})
+        self.assertEqual(list(paths),["basics","python","ml","dl","nlp","llm"])
+        self.assertEqual({k:len(p["lessons"]) for k,p in paths.items()},{"basics":5,"python":95,"ml":16,"dl":14,"nlp":26,"llm":18})
         flat=[l["id"] for p in paths.values() for l in p["lessons"]]
         self.assertEqual(len(flat),len(set(flat)))
         self.assertEqual(set(flat),{r[0] for r in curriculum.LESSONS})
         self.assertEqual(index["shared_foundations"],["P2","P3","P4","P5","P8"])
-        self.assertEqual(len(index["units"]),79)
+        self.assertEqual(len(index["units"]),174)
 
     def test_guided_and_sidebar_use_the_same_canonical_reader(self):
         for identifier,*_ in curriculum.LESSONS:
@@ -38,7 +38,7 @@ class GuidedCourseTests(unittest.TestCase):
         ids=set();prompts=set();positions=[0]*4
         for identifier,rows in checks.items():
             expected_advanced = c._json("advanced_checks.json")["lessons"].get(identifier, [])
-            self.assertEqual(len(rows),2+len(expected_advanced))
+            self.assertEqual(len(rows),(1 if identifier in curriculum.python_course.metadata()["lessons"] else 2)+len(expected_advanced))
             for q in rows:
                 self.assertEqual(len(q["options"]),4)
                 self.assertEqual(len({o["text"] for o in q["options"]}),4)
@@ -52,7 +52,7 @@ class GuidedCourseTests(unittest.TestCase):
                 self.assertEqual(len({o["feedback"] for o in q["options"]}),4)
             deck=c.lesson(identifier)
             self.assertEqual([s["question"]["id"] for s in deck["steps"] if s["kind"]=="question"],[q["id"] for q in rows])
-        self.assertEqual(len(ids),183)
+        self.assertEqual(len(ids),278)
         self.assertTrue(all(.15*len(ids)<=p<=.35*len(ids) for p in positions))
 
     def test_partition_respects_code_and_math(self):

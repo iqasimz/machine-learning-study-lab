@@ -30,7 +30,9 @@ def validate(settings=None):
 
 
 def catalog():
+    from .source_code import language
     return {"defaults":DEFAULTS,"choices":CHOICES,"assets":status(),"prompts":PROMPTS,
+            "sources":language("lora"),
             "model_config":read_json(MODEL_DIR/"config.json") if (MODEL_DIR/"config.json").is_file() else None,
             "method":"LoRA: frozen pretrained weights, small trainable adapters on attention query/value projections.",
             "caveat":"Conversational data is synthetic and may be part of the base model's original training. This is an adaptation exercise, not a novel generalization benchmark."}

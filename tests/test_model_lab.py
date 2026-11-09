@@ -29,8 +29,8 @@ class ModelLabTests(unittest.TestCase):
 
     def test_catalog_and_strict_validation(self):
         catalog=lab.catalog()
-        self.assertEqual(len(catalog["methods"]),21)
-        self.assertEqual(len(catalog["datasets"]),8)
+        self.assertEqual(len(catalog["methods"]),37)
+        self.assertEqual(len(catalog["datasets"]),15)
         self.assertEqual(lab.validate(config(C=1))["controls"]["C"],1)
         invalid=[config(C=True),config(C=float("nan")),config(C=999),config(unknown=2),
                  config("mlp",area="ml"),config("cnn","wine",area="dl"),config("pca","iris","representation",components=10),
@@ -62,8 +62,8 @@ class ModelLabTests(unittest.TestCase):
 
     def test_real_neural_architectures_and_training(self):
         with tempfile.TemporaryDirectory() as tmp:
-            for model in ["linear_head","mlp","cnn","residual","autoencoder"]:
-                task="representation" if model=="autoencoder" else "classification"
+            for model in ["linear_head","mlp","cnn","residual","autoencoder","residual_mlp","lenet","conv_autoencoder"]:
+                task="representation" if model in {"autoencoder","conv_autoencoder"} else "classification"
                 with self.subTest(model=model):
                     settings=config(model,"digits",task,"dl",train_limit=500,epochs=1,batch_size=128)
                     lab.fit(model,settings,Path(tmp));run=lab.detail(model,Path(tmp))

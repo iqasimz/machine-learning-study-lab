@@ -4,6 +4,8 @@ import json
 from pathlib import Path
 import shutil
 import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from public_content import public_text
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -45,17 +47,25 @@ def export(destination):
         if file.is_file() and not file.is_symlink():
             target = destination / file.relative_to(web)
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(file, target)
+            if file.suffix in {".js", ".html", ".css"}:
+                target.write_text(public_text(file.relative_to(web), file.read_text()))
+            else:
+                shutil.copy2(file, target)
+    from training_lab import python_course
+    for filename in python_course.PLOTS:
+        target = destination / "course-assets/python" / filename
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(python_course.asset(filename), target)
     html = (destination / "index.html").read_text()
     html = html.replace('src="/', 'src="./').replace('href="/', 'href="./')
     html = html.replace('<script src="./vendor/', '<script src="./preview.js" defer></script><script src="./vendor/', 1)
-    html = html.replace('<body>', '<body><div class="preview-notice" role="note">Online course preview. Lessons, diagrams and quizzes work here. Install the repository locally to train models and save experiments.</div>', 1)
+    html = html.replace('<body>', '<body><div class="preview-notice" role="note">Explore the courses and training-lab settings online. Training runs only in the local installation. <span>Content is being updated to improve accuracy and make explanations more intuitive.</span></div>', 1)
     (destination / "index.html").write_text(html)
     (destination / "api-data.json").write_text(json.dumps(snapshots, ensure_ascii=False, allow_nan=False))
     shutil.copy2(ROOT / "scripts/preview.js", destination / "preview.js")
     (destination / ".nojekyll").touch()
     with (destination / "style.css").open("a") as stream:
-        stream.write("\n.preview-notice{position:relative;z-index:10;margin-left:270px;padding:10px 24px;background:#edf2f7;color:#22354a;font-size:14px;border-bottom:1px solid #d4dce5}@media(max-width:800px){.preview-notice{margin-left:0}}\n")
+        stream.write("\n.preview-notice{position:relative;z-index:10;margin-left:270px;padding:10px 24px;background:#edf2f7;color:#22354a;font-size:14px;border-bottom:1px solid #d4dce5}.preview-notice span{display:block;margin-top:4px}.local-only-note{padding:12px 16px;border-left:3px solid #627d98;background:#f1f5f9;color:#243b53}@media(max-width:800px){.preview-notice{margin-left:0}}\n")
     report = {"lessons": len(index["lessons"]), "questions": len(index["questions"]),
               "interactive_paths": len(courses["paths"]), "snapshot_endpoints": len(snapshots),
               "training_enabled": False, "user_runs_exported": 0}

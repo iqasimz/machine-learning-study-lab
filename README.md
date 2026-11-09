@@ -4,20 +4,18 @@ Study machine learning, deep learning, NLP and LLMs, then test the ideas in a lo
 
 The courses combine plain-language explanations, worked equations, selectable architecture diagrams, sources and practice questions. Browse the sidebar freely or follow Interactive mode. The two routes use the same lessons.
 
-Each lesson includes a connected explanation before its worked calculations. The readings draw on textbooks such as *Dive into Deep Learning*, *Think Stats*, *Speech and Language Processing*, and *An Introduction to Statistical Learning*, alongside original papers and official implementation documentation. References are linked within each lesson. The [teaching chapters](learning_materials/teaching/README.md) contain the text served by both course modes.
+Content is being updated to improve accuracy and make explanations more intuitive. Corrections are welcome.
 
 ## Choose how to use it
 
-- **Online course:** the `site/` folder is a GitHub Pages-ready preview. Courses, diagrams and quizzes work in your browser. It does not train models, detect your GPU, call an inference API or contain somebody else's saved results.
+- **Online course:** the `site/` folder is a GitHub Pages-ready preview. Courses, diagrams, quizzes and training-lab configuration work in your browser. Explore datasets, model options, experiment summaries and the matching code. Training buttons are disabled: running models, preparing data and saving experiments require the local installation. The website cannot detect your GPU or access local results.
 - **Full local lab:** install this repository to train classical ML models, neural networks and small language models. Runs and downloaded assets stay on your computer. Initial installation and optional downloads need internet.
 
 ## Install the full lab
 
-Use Python **3.11**. Clone the repository, then install it in a virtual environment:
+Use Python **3.11** (the tested version). Download/clone the complete repository first; this is a source-checkout app, not a standalone wheel/PyPI installation. Open a terminal in that directory:
 
 ```bash
-git clone https://github.com/iqasimz/machine-learning-study-lab.git
-cd machine-learning-study-lab
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -c constraints-tested.txt -e '.[language]'
@@ -55,14 +53,24 @@ KaTeX and its license are bundled so mathematical notation works without a CDN. 
 
 ## What is implemented?
 
-- 79 lessons: shared foundations, ML, DL, NLP, LLM training and post-training/systems.
-- 102 interview questions, plus guided-course practice checks.
+- Courses in shared foundations, Python and libraries, data structures and algorithms, ML, DL, NLP, LLM training and post-training/systems.
+- Concept-first interview preparation, including evaluation, coding and scientific writing, plus guided-course practice checks.
 - Classical classification/regression, clustering, PCA and anomaly experiments.
-- PyTorch linear/MLP/CNN/residual-CNN/image-autoencoder training.
+- PyTorch linear/MLP/CNN/residual-CNN/image-autoencoder, recurrent (RNN/LSTM/GRU and bidirectional), sequence-convolution, encoder and small vision-transformer training on compatible datasets.
 - Small from-scratch decoder experiments and pretrained LoRA adaptation.
 - Training progress, loss curves, checkpoints, errors and compatible-run comparisons.
 
 NLP architectures, RLHF, distributed training and many advanced methods are explained in the course but are **not all executable trainers**. The lab is an educational project, not an accredited course, production training platform or guarantee of mastery. Numerical lesson examples are not benchmark evidence.
+
+## Publish the course on GitHub Pages
+
+The supplied GitHub Actions workflow publishes `site/`; it never exposes the Python training server. Rebuild the preview after changing lessons or interface code:
+
+```bash
+python scripts/export_site.py --output site-next
+```
+
+Review that new folder, then replace the previous `site/` in your repository. The exporter refuses to overwrite a nonempty folder.
 
 ## Tests
 
@@ -74,10 +82,10 @@ node tests/test_chart_layout.cjs
 node tests/test_static_preview.cjs
 ```
 
-Node is needed for JavaScript development tests, not for using the local lab. Tests that need optional model downloads, datasets or a running HTTP server may skip on a fresh checkout. Automated interface tests use DOM stand-ins; they do not replace visual testing in a browser.
+Node is needed for JavaScript development tests, not for using the local lab. GPU/model-download-dependent and opt-in HTTP tests may skip on a fresh checkout. Tests do not establish that every model will run on every device.
 
 ## Safety and contributions
 
 Keep the server on loopback. Do not publicly tunnel it or expose it as a multi-user service: it has no user accounts or authentication. Do not load untrusted pickle/joblib artifacts. See [SECURITY.md](SECURITY.md) and [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Original project code and teaching material are offered under the MIT license; third-party components retain their own terms. Corrections and contributions are welcome.
+Original project code and authored teaching material are offered under the MIT license; third-party components retain their own terms. Authored explanations and examples were developed with AI assistance and checked through source review, numerical examples and automated tests. Corrections are welcome; tests are not a substitute for independent technical review.

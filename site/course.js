@@ -7,7 +7,7 @@ const CourseProgress=(()=>{
   const record=v=>v&&typeof v==="object"&&!Array.isArray(v);
   function load(storage){
     try{const raw=storage.getItem(KEY);if(!raw)return {data:fresh(),warning:""};if(raw.length>2_000_000)throw Error("oversized");const v=JSON.parse(raw);if(v.version!==1||![v.cursors,v.visited,v.responses].every(record))throw Error("invalid");
-      const data=fresh();for(const [k,r] of Object.entries(v.cursors))if(["basics","ml","dl","nlp","llm"].includes(k)&&record(r)&&typeof r.lesson==="string"&&typeof r.step==="string")data.cursors[k]={lesson:r.lesson,step:r.step};
+      const data=fresh();for(const [k,r] of Object.entries(v.cursors))if(["basics","python","ml","dl","nlp","llm"].includes(k)&&record(r)&&typeof r.lesson==="string"&&typeof r.step==="string")data.cursors[k]={lesson:r.lesson,step:r.step};
       for(const [k,r] of Object.entries(v.visited))if(/^[A-Z0-9]+:[a-z0-9-]+$/.test(k)&&record(r)&&/^[a-f0-9]{64}$/.test(r.fingerprint))data.visited[k]={fingerprint:r.fingerprint};
       for(const [k,r] of Object.entries(v.responses))if(/^[A-Z0-9]+:check-[ab]$/.test(k)&&record(r)&&/^[a-f0-9]{64}$/.test(r.fingerprint)&&["correct","incorrect","skipped"].includes(r.status)&&Number.isInteger(r.attempts)&&r.attempts>=0&&r.attempts<=100000&&[r.first,r.last].every(x=>x===null||Number.isInteger(x)&&x>=0&&x<4)&&(r.status==="skipped"||r.attempts>0&&r.first!==null&&r.last!==null))data.responses[k]={fingerprint:r.fingerprint,status:r.status,first:r.first,last:r.last,attempts:r.attempts,everWrong:!!r.everWrong,everSkipped:!!r.everSkipped};
       return {data,warning:""};
@@ -118,7 +118,7 @@ const GuidedCourse=(()=>{
     if(step.kind==="question")question(step);else{
       if(step.kind==="lesson")LabLearning.renderLecture(step.document,$("interactive-body"));
       else LabLearning.markdown(step.markdown,$("interactive-body"),deck.source);
-      if(step.kind==="lab"){const b=make("button","Open the relevant training lab","secondary");b.onclick=()=>navigate(step.lab.page);$("interactive-body").append(b);}
+      if(step.kind==="lab"){const b=make("button","Open the relevant training lab","secondary");b.onclick=()=>LabLearning.openLab(step.lab.page,step.lab.mode);$("interactive-body").append(b);}
 
     }
     const nextChapter=path.lessons[lessonIndex+1],hint=step.next_hint|| (nextChapter?"Next lesson: "+nextChapter.title:"Finish this path and review the remaining questions.");

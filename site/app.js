@@ -3,14 +3,19 @@ const $=id=>document.getElementById(id);
 const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
 const option=(value,label)=>{const n=make("option",label);n.value=value;return n;};
 const palette=["#315d9c","#b87530","#79649a","#3e7861"];
-const coursePages=["basics","ml","dl","language","nlp","training","post"],interviewPages=["interview","ml-interview","dl-interview","nlp-interview"];
-const pageContexts={home:"Overview",basics:"Shared foundations",ml:"Machine learning · Course",dl:"Deep learning · Course",language:"NLP · Foundations",nlp:"Natural language processing · Course",training:"LLMs · Training",post:"LLMs · Post-training",visuals:"LLMs · Diagrams",train:"LLMs · Local experiments",explore:"LLMs · Saved experiments",compare:"LLMs · Analysis",interview:"LLMs · Interviews"};
+const coursePages=["basics",...PythonStages,"ml","dl","language","nlp","training","post"],interviewPages=["interview","ml-interview","dl-interview","nlp-interview"];
+const pageContexts={home:"Overview",basics:"Shared foundations",ml:"Machine learning · Course",dl:"Deep learning · Course",language:"NLP · Foundations",nlp:"Natural language processing · Course",training:"LLMs · Training",post:"LLMs · Post-training",visuals:"LLMs · Diagrams",train:"LLMs · Local experiments",explore:"LLMs · Saved experiments",compare:"LLMs · Analysis",interview:"Interview preparation"};
 const titles={home:"Machine Learning Study Lab",basics:"Shared foundations",ml:"Machine learning",dl:"Deep learning",language:"Language foundations",nlp:"Natural language processing",training:"LLM training",post:"Post-training and systems",visuals:"Model diagrams",train:"Language-model training lab",explore:"Language-model results",compare:"Compare language-model runs",interview:"LLM interview questions"};
 titles["nlp-interview"]="NLP interview questions";pageContexts["nlp-interview"]="NLP · Interviews";
 titles.interactive="Interactive mode";pageContexts.interactive="Guided courses";
+titles.interview="Interview questions";
+for(const [i,name] of PythonStages.entries()){
+  titles[name]=["Python basics","Data and plotting","Machine learning code","Deep learning code","NLP code","LLM code and systems"][i];
+  pageContexts[name]="Python · "+titles[name];
+}
 for(const area of ["ml","dl"]){for(const [key,label] of Object.entries({lab:"Training lab",results:"Saved results",compare:"Compare models",interview:"Interview questions"})){titles[area+"-"+key]=label;pageContexts[area+"-"+key]=(area==="ml"?"Machine learning":"Deep learning")+" · "+label;}}
 let page="home",engine="lora",tab="results",registry,adaptation,runList=[],selectedRun=null,monitorRun=null,run=null,monitor=null,job={running:false},comparisonSerial=0;
-let plan=null,previewSerial=0,refreshing=false,comparison=null,lastTrace=null,exampleScene=null,architectureScene=null,targetScene=null;
+let plan=null,previewSerial=0,refreshing=false,comparison=null,lastTrace=null,exampleScene=null,targetScene=null;
 let localHardware=null;
 const selectedComparisons=new Set();
 const pretty=value=>typeof value==="boolean"?value?"On":"Off":String(value);
@@ -28,18 +33,18 @@ function show(name,fromReader=false){
   document.querySelectorAll("[data-page]").forEach(n=>{const active=n.dataset.page===name;n.classList.toggle("active",active);if(active&&!["basics","training","post","interview"].includes(name))n.setAttribute("aria-current","page");else n.removeAttribute("aria-current");});
   LabLearning.setPage(name,fromReader);
   $("page-title").textContent=titles[name]||"Course reference";$("page-context").textContent=pageContexts[name]||"Reference";document.title=name==="home"?"Machine Learning Study Lab":(titles[name]||"Reference")+" · Machine Learning Study Lab";
-  const area=["nlp","language","nlp-interview"].includes(name)?"nlp":["ml","dl"].includes(name)?name:/^(ml|dl)-/.test(name)?name.split("-")[0]:["training","post","visuals","train","explore","compare","interview"].includes(name)?"llm":null;
+  const area=PythonStages.includes(name)?"python":["nlp","language"].includes(name)?"nlp":["ml","dl"].includes(name)?name:/^(ml|dl)-(lab|results|compare)$/.test(name)?name.split("-")[0]:["training","post","visuals","train","explore","compare"].includes(name)?"llm":null;
+  if(interviewPages.includes(name))document.querySelectorAll("[data-subject]").forEach(n=>{$("subject-"+n.dataset.subject).hidden=true;n.setAttribute("aria-expanded","false");});
   if(area){$("subject-"+area).hidden=false;document.querySelectorAll("[data-subject]").forEach(n=>{if(n.dataset.subject===area)n.setAttribute("aria-expanded","true");});}
   if(coursePages.includes(name)&&!fromReader)LabLearning.showStage(name);
   if(interviewPages.includes(name)&&!fromReader)LabLearning.showInterview(name==="interview"?"llm":name.split("-")[0]);
   ModelLab.hide();if(modelPage)ModelLab.show(name.split("-")[0],name.split("-")[1]);
   GuidedCourse.hide();if(name==="interactive")GuidedCourse.show();
   if(name==="visuals")mountExample();
-  if(name==="train"){renderLive();mountTrainingStructure();}
+  if(name==="train"){renderLive();renderTrainingReview();}
   if(name==="explore"){renderRun();showTab(tab);}
   if(name==="compare"){renderCompareChoices();drawComparison();}
   if(["train","explore","compare"].includes(name))refresh();
-  if(name!=="train"){architectureScene?.destroy();architectureScene=null;}
 }
 function showTab(name){tab=name;document.querySelectorAll(".run-tab").forEach(n=>n.hidden=n.id!=="tab-"+name);document.querySelectorAll("[data-tab]").forEach(n=>{n.classList.toggle("active",n.dataset.tab===name);n.setAttribute("aria-pressed",String(n.dataset.tab===name));});if(page==="explore"){drawRun();if(name==="tokens"){targetScene?.destroy();targetScene=LabVisuals.mount($("targets-visual"),"targets");}else{targetScene?.destroy();targetScene=null;}}}
 function mountExample(){
@@ -54,20 +59,21 @@ const trainingGuideNames={first:"Training duration: a first experiment",rate:"Co
 adaptationHelp.device[1]="Auto checks NVIDIA CUDA, Apple Metal, then CPU. The installed PyTorch build determines GPU support. No cloud worker is started.";
 function buildControls(host,prefix,parameters,values,onchange,locked){
   host.replaceChildren();
+  const advanced=prefix==="scratch"?$("scratch-advanced-controls"):null;if(advanced)advanced.replaceChildren();
+  const common=new Set(["steps","learning_rate","batch_size","accumulation","block_size","width","layers","heads","optimizer","device",locked]);
   for(const [key,p] of Object.entries(parameters)){
     const block=make("div",undefined,"setting"),help=prefix==="adapt"?adaptationHelp[key]:[p.label,p.explanation];
-    const label=make("label",help[0]),select=make("select");select.id=prefix+"-"+key;
+    const select=make("select"),choiceHost=make("div");select.id=prefix+"-"+key;
     select.append(...p.choices.map(v=>option(JSON.stringify(v),pretty(v))));select.value=JSON.stringify(values[key]);select.disabled=key===locked;
-    if(key==="device"&&localHardware)for(const o of select.options){const d=JSON.parse(o.value);if(["cuda","mps"].includes(d))o.disabled=!localHardware[d]||Boolean(localHardware.probe_errors?.[d]);}
-    const description=make("p",help[1],"field-help");description.id=prefix+"-"+key+"-help";
-    label.setAttribute("for",select.id);select.setAttribute("aria-describedby",description.id);
-    select.onchange=onchange;block.append(label,description,select);
+    if(key==="device"&&localHardware&&!window.LAB_STATIC_PREVIEW)for(const o of select.options){const d=JSON.parse(o.value);if(["cuda","mps"].includes(d))o.disabled=!localHardware[d]||Boolean(localHardware.probe_errors?.[d]);}
+    select.onchange=()=>{onchange?.();if(prefix==="adapt")renderTrainingReview();};block.append(select,choiceHost);
+    LabSetup.choices(select,choiceHost,help[0],help[1]+(key===locked?" This value is controlled by the selected experiment variation.":""));
     if(prefix==="scratch"){
-      const details=make("details");details.append(make("summary","Effects, interactions and code"));
+      const details=make("details");details.append(make("summary","Why this setting matters"));
       const effects=make("ul");[...p.effects,...p.interactions].forEach(t=>effects.append(make("li",t)));details.append(effects,make("pre",p.equation));
-      const code=make("details");code.append(make("summary","Actual implementation"),make("pre",p.source.code));details.append(code);block.append(details);
+      block.append(details);
     }
-    host.append(block);
+    (advanced&&!common.has(key)?advanced:host).append(block);
   }
 }
 function settings(prefix){const defs=prefix==="adapt"?adaptation.choices:registry.parameters;return Object.fromEntries(Object.keys(defs).map(k=>[k,JSON.parse($(prefix+"-"+k).value)]));}
@@ -76,13 +82,40 @@ function loadGuide(){
   $("guide-question").textContent=guide.question;
   $("variation").replaceChildren(...guide.variations.map((v,i)=>option(String(i),v.label)),option("all","Compare all variations, one after another"));
   $("variation").value="1";
-  buildControls($("scratch-controls"),"scratch",registry.parameters,{...registry.defaults,...guide.overrides},()=>{architectureScene?.updateSettings(settings("scratch"));preview();},guide.parameter);
+  LabSetup.choices($("variation"),$("variation-choices"),"Which variation?","Choose one run, or compare all the listed variations in serial runs.");
+  buildControls($("scratch-controls"),"scratch",registry.parameters,{...registry.defaults,...guide.overrides},preview,guide.parameter);
   preview();
 }
 function guidedPayload(){const value=$("variation").value;return {guide:$("guide").value,variation:value==="all"?"all":Number(value),overrides:settings("scratch"),prediction:""};}
-async function preview(){const serial=++previewSerial;plan=null;try{const result=await api("/api/preview",guidedPayload());if(serial!==previewSerial)return;plan=result;$("plan").replaceChildren(...result.runs.map(r=>{const item=make("div",undefined,"plan-item");item.append(make("strong",r.label),make("span",` · ${r.settings.steps} updates · ${r.estimate.effective_windows_per_update} text windows per update`));return item;}));if(engine==="scratch")architectureScene?.updateSettings(result.runs[0].settings);buttons();}catch(e){error("plan",e.message);}}
-function mountTrainingStructure(){architectureScene?.destroy();architectureScene=engine==="scratch"?LabVisuals.mount($("architecture-preview"),"architecture",{settings:plan?.runs[0].settings||settings("scratch")}):LabVisuals.mount($("language-structure"),"lora",{settings:{model_config:adaptation?.model_config,...settings("adapt")}});}
-function setEngine(value){engine=value;$("language-setup").hidden=value!=="lora";$("scratch-setup").hidden=value!=="scratch";document.querySelectorAll("[data-engine]").forEach(n=>n.classList.toggle("active",n.dataset.engine===value));$("run-training").textContent=value==="lora"?"Train the adapter":"Run this experiment";mountTrainingStructure();buttons();}
+async function preview(){
+  const serial=++previewSerial;plan=null;
+  const guide=registry.guides.find(g=>g.id===$("guide").value),variation=$("variation").value,controlled=$("scratch-"+guide.parameter);
+  if(controlled&&variation!=="all"){controlled.value=JSON.stringify(guide.variations[Number(variation)].value);LabSetup.sync(controlled);}
+  renderTrainingReview();buttons();
+  try{const result=await api("/api/preview",guidedPayload());if(serial!==previewSerial)return;plan=result;$("plan").replaceChildren(...result.runs.map(r=>{const item=make("div",undefined,"plan-item");item.append(make("strong",r.label),make("span",` · ${r.settings.steps} updates · ${r.estimate.effective_windows_per_update} text windows per update`));return item;}));renderTrainingReview();buttons();}catch(e){if(serial===previewSerial){error("plan",e.message);buttons();}}
+}
+function renderTrainingReview(){
+  if(!adaptation||!registry||!$("adapt-steps")||!$("scratch-steps"))return;
+  let paragraphs,entry,sources;
+  if(engine==="lora"){
+    const s=settings("adapt");
+    paragraphs=[["Problem and data",`Adapt SmolLM2-360M-Instruct to short conversation responses using up to ${s.examples} retained training exchanges. Prompt tokens provide context; only assistant-response tokens contribute to the loss.`],
+      ["What changes",`Keep the original model weights frozen and train rank-${s.rank} adapters on query/value projections. Run ${s.steps} updates at learning rate ${s.learning_rate}, accumulating ${s.accumulation} single-example batches per update, with at most ${s.block_size} tokens per example.`],
+      ["How to judge it","Compare held-out response-token loss and before/after answers against the unchanged model. Development selects the checkpoint. Synthetic conversations may have appeared in original pretraining, so this local holdout is not a new generalisation benchmark."]];
+    entry="from training_lab.adaptation import train\n\nsettings = "+LabSetup.python(s)+"\n\n# Requires the prepared local model/data and an unused run name.\ntrain(\"my-adapter-experiment\", settings=settings)";
+    sources=adaptation.sources;
+  }else{
+    const s=settings("scratch"),g=registry.guides.find(x=>x.id===$("guide").value),v=$("variation").value;
+    const runs=plan?.runs||[];
+    paragraphs=[["Problem and data","Train a causal decoder from random weights to predict the next token in the authored local text corpus (data/corpus.jsonl). Training, development and test documents are separate; the tokenizer is fitted on training text only."],
+      ["What is being tested",g.question+" "+(v==="all"?`Run ${g.variations.length} variations one after another, changing ${registry.parameters[g.parameter].label.toLowerCase()}.`:`Run the selected variation: ${g.variations[Number(v)].label}. One run alone does not establish a comparative effect.`)],
+      ["Training and evaluation",`${s.width}-wide decoder, ${s.layers} layers and ${s.heads} attention heads; ${s.batch_size} windows per microbatch and ${s.accumulation} microbatches per update. ${runs.length?runs.map(r=>r.settings.steps+" updates").join(" / "):s.steps+" requested updates"}. Check held-out token loss, perplexity, baseline and generated examples. This small corpus teaches the training process, not broad language competence.`]];
+    entry="from training_lab.experiments import make_plan\nfrom training_lab.studies import create_study, execute_study\n\nsettings = "+LabSetup.python(s)+"\n\nplan = make_plan("+JSON.stringify(g.id)+", variation="+LabSetup.python(v==="all"?"all":Number(v))+", overrides=settings)\nstudy = create_study(plan)\nexecute_study(study[\"id\"])";
+    sources=registry.sources;
+  }
+  LabSetup.review($("language-experiment-review"),{paragraphs,entry,sources:sources?Object.values(sources):[]});
+}
+function setEngine(value){engine=value;$("language-setup").hidden=value!=="lora";$("scratch-setup").hidden=value!=="scratch";document.querySelectorAll("[data-engine]").forEach(n=>{n.classList.toggle("active",n.dataset.engine===value);n.setAttribute("aria-pressed",String(n.dataset.engine===value));});$("run-training").textContent=value==="lora"?"Train the adapter":"Run this experiment";renderTrainingReview();buttons();}
 async function launch(){
   try{
     $("run-training").disabled=true;error("train-message","Starting local training…");
@@ -92,7 +125,8 @@ async function launch(){
   }catch(e){error("train-message",e.message);}finally{buttons();}
 }
 function buttons(){
-  $("run-training").disabled=!!job.running||(engine==="lora"?!adaptation?.assets.ready:!plan);
+  $("run-training").disabled=!!window.LAB_STATIC_PREVIEW||!!job.running||(engine==="lora"?!adaptation?.assets.ready:!plan);
+  if(window.LAB_STATIC_PREVIEW){$("run-training").textContent="Training — local installation only";$("run-training").title="Explore settings and code here; install locally to train.";}
   $("cancel").disabled=!job.running;
   const complete=run?.manifest.status==="MEASURED";
   $("generate").disabled=job.running||!complete;$("inspect").disabled=job.running||!complete;$("inspect-update").disabled=job.running||!complete||run?.manifest.engine==="lora"||run?.manifest.model.parameters>5000000;
@@ -198,9 +232,9 @@ async function bootstrap(){
   try{
     [registry,adaptation,localHardware]=await Promise.all([api("/api/catalog"),api("/api/adaptation"),api("/api/hardware")]);
     for(const id of ["training-hardware","model-hardware"]){const host=$(id);if(host){host.textContent=localHardware.summary+" "+localHardware.note;}}
-    $("asset-state").textContent=adaptation.assets.ready?"Prepared locally · 361.8M model parameters · Apache-2.0 model and conversation dataset. No API key needed.":"Model files are not prepared. In the project folder run: python lab.py prepare --model";
-    const params=Object.fromEntries(Object.entries(adaptation.choices).map(([k,v])=>[k,{choices:v}]));buildControls($("adapt-controls"),"adapt",params,adaptation.defaults,()=>{if(engine==="lora")architectureScene?.updateSettings({model_config:adaptation.model_config,...settings("adapt")});});
-    $("guide").replaceChildren(...registry.guides.map(g=>option(g.id,trainingGuideNames[g.id]||g.title)));loadGuide();buildGenerationControls();
+    $("asset-state").textContent=window.LAB_STATIC_PREVIEW?"The online version does not download model weights. Prepare the model and data after installing the repository locally.":adaptation.assets.ready?"Prepared locally · 361.8M model parameters · Apache-2.0 model and conversation dataset. No API key needed.":"Model files are not prepared. In the project folder run: python lab.py prepare --model";
+    const params=Object.fromEntries(Object.entries(adaptation.choices).map(([k,v])=>[k,{choices:v}]));buildControls($("adapt-controls"),"adapt",params,adaptation.defaults);
+    $("guide").replaceChildren(...registry.guides.map(g=>option(g.id,trainingGuideNames[g.id]||g.title)));LabSetup.choices($("guide"),$("guide-choices"),"Choose an experiment");loadGuide();buildGenerationControls();
     $("visual-select").replaceChildren(...LabVisuals.catalog.map(v=>option(v.id,v.title)));
     await Promise.all([LabLearning.init(show),ModelLab.init(),GuidedCourse.init(show)]);show("home");await refresh();
   }catch(e){$("home").append(make("p",e.message,"error"));}
@@ -223,4 +257,4 @@ $("resume").onclick=async()=>{try{const result=await api("/api/resume",{run:sele
 $("export").onclick=async()=>{try{const r=await api("/api/export",{run:selectedRun});$("export-result").textContent=`${r.status}: ${r.directory}`;}catch(e){$("export-result").textContent=e.message;}};
 $("compare-run").onclick=compare;$("comparison-metric").onchange=drawComparison;$("comparison-axis").onchange=drawComparison;
 window.addEventListener("resize",()=>{if(page==="train")renderLive();drawRun();drawComparison();});
-bootstrap();setInterval(()=>{if(!document.hidden&&(page==="train"||page==="explore"&&job.running))refresh();},1500);
+const labReady=bootstrap();setInterval(()=>{if(!document.hidden&&(page==="train"||page==="explore"&&job.running))refresh();},1500);

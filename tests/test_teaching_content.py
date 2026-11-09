@@ -2,6 +2,7 @@
 import copy
 import math
 from pathlib import Path
+import re
 import sys
 import unittest
 
@@ -13,7 +14,7 @@ from training_lab.teaching import explanations
 class TeachingContentTests(unittest.TestCase):
     def test_all_active_lessons_have_visible_source_backed_explanations(self):
         authored = explanations()
-        active = {row[0] for row in curriculum.LESSONS}
+        active = set(curriculum.READER_PROFILES)
         self.assertEqual(set(authored), active)
         for identifier, chapter in authored.items():
             with self.subTest(lesson=identifier):
@@ -21,7 +22,7 @@ class TeachingContentTests(unittest.TestCase):
                 self.assertGreater(len(chapter["markdown"].split()), 150)
                 self.assertGreaterEqual(len(chapter["sources"]), 2)
                 self.assertTrue(all(url.startswith("https://") for _, url in chapter["sources"]))
-                for phrase in ("your thesis", "the served step", "the lesson should"):
+                for phrase in ("your thesis", "qasim", "the served step", "the lesson should", "grok"):
                     self.assertNotIn(phrase, chapter["markdown"].casefold())
                 doc = curriculum.document(identifier)
                 self.assertEqual(doc["reader"]["reading"]["lesson_markdown"], chapter["markdown"])
@@ -58,7 +59,7 @@ class TeachingContentTests(unittest.TestCase):
         self.assertAlmostEqual(.7 * math.tanh(.62), .38578960990909084, places=3)
         self.assertAlmostEqual((2 + 9) / 4, 2.75)
 
-    def test_reviewed_examples_remain_consistent(self):
+    def test_known_draft_errors_do_not_reach_the_new_main_text(self):
         texts = explanations()
         self.assertIn("8/9", texts["ML07"]["markdown"])
         self.assertIn("negative ELBO", texts["DL10"]["markdown"])

@@ -12,6 +12,7 @@ from . import curriculum
 CONTENT = curriculum.MATERIALS / "interactive_mode"
 PATHS = {
     "basics": {"title": "Shared foundations", "description": "Review shapes, gradients, uncertainty, experimental boundaries and metrics once. Skip familiar entries; subjects do not repeat this section.", "stages": ["basics"]},
+    "python": {"title": "Python", "description": "Read explained code and checked outputs, from basic programs to ML, neural models, NLP and LLM systems. Training stays in the existing local labs.", "stages": [s["id"] for s in curriculum.python_course.metadata()["sections"]]},
     "ml": {"title": "Machine learning", "description": "From a prediction question to classical models, uncertainty and a complete experiment.", "stages": ["ml"]},
     "dl": {"title": "Deep learning", "description": "Follow gradients through neural architectures, representations and training systems.", "stages": ["dl"]},
     "nlp": {"title":"Natural language processing", "description":"From linguistic units and lexical features to recurrent models, structured prediction, sentence encoders and grounded NLP evaluation.", "stages":["language","nlp"]},
@@ -33,6 +34,7 @@ def checks():
         if result.keys() & rows.keys():
             raise ValueError("Duplicate assessment lesson.")
         result.update(rows)
+    result.update(curriculum.python_course.checks())
     def q(key, prompt, options, answer, explanation):
         return {"id":key,"prompt":prompt,"answer":answer,"explanation":explanation,"skill":"Inspect metric denominators",
                 "options":[{"text":text,"feedback":feedback} for text,feedback in options]}
@@ -100,6 +102,10 @@ def lesson(identifier):
     doc = curriculum.document(identifier)
     questions = checks()[identifier]
     bridge = _json("lesson_bridges.json")["lessons"].get(identifier, {})
+    handoff = doc["reader"].get("lab_handoff")
+    if handoff:
+        bridge = {"lab": {"page": handoff["train"], "mode": handoff.get("mode"),
+                           "challenge": "Open the existing setup to explore the supported workflow. " + handoff["scope"] + ". Nothing starts until you deliberately train in the local installation."}}
     steps = []
     def add(kind, title, markdown="", **extra):
         key = extra.pop("key")
@@ -131,6 +137,6 @@ def catalog():
     for identifier, spec in PATHS.items():
         rows = [row for row in curriculum.LESSONS if row[1] in spec["stages"]]
         paths.append({"id": identifier, "title": spec["title"], "description": spec["description"],
-                      "lessons": [{"id": row[0], "title": row[3], "stage": row[1]} for row in rows]})
+                      "lessons": [{"id": row[0], "title": units[row[0]]["title"], "stage": row[1]} for row in rows]})
     return {"schema_version": 2, "paths": paths, "units":units, "shared_foundations": ["P2", "P3", "P4", "P5", "P8"],
             "progress_note": "Reading and answer history are saved only in this browser at this address. They are not evidence of independent mastery. Reading never starts training."}

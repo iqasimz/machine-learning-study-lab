@@ -19,7 +19,7 @@ for(const file of ['architecture_math','architecture_lessons','explorer_lessons'
  assert.doesNotMatch(source,/fetch\(|setInterval|setTimeout|requestAnimationFrame|innerHTML|WebGL/);vm.runInContext(source,c);
 }
 const ids=vm.runInContext('ConceptLessons.ids()',c);assert.equal(ids.length,77);
-const materials=path.resolve(__dirname,'../learning_materials');
+const materials=fs.existsSync(path.resolve(__dirname,'../learning_materials'))?path.resolve(__dirname,'../learning_materials'):path.resolve(__dirname,'../../../learning_materials');
 const profiles=JSON.parse(fs.readFileSync(path.join(materials,'reader_profiles.json'),'utf8')).lessons;
 const build=(id,options={})=>vm.runInContext('ConceptLessons.build('+JSON.stringify(id)+','+JSON.stringify(options)+')',c);
 const outputAt=process.argv.indexOf('--export'),output=outputAt>=0?path.resolve(process.argv[outputAt+1]):null;

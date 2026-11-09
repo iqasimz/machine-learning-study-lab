@@ -93,7 +93,8 @@ class Jobs:
             return self.launch(name,["model-fit","--name",name,"--settings",json.dumps(settings)],"model")
 
     def prepare_dataset(self,dataset):
-        if not isinstance(dataset,str) or dataset not in {"wine_quality","fashion_mnist"}:raise ValueError("Unknown downloadable dataset.")
+        from .model_data import DOWNLOADS
+        if not isinstance(dataset,str) or dataset not in DOWNLOADS:raise ValueError("Unknown downloadable dataset.")
         with self.lock:
             if self.state()["running"]:raise ValueError("Wait for the active local worker before preparing data.")
             name="prepare-"+dataset+"-"+uuid.uuid4().hex[:5]
@@ -194,6 +195,13 @@ def make_handler(jobs, port):
                 return self.reply(403, {"error": "Loopback host only."})
             path = urlsplit(self.path).path
             try:
+                if path.startswith("/course-assets/python/"):
+                    from .python_course import asset
+                    try:
+                        file = asset(path.removeprefix("/course-assets/python/"))
+                    except ValueError:
+                        return self.reply(404, {"error": "Course image not found."})
+                    return self.reply(200, file.read_bytes(), "image/png")
                 if path.startswith("/vendor/katex/"):
                     relative=path.removeprefix("/vendor/katex/")
                     from .assets import VENDOR
@@ -202,7 +210,7 @@ def make_handler(jobs, port):
                     kinds={".js":"text/javascript",".css":"text/css",".woff2":"font/woff2",".woff":"font/woff",".ttf":"font/ttf"}
                     if file.suffix not in kinds:return self.reply(404,{"error":"Asset not served."})
                     return self.reply(200,file.read_bytes(),kinds[file.suffix])
-                if path in {"/", "/app.js", "/readouts.js", "/learning.js", "/visuals.js", "/ml_visuals.js", "/architecture_math.js", "/architecture_lessons.js", "/explorer_lessons.js", "/explorer_ml.js", "/explorer_dl.js", "/explorer_llm.js", "/explorer_figures.js", "/nlp_math.js", "/explorer_nlp.js", "/nlp_figures.js", "/metrics.js", "/architecture_explorer.js", "/models.js", "/course.js", "/style.css"}:
+                if path in {"/", "/app.js", "/lab_setup.js", "/readouts.js", "/learning.js", "/dsa_scenes.js", "/visuals.js", "/ml_visuals.js", "/architecture_math.js", "/architecture_lessons.js", "/explorer_lessons.js", "/explorer_ml.js", "/explorer_dl.js", "/explorer_llm.js", "/explorer_figures.js", "/nlp_math.js", "/explorer_nlp.js", "/nlp_figures.js", "/metrics.js", "/architecture_explorer.js", "/models.js", "/course.js", "/style.css"}:
                     file, kind = {"/": ("index.html", "text/html"), "/app.js": ("app.js", "text/javascript"),
                                   "/learning.js": ("learning.js", "text/javascript"),
                                   "/readouts.js": ("readouts.js", "text/javascript"),
@@ -211,6 +219,7 @@ def make_handler(jobs, port):
                                   "/architecture_math.js": ("architecture_math.js", "text/javascript"),
                                   "/architecture_lessons.js": ("architecture_lessons.js", "text/javascript"),
                                   "/architecture_explorer.js": ("architecture_explorer.js", "text/javascript"),
+                                  "/dsa_scenes.js": ("dsa_scenes.js", "text/javascript"),
                                   "/explorer_lessons.js": ("explorer_lessons.js", "text/javascript"),
                                   "/explorer_ml.js": ("explorer_ml.js", "text/javascript"),
                                   "/explorer_dl.js": ("explorer_dl.js", "text/javascript"),
@@ -221,6 +230,7 @@ def make_handler(jobs, port):
                                   "/explorer_nlp.js": ("explorer_nlp.js", "text/javascript"),
                                   "/nlp_figures.js": ("nlp_figures.js", "text/javascript"),
                                   "/models.js": ("models.js", "text/javascript"),
+                                  "/lab_setup.js": ("lab_setup.js", "text/javascript"),
                                   "/course.js": ("course.js", "text/javascript"),
                                   "/style.css": ("style.css", "text/css")}[path]
                     return self.reply(200, (WEB / file).read_bytes(), kind)

@@ -1,0 +1,1716 @@
+{
+  "schema": 1,
+  "format": "Each row: lesson ID, question, correct option, correct feedback, then three [wrong option, specific feedback] pairs. Display positions rotate; source order is not an answer hint.",
+  "rows": [
+    [
+      "PY01",
+      "A script stores total = morning + evening, then changes morning. What happens to the stored total?",
+      "It stays unchanged until recalculated.",
+      "Assignment stored the result of that addition; it did not create a spreadsheet formula.",
+      [
+        "It recalculates automatically.",
+        "Ordinary assignment does not subscribe to later changes in its inputs."
+      ],
+      [
+        "It becomes the new morning value.",
+        "Changing one name does not rebind the separate total name."
+      ],
+      [
+        "Python raises an error immediately.",
+        "Reassigning morning is legal and does not itself invalidate a previously calculated number."
+      ]
+    ],
+    [
+      "PY02",
+      "Why can 0.1 + 0.2 == 0.3 be false while math.isclose accepts the comparison?",
+      "Binary floating-point rounding can create a tiny difference.",
+      "A tolerance-based comparison addresses small numerical representation differences.",
+      [
+        "Floats are strings.",
+        "Floats are numerical values; the issue is their finite binary representation."
+      ],
+      [
+        "isclose converts every float to an integer.",
+        "isclose compares differences under tolerances rather than discarding fractional parts."
+      ],
+      [
+        "Printing three decimals repairs the stored number.",
+        "Display formatting does not repair or change the underlying calculation."
+      ]
+    ],
+    [
+      "PY03",
+      "For scores [0.2, 0.8, 0.5], changing >= 0.5 to > 0.5 changes the positive count to what?",
+      "1",
+      "Only 0.8 remains strictly greater than the threshold.",
+      [
+        "2",
+        "That count still includes the boundary score 0.5, which the new rule excludes."
+      ],
+      [
+        "3",
+        "The score 0.2 satisfies neither threshold rule."
+      ],
+      [
+        "0",
+        "The score 0.8 remains above the threshold."
+      ]
+    ],
+    [
+      "PY04",
+      "You repeatedly check whether an ID is among many unique allowed IDs. Which container normally expresses that job best?",
+      "A set",
+      "A set represents membership without duplicate counts and normally offers efficient hash lookup.",
+      [
+        "A queue that you empty on each query",
+        "Destructive queue traversal changes the collection and is not a membership interface."
+      ],
+      [
+        "A single string of concatenated IDs",
+        "Substring matching can confuse partial IDs and loses explicit item boundaries."
+      ],
+      [
+        "A list sorted again for every query",
+        "Repeated sorting adds unnecessary work and does not express the membership requirement directly."
+      ]
+    ],
+    [
+      "PY05",
+      "A nested list is copied with outer.copy(). Does changing an inner list through the copy affect the original?",
+      "Yes, when that inner list is still shared.",
+      "A shallow copy creates a new outer list but retains references to nested objects.",
+      [
+        "Never: every copy recursively duplicates everything.",
+        "That describes a deep copy, not ordinary list.copy."
+      ],
+      [
+        "Only if the variable names are equal.",
+        "Sharing depends on object references, not how names are spelled."
+      ],
+      [
+        "Only immutable objects can change through aliases.",
+        "Mutation applies to mutable objects; immutable objects are not changed in place this way."
+      ]
+    ],
+    [
+      "PY06",
+      "Why use labels=None and create [] inside a function rather than use labels=[] as a default?",
+      "To create a fresh list when no list is supplied.",
+      "Mutable defaults are created when a function is defined and can be unintentionally shared across calls.",
+      [
+        "Because None automatically becomes a list.",
+        "The function must explicitly construct the fresh list; None does not convert itself."
+      ],
+      [
+        "Because lists cannot be function arguments.",
+        "Lists can be arguments; the problem is unintended reuse of a default object."
+      ],
+      [
+        "Because return makes a deep copy.",
+        "Returning an object does not automatically copy it."
+      ]
+    ],
+    [
+      "PY07",
+      "A generator has been fully consumed with list(generator). What does a second list(generator) normally contain?",
+      "An empty list",
+      "An exhausted iterator does not automatically restart; create a new one if the source can be reread.",
+      [
+        "The same values again",
+        "A generator retains iteration state rather than behaving like a reusable list."
+      ],
+      [
+        "The original function's source code",
+        "Iteration yields values, not the generator function's source."
+      ],
+      [
+        "All values twice",
+        "Consuming an iterator does not duplicate its items."
+      ]
+    ],
+    [
+      "PY08",
+      "Why can a character offset differ from a UTF-8 byte offset in the same text?",
+      "A Unicode character can occupy several encoded bytes.",
+      "Text indices, encoded bytes and model tokens use different units.",
+      [
+        "A path changes the letters in a file.",
+        "Paths identify locations; encoding determines how text becomes bytes."
+      ],
+      [
+        "All UTF-8 characters always take four bytes.",
+        "UTF-8 has variable-width encodings, not a fixed four-byte width."
+      ],
+      [
+        "JSON guarantees one byte per character.",
+        "JSON serialization does not make arbitrary Unicode text single-byte."
+      ]
+    ],
+    [
+      "PY09",
+      "Why is catching every Exception and continuing dangerous in a data-processing function?",
+      "It can hide bugs and failures the function cannot safely repair.",
+      "Catch failures you understand and preserve useful error context instead of silently accepting bad state.",
+      [
+        "Exceptions always mean a syntax error.",
+        "Many exceptions arise while executing syntactically valid code."
+      ],
+      [
+        "A caught exception proves the input is valid.",
+        "Catching a failure does not validate the rejected input or produce a correct result."
+      ],
+      [
+        "It automatically makes processing faster.",
+        "Suppressing errors is not a performance or correctness guarantee."
+      ]
+    ],
+    [
+      "PY10",
+      "Which command helps ensure pip installs into the environment of a specific selected Python interpreter?",
+      "Use that interpreter with -m pip.",
+      "The module invocation ties pip to the chosen interpreter rather than an unrelated executable on PATH.",
+      [
+        "Put pip install inside a normal Python expression.",
+        "pip installation commands belong in the shell, not ordinary Python syntax."
+      ],
+      [
+        "Rename your file json.py.",
+        "That can shadow the module you intended to import and does not select an environment."
+      ],
+      [
+        "Import a package to install it automatically.",
+        "Importing normally loads available code; it is not package installation."
+      ]
+    ],
+    [
+      "PY11",
+      "Inside a method, what does self refer to?",
+      "The particular instance receiving the method call.",
+      "Different instances can carry different attribute values while sharing the same method definition.",
+      [
+        "Every instance at the same time",
+        "self identifies one receiver, not a collection of all instances."
+      ],
+      [
+        "A global copy of the class source",
+        "The receiver is an object, not a source-code string or global template."
+      ],
+      [
+        "A type annotation enforced by Python",
+        "self is a conventional parameter name, not automatic runtime type enforcement."
+      ]
+    ],
+    [
+      "PY12",
+      "A function passes tests for two ordinary inputs. What can you conclude?",
+      "Those checked behaviors passed, but boundary and other cases may still fail.",
+      "Tests provide evidence for specified cases, not proof over every possible input.",
+      [
+        "The function is mathematically proven correct.",
+        "A finite selection of ordinary tests does not establish a general proof."
+      ],
+      [
+        "Type hints guarantee every runtime input is valid.",
+        "Ordinary Python annotations are not automatic runtime validators."
+      ],
+      [
+        "No empty-input test is useful now.",
+        "Boundary cases often expose behavior the ordinary examples never exercised."
+      ]
+    ],
+    [
+      "PY13",
+      "What does recording a random seed establish by itself?",
+      "An initial random-generator setting, not universal cross-device reproducibility.",
+      "Libraries, devices, kernels and other sources of randomness can still change results.",
+      [
+        "Exactly the same trained result on all hardware",
+        "A seed does not force every numerical operation and library version to behave identically."
+      ],
+      [
+        "That the data split is independent of every other setting",
+        "Split randomness needs its own explicit control/protocol."
+      ],
+      [
+        "That every random choice is now non-random data",
+        "A seeded pseudorandom sequence still serves a sampling procedure; the seed is not scientific certainty."
+      ]
+    ],
+    [
+      "PY14",
+      "The JSONL label-report program counts two claims and one premise. What has it demonstrated?",
+      "Parsing, validation and counting supplied labels.",
+      "The program reports existing annotations; it has not learned to recognize claims in new text.",
+      [
+        "A trained argument classifier",
+        "No model fitting or predictive rule over text was performed."
+      ],
+      [
+        "A universal dataset schema",
+        "Its validation checks only the fields and label choices defined for that task."
+      ],
+      [
+        "Three independent research observations by definition",
+        "Record count alone does not establish statistical independence."
+      ]
+    ],
+    [
+      "DS01",
+      "An array has shape (3, 2) and dtype float32. How many bytes does its six-value data buffer use?",
+      "24 bytes",
+      "Six numerical values times four bytes per float32 gives 24, excluding object overhead.",
+      [
+        "6 bytes",
+        "That assumes one byte per value rather than four."
+      ],
+      [
+        "12 bytes",
+        "That assumes two bytes per value rather than float32's four."
+      ],
+      [
+        "The entire Python process must use exactly 24 bytes.",
+        "The buffer calculation excludes object metadata, libraries and other process memory."
+      ]
+    ],
+    [
+      "DS02",
+      "A NumPy basic slice is a view. What should you check before modifying it?",
+      "Whether its storage is shared with the original array.",
+      "A view can propagate mutations through shared storage even though it is a different array object.",
+      [
+        "Whether its variable name is shorter",
+        "Variable naming does not determine storage ownership."
+      ],
+      [
+        "Whether every slice always makes a deep copy",
+        "Basic slicing often returns a view rather than a deep copy."
+      ],
+      [
+        "Whether reshape always guarantees independence",
+        "Reshaping may reuse storage and is not an independence guarantee."
+      ]
+    ],
+    [
+      "DS03",
+      "For features shaped (3, 2), what does mean(axis=0, keepdims=True) represent?",
+      "One mean per feature, shaped (1, 2).",
+      "Reducing the row/example axis leaves the two feature columns and retains a length-one axis.",
+      [
+        "One mean per row, shaped (3, 1).",
+        "That would reduce the feature axis, not axis zero."
+      ],
+      [
+        "A matrix multiplication",
+        "A reduction computes means; it is not the @ operation."
+      ],
+      [
+        "A new learned model",
+        "This calculates a statistic from supplied values; model fitting is a separate protocol."
+      ]
+    ],
+    [
+      "DS04",
+      "When bootstrapping a difference between two systems evaluated on the same documents, why reuse the same resampled indices?",
+      "To preserve paired comparisons on the same sampled documents.",
+      "The two predictions for a document belong together in a paired difference.",
+      [
+        "To include all retraining uncertainty automatically",
+        "Resampling fixed predictions does not refit the models."
+      ],
+      [
+        "To guarantee a narrow interval",
+        "Pairing preserves the design; it does not guarantee small uncertainty."
+      ],
+      [
+        "To make correlated documents independent",
+        "An inappropriate row resampler cannot remove genuine dependence between documents."
+      ]
+    ],
+    [
+      "DS05",
+      "A score column contains 2, missing and 6. Its pandas mean is 4 under the shown defaults. Why?",
+      "The mean uses the two observed values.",
+      "Skipping a missing value is different from replacing it with zero.",
+      [
+        "Missing is always exactly zero.",
+        "A missing value represents unavailable data, not a measured zero."
+      ],
+      [
+        "The column has only two rows.",
+        "There are three rows but only two observed scores."
+      ],
+      [
+        "read_csv fitted an imputation model.",
+        "Reading the CSV did not learn replacement values for the missing field."
+      ]
+    ],
+    [
+      "DS06",
+      "Two pandas Series have the same index labels in different orders. How does their sum normally match entries?",
+      "By index label",
+      "Label alignment can differ from the positional pairing you might expect from raw arrays.",
+      [
+        "By the lengths of the variable names",
+        "Variable names do not participate in alignment."
+      ],
+      [
+        "Always by physical position only",
+        "Series arithmetic normally aligns labels rather than ignoring them."
+      ],
+      [
+        "By sorting their values from smallest to largest",
+        "Alignment uses index keys, not a value-ranking operation."
+      ]
+    ],
+    [
+      "DS07",
+      "Why add validate='many_to_one' when joining many measurement rows to a group-name lookup?",
+      "To reject duplicate lookup keys that could multiply rows.",
+      "The validation expresses the intended relationship between left and right keys.",
+      [
+        "To guarantee every row finds a match",
+        "Cardinality validation does not by itself guarantee complete key coverage."
+      ],
+      [
+        "To perform aggregation instead of a join",
+        "A validated merge still joins records; groupby aggregation is a different operation."
+      ],
+      [
+        "To make all columns numerical",
+        "Join cardinality has nothing to do with converting feature types."
+      ]
+    ],
+    [
+      "DS08",
+      "In Matplotlib, what is the distinction between a Figure and an Axes?",
+      "The Figure is the whole image; an Axes is a plotting area inside it.",
+      "One Figure can contain several Axes, each with its own plotted data and labels.",
+      [
+        "They are always two independent datasets.",
+        "These names describe plotting objects, not datasets."
+      ],
+      [
+        "Axes means the trained model's coefficients.",
+        "Axes is a plotting container, unrelated to model coefficients."
+      ],
+      [
+        "A Figure exists only when a GUI window opens.",
+        "A noninteractive backend can create and save a Figure without a visible window."
+      ]
+    ],
+    [
+      "DS09",
+      "The confusion matrix [[1,1],[0,2]] uses actual rows and predicted columns, labels [0,1]. What is positive recall?",
+      "1.0",
+      "Both actual positives were predicted positive: 2/(2+0).",
+      [
+        "2/3",
+        "That uses predicted positives and calculates precision, not recall."
+      ],
+      [
+        "1/4",
+        "That is neither the positive recall numerator nor denominator."
+      ],
+      [
+        "0.0",
+        "The matrix contains two true positives and no missed positives."
+      ]
+    ],
+    [
+      "DS10",
+      "Why can calling toarray() on a large sparse text-feature matrix be risky?",
+      "It materializes zero entries and may greatly increase memory use.",
+      "Sparse storage is efficient because it need not store every implicit zero as a dense element.",
+      [
+        "It necessarily trains a neural network.",
+        "Densifying changes representation, not model weights."
+      ],
+      [
+        "It removes the need to track feature columns.",
+        "Feature meanings remain necessary after a representation conversion."
+      ],
+      [
+        "It guarantees the analysis is faster.",
+        "Extra allocation and dense work can make it slower or exhaust memory."
+      ]
+    ],
+    [
+      "SK01",
+      "After model = LogisticRegression(C=0.5), what has happened?",
+      "An estimator was configured; its coefficients have not been learned.",
+      "Construction sets hyperparameters; fit is the learning boundary.",
+      [
+        "A classifier was trained on the current table automatically.",
+        "No table was supplied to a fitting call."
+      ],
+      [
+        "C is the first learned coefficient.",
+        "C is a selected regularization setting, not a coefficient learned from data."
+      ],
+      [
+        "Predictions are now valid for any input width.",
+        "Fitting and compatible feature shape are still required."
+      ]
+    ],
+    [
+      "SK02",
+      "Why must learned preprocessing be fitted inside each cross-validation training fold?",
+      "To keep the validation fold out of learned statistics and features.",
+      "A pipeline evaluated fold by fold preserves that fitting boundary.",
+      [
+        "So the test set selects the best scaler.",
+        "Using final test information to select preprocessing defeats the held-out protocol."
+      ],
+      [
+        "Because transform must always relearn the mean.",
+        "Transform should apply learned state unchanged, not relearn it on validation data."
+      ],
+      [
+        "Because pipelines eliminate every kind of leakage automatically.",
+        "A pipeline cannot fix an inappropriate grouping/time split or leaked input columns."
+      ]
+    ],
+    [
+      "SK03",
+      "A fixed linear predictor makes errors -1 and +1. What are MAE and RMSE?",
+      "Both are 1.",
+      "Absolute errors are both one and squared errors are both one before averaging/rooting.",
+      [
+        "Both are 0 because signs cancel.",
+        "Neither MAE nor RMSE averages signed errors directly."
+      ],
+      [
+        "MAE is -1.",
+        "Absolute error cannot be negative."
+      ],
+      [
+        "RMSE is a classification accuracy percentage.",
+        "RMSE measures numerical error in target units, not correct class counts."
+      ]
+    ],
+    [
+      "SK04",
+      "When using a fitted classifier's predict_proba, how do you identify the positive-class column safely?",
+      "Inspect classes_ and its mapping to the target label.",
+      "Column order belongs to the fitted class mapping, not a universal semantic convention.",
+      [
+        "Always use column zero.",
+        "Column zero is not universally the desired positive concept."
+      ],
+      [
+        "Always use the last column without inspecting labels.",
+        "A column position alone does not establish which label it represents."
+      ],
+      [
+        "Apply fit to the test labels first.",
+        "Test-label fitting would leak evaluation information rather than clarify the class mapping."
+      ]
+    ],
+    [
+      "SK05",
+      "Why can scaling change a kNN prediction?",
+      "It changes relative distances between examples.",
+      "Neighbour selection depends on the feature-space metric and feature units.",
+      [
+        "It changes the spelling of class labels.",
+        "Numerical scaling does not relabel the target names."
+      ],
+      [
+        "kNN ignores all input features.",
+        "It uses those features to find neighbours."
+      ],
+      [
+        "Every scaled dataset becomes linearly separable.",
+        "Scaling is not a guarantee of separability or perfect accuracy."
+      ]
+    ],
+    [
+      "SK06",
+      "Why does stacking need appropriately out-of-fold predictions for its combining model?",
+      "Fitting-set predictions can make the combining task unrealistically easy.",
+      "The combiner needs predictions generated under a protocol resembling unseen-example use.",
+      [
+        "A forest cannot produce numerical outputs.",
+        "Ensemble outputs can be labels, probabilities or regression values."
+      ],
+      [
+        "More trees always fix leakage.",
+        "Increasing model count does not repair information leakage."
+      ],
+      [
+        "Every base model must see the test labels.",
+        "Exposing test labels during fitting invalidates final evaluation."
+      ]
+    ],
+    [
+      "SK07",
+      "Two fixed boosting corrections are added with learning rate 0.2. What does that rate do in the shown additive example?",
+      "It scales each correction's contribution.",
+      "The rate multiplies the correction sum; it is not the initial prediction or a probability threshold.",
+      [
+        "It makes every prediction equal 0.2.",
+        "The base prediction and correction values still contribute."
+      ],
+      [
+        "It selects 20 percent of labels for the test set.",
+        "Learning rate is not a split-size parameter."
+      ],
+      [
+        "It guarantees the same quality for every iteration count.",
+        "Learning rate interacts with iteration budget and model complexity."
+      ]
+    ],
+    [
+      "SK08",
+      "ParameterGrid enumerates four configurations. What has that done by itself?",
+      "Listed candidate settings without fitting any model.",
+      "Enumeration is not execution of cross-validation or model selection.",
+      [
+        "Completed four training runs.",
+        "No fitting call follows from constructing the grid alone."
+      ],
+      [
+        "Made a final test score unbiased regardless of later choices.",
+        "The selection/evaluation protocol still determines what a score means."
+      ],
+      [
+        "Guaranteed those settings are the best possible choices.",
+        "A finite grid neither measures nor guarantees optimality."
+      ]
+    ],
+    [
+      "SK09",
+      "Why should the DBSCAN diagnostic in this lab not be described as ordinary held-out classification accuracy?",
+      "It has no native held-out prediction route here and its cluster/noise outputs serve a different task.",
+      "Task and available prediction semantics determine which evaluation is valid.",
+      [
+        "All cluster IDs are known true semantic classes.",
+        "Unsupervised IDs need not correspond to named target classes."
+      ],
+      [
+        "PCA learns target labels too.",
+        "PCA learns variance directions rather than fitting to supplied class labels."
+      ],
+      [
+        "Every algorithm with fit has the same predict interface.",
+        "Estimators differ in supported methods and output meaning."
+      ]
+    ],
+    [
+      "SK10",
+      "A threshold changes false alarms and misses. Where should you choose it before final testing?",
+      "On appropriate training/development data under the selection protocol.",
+      "Repeatedly selecting on final test scores turns those cases into development information.",
+      [
+        "On the final test labels until F1 is maximal.",
+        "That uses the final evaluation data for selection."
+      ],
+      [
+        "By assuming 0.5 is optimal for every cost/task.",
+        "Costs, calibration and prevalence can change the appropriate decision threshold."
+      ],
+      [
+        "By minimizing the printed number of decimal places.",
+        "Formatting does not select a scientifically justified decision rule."
+      ]
+    ],
+    [
+      "SK11",
+      "Why should forecasting inputs exclude values observed only after the prediction time?",
+      "Those values would be unavailable when making the real forecast.",
+      "Chronological availability is part of the prediction task, not merely a plotting preference.",
+      [
+        "Because every time-series value must be a string.",
+        "The problem is information timing, not a required storage type."
+      ],
+      [
+        "Because future observations always have larger numbers.",
+        "A later timestamp does not imply a larger measured value."
+      ],
+      [
+        "Because random shuffling proves temporal independence.",
+        "Shuffling cannot establish the independence or deployment availability of time-dependent information."
+      ]
+    ],
+    [
+      "SK12",
+      "What does opening the ML lab from the final fitting walkthrough do?",
+      "Open the existing setup without starting training.",
+      "A deliberate Train action in a compatible local setup remains necessary.",
+      [
+        "Start every candidate estimator automatically.",
+        "A lesson handoff must not launch jobs or a search without a separate action."
+      ],
+      [
+        "Enable hosted GPU training on GitHub Pages.",
+        "The hosted preview remains read-only; fitting requires local installation."
+      ],
+      [
+        "Grant all code-course estimators a new runnable trainer.",
+        "Only methods registered and validated by the existing lab are supported."
+      ]
+    ],
+    [
+      "PT01",
+      "What can torch.from_numpy share with a compatible CPU NumPy array?",
+      "Its underlying data storage.",
+      "Mutating shared storage can change both views; clone creates independent tensor storage.",
+      [
+        "Only the variable's spelling",
+        "The relevant relationship is memory/storage, not names."
+      ],
+      [
+        "A trained classifier automatically",
+        "Converting numerical data does not fit a predictive model."
+      ],
+      [
+        "A guarantee that the data moved to CUDA",
+        "from_numpy creates a CPU-sharing tensor; device transfer is a separate operation."
+      ]
+    ],
+    [
+      "PT02",
+      "After loss.backward() in the fixed scalar example, what changed?",
+      "The gradient field was populated; no optimizer update ran.",
+      "Backward calculates derivatives, while a later optimizer step uses them to change parameters.",
+      [
+        "The weight was trained automatically.",
+        "No optimizer step is implied by backward itself."
+      ],
+      [
+        "The target label changed.",
+        "Differentiation does not rewrite the supplied supervision."
+      ],
+      [
+        "The gradient proves real-world causal importance.",
+        "A derivative of the program is not automatically a causal explanation of the world."
+      ]
+    ],
+    [
+      "PT03",
+      "What does calling model.eval() do by itself?",
+      "Change mode-dependent layer behavior, not disable all gradient recording.",
+      "Use an appropriate no-grad/inference context separately when gradients are not needed.",
+      [
+        "Erase all model parameters.",
+        "Evaluation mode does not delete weights."
+      ],
+      [
+        "Run one training epoch.",
+        "Changing module mode does not process training data or update parameters."
+      ],
+      [
+        "Make random weights pretrained.",
+        "Mode selection cannot supply learned knowledge."
+      ]
+    ],
+    [
+      "PT04",
+      "A DataLoader makes batches of sizes two and one. Why not average their mean losses equally for an example-weighted epoch loss?",
+      "The one-example batch would receive too much weight.",
+      "Accumulate loss sums and divide by the appropriate total example or token count.",
+      [
+        "The final batch is not real data.",
+        "Unless deliberately dropped, its example still belongs to the dataset."
+      ],
+      [
+        "DataLoader always forces equal batch sizes.",
+        "The final batch can be smaller when drop_last is false."
+      ],
+      [
+        "Loss units do not matter.",
+        "The desired aggregation depends on what each scored unit represents."
+      ]
+    ],
+    [
+      "PT05",
+      "Which operation in the displayed neural training loop actually changes parameters using gradients?",
+      "optimizer.step()",
+      "Forward computes scores, backward computes gradients and the optimizer applies the parameter update.",
+      [
+        "model.eval()",
+        "Evaluation mode changes certain layer behavior rather than applying an optimizer update."
+      ],
+      [
+        "len(targets)",
+        "Counting targets affects aggregation, not parameter updates."
+      ],
+      [
+        "optimizer.zero_grad()",
+        "Clearing gradients does not itself move the parameters."
+      ]
+    ],
+    [
+      "PT06",
+      "For the ordinary class-index case, what should be passed to CrossEntropyLoss?",
+      "Raw class logits and compatible integer class targets.",
+      "The loss includes the normalization needed for those logits and target IDs.",
+      [
+        "Already argmaxed class IDs as the input scores",
+        "Argmax discards the differentiable score information expected by the loss."
+      ],
+      [
+        "The final test accuracy as its target tensor",
+        "A dataset-level metric is not a per-example class target."
+      ],
+      [
+        "Arbitrary mismatched shapes because broadcasting fixes them",
+        "Loss interfaces require specific compatible axes/types; silent shape changes can express the wrong task."
+      ]
+    ],
+    [
+      "PT07",
+      "An all-one 2 by 2 filter reads the top-left window [1,2;4,5]. What is its no-bias output?",
+      "12",
+      "The fixed filter sums the four window values: 1+2+4+5.",
+      [
+        "5",
+        "That is the window maximum, not this convolution's sum."
+      ],
+      [
+        "4",
+        "There are four values, but this filter sums their magnitudes rather than counting them."
+      ],
+      [
+        "A guaranteed learned edge detector",
+        "The hand-set filter has not learned a visual task."
+      ]
+    ],
+    [
+      "PT08",
+      "A bidirectional LSTM has hidden size 3. Why does each output position have width 6 in the example?",
+      "It concatenates three features from each of two directions.",
+      "Direction count and hidden width determine this output dimension.",
+      [
+        "It always doubles the batch size.",
+        "Bidirectionality changes representation width/state structure, not the number of input examples."
+      ],
+      [
+        "Its cell state is a class label.",
+        "The cell state is recurrent state, not a supplied target label."
+      ],
+      [
+        "It can therefore predict causally without future information.",
+        "The backward direction can read later positions and is not an ordinary causal predictor."
+      ]
+    ],
+    [
+      "PT09",
+      "In the causal attention example, why cannot position zero average both value vectors?",
+      "The causal mask blocks access to the later position.",
+      "Equal scores are averaged only over positions the mask permits.",
+      [
+        "The value vectors must always be identical.",
+        "The mask restricts information access independently of vector equality."
+      ],
+      [
+        "Softmax changes the sequence length to one.",
+        "Normalization changes weights, not the declared sequence length."
+      ],
+      [
+        "Evaluation mode removes every attention mask.",
+        "Causal information constraints remain relevant during inference."
+      ]
+    ],
+    [
+      "PT10",
+      "What does the fixed VAE expression mean + exp(0.5*log_variance)*noise demonstrate?",
+      "A reparameterized latent calculation with supplied noise.",
+      "It separates the noise input from distribution parameters without claiming a trained generative model.",
+      [
+        "A complete diffusion reverse sampler",
+        "Diffusion sampling needs its own model, schedule and update process."
+      ],
+      [
+        "That all generative models use the same objective",
+        "Adversarial, latent-variable and denoising objectives differ."
+      ],
+      [
+        "A measured image-quality improvement",
+        "The example only calculates fixed numbers; no image benchmark or training was performed."
+      ]
+    ],
+    [
+      "PT11",
+      "Nodes with features 1 and 4 both send to a node with feature 2. What is that node's sum-aggregated self-plus-neighbours value?",
+      "7",
+      "The neighbours contribute 5 and the self feature contributes 2.",
+      [
+        "5",
+        "That omits the explicitly added self feature."
+      ],
+      [
+        "2",
+        "That ignores both incoming messages."
+      ],
+      [
+        "The exact output of every GCN and GAT layer",
+        "The simple sum does not implement every normalization, attention or transformation convention."
+      ]
+    ],
+    [
+      "PT12",
+      "What is missing from an ordinary weights-only state dictionary if you need exact training resume?",
+      "Additional optimizer, scheduler, random and sampling state may be needed.",
+      "Matching inference weights does not by itself reconstruct the training process.",
+      [
+        "The need for the architecture disappears.",
+        "The tensors still need a compatible architecture/configuration."
+      ],
+      [
+        "Loading any unknown pickle is safe now.",
+        "Unknown serialized objects and resource requirements remain a security concern."
+      ],
+      [
+        "The file automatically proves the data split was honest.",
+        "Model state does not establish the evaluation protocol's validity."
+      ]
+    ],
+    [
+      "NC01",
+      "What linguistic predictions does spacy.blank('en') supply by itself in this example?",
+      "Tokenization, not a trained dependency parser or NER model.",
+      "A blank language object lacks the trained components required for those predictions.",
+      [
+        "A fully trained dependency parse for every language",
+        "The blank English pipeline does not contain such a model."
+      ],
+      [
+        "A guarantee that stop-word removal preserves meaning",
+        "Removing words such as negation can change the task evidence."
+      ],
+      [
+        "A classifier trained on the input sentence",
+        "Processing one sentence is not fitting a classifier."
+      ]
+    ],
+    [
+      "NC02",
+      "CountVectorizer uses the fixed vocabulary {'good':0,'not':1}. What is the vector for 'not good'?",
+      "[1, 1]",
+      "The columns count good and not once each, irrespective of their order in this bag-of-words representation.",
+      [
+        "[0, 1]",
+        "That drops the observed word good."
+      ],
+      [
+        "[1, 0]",
+        "That drops the observed word not."
+      ],
+      [
+        "A learned sentiment probability",
+        "A count vector is a feature representation, not a fitted classifier output."
+      ]
+    ],
+    [
+      "NC03",
+      "Why exclude padded positions when mean-pooling token features?",
+      "Padding is not real text and can distort the representation.",
+      "The mask defines which positions contribute and the denominator must count those positions.",
+      [
+        "Every padding vector must carry semantic evidence.",
+        "Padding is a batching artifact, not source content."
+      ],
+      [
+        "A mean always ignores large values automatically.",
+        "An ordinary arithmetic mean includes whatever values you supply."
+      ],
+      [
+        "Cosine similarity trains a sentence encoder.",
+        "Cosine compares existing vectors; it does not learn their representation."
+      ]
+    ],
+    [
+      "NC04",
+      "What differs between an attention mask and a response-only loss mask?",
+      "One controls readable positions; the other controls scored targets.",
+      "A prompt can be visible to the model while its own target positions are excluded from loss.",
+      [
+        "They must always have the same values and purpose.",
+        "Input access and supervision are separate decisions."
+      ],
+      [
+        "Both delete the tokenizer vocabulary.",
+        "Masks operate on positions/attention or targets, not by erasing the vocabulary."
+      ],
+      [
+        "The loss mask makes prompt text unavailable during generation.",
+        "Excluding a target from loss does not necessarily prevent reading that input."
+      ]
+    ],
+    [
+      "NC05",
+      "Under first-subword-only supervision, why does a continuation piece receive -100?",
+      "That policy excludes the continuation target from loss.",
+      "The word's target is assigned to its first piece; special/continuation positions are ignored under this declared convention.",
+      [
+        "-100 is the universal entity label for every continuation.",
+        "It is an ignore marker for the chosen loss, not a linguistic class."
+      ],
+      [
+        "Every word always has exactly one token.",
+        "Subword tokenization can split one annotated word into several pieces."
+      ],
+      [
+        "This proves a full CRF has been trained.",
+        "Label alignment is data preparation, not structured-model fitting."
+      ]
+    ],
+    [
+      "NC06",
+      "Why use a bi-encoder for candidate retrieval before a cross-encoder reranker?",
+      "Document vectors can be reused, while joint pair scoring is applied to fewer candidates.",
+      "The stages trade representation reuse and retrieval scale against more expensive pair interaction.",
+      [
+        "A cross-encoder never reads the query.",
+        "It jointly processes the query/document pair."
+      ],
+      [
+        "Cosine similarity certifies source truth.",
+        "Similarity is not a truth or permission guarantee."
+      ],
+      [
+        "A FAISS index automatically enforces every document permission.",
+        "Permissions/provenance require application-level design beyond an index."
+      ]
+    ],
+    [
+      "NC07",
+      "The answer 'red car' overlaps 'the red car' in two tokens. Under the lesson's stated unnormalized token rule, what is F1?",
+      "0.8",
+      "Precision is 1, recall is 2/3 and their harmonic mean is 0.8.",
+      [
+        "1.0 under every QA benchmark",
+        "Other benchmarks may normalize articles differently; the result depends on the stated rule."
+      ],
+      [
+        "0.0 because exact match fails",
+        "Exact match and partial token overlap are different metrics."
+      ],
+      [
+        "A complete BLEU score",
+        "This is a token-overlap F1 calculation, not clipped n-gram BLEU."
+      ]
+    ],
+    [
+      "NC08",
+      "The fixed NLP fixture has 0.75 overall accuracy but zero positive F1 in dialogue. What is the sound interpretation?",
+      "Inspect the domain errors; the tiny fixture illustrates aggregation limits, not universal model failure.",
+      "A slice can reveal a missed positive, but four authored cases cannot establish broad architecture claims.",
+      [
+        "Every encoder fails on all dialogue.",
+        "The fixture did not evaluate every encoder or a representative dialogue benchmark."
+      ],
+      [
+        "Overall accuracy proves both domains are equally solved.",
+        "The slice metrics explicitly show different errors."
+      ],
+      [
+        "The fixture secretly trained a new classifier.",
+        "The labels/predictions were supplied as evaluation inputs."
+      ]
+    ],
+    [
+      "LC01",
+      "AutoModelForCausalLM.from_config builds a tiny model. Does this supply pretrained language knowledge?",
+      "No; configuration defines architecture, not learned checkpoint weights.",
+      "A compatible reviewed checkpoint and tokenizer are separate assets.",
+      [
+        "Yes, because the class name contains language model.",
+        "An architecture name is not evidence that weights were pretrained."
+      ],
+      [
+        "Yes, provided its tensor shape is correct.",
+        "A valid shape checks the interface, not linguistic competence."
+      ],
+      [
+        "No model can be constructed without a network download.",
+        "A local configuration can construct an initialized model without downloading assets."
+      ]
+    ],
+    [
+      "LC02",
+      "In response-only causal training, why can the last prompt position help predict the first response token?",
+      "Its logit is paired with the next position's response target after one causal shift.",
+      "Input visibility and target scoring line up across the next-token boundary.",
+      [
+        "The label must be shifted twice.",
+        "A second shift would misalign predictions and targets."
+      ],
+      [
+        "Every EOS ID must be removed from the labels.",
+        "Real EOS targets must be distinguished from padding positions, even when IDs are shared."
+      ],
+      [
+        "Prompt masking prevents the model from reading the prompt.",
+        "A loss ignore marker does not itself block attention to the input prompt."
+      ]
+    ],
+    [
+      "LC03",
+      "Where do measured learning curves for the supported scratch decoder belong?",
+      "In the existing LLM lab's saved results, not a second canned training-output panel.",
+      "The code lesson explains the loop; the actual lab owns execution and measured run artifacts.",
+      [
+        "They should be invented from the expected trend.",
+        "A plausible curve is not measured evidence."
+      ],
+      [
+        "Opening the lesson should launch a full training run.",
+        "Reading must remain free of training side effects."
+      ],
+      [
+        "They prove equivalence to pretrained foundation-model behavior.",
+        "The educational scratch model has different resources and starting knowledge."
+      ]
+    ],
+    [
+      "LC04",
+      "An adapter has rank 4 for an 8-input, 12-output weight. How many A/B parameters does this factorization add?",
+      "80",
+      "The matrices contain 4*8 + 12*4 = 80 values under the stated setup.",
+      [
+        "96",
+        "That is the number of base matrix weights, 12*8, not this adapter factorization."
+      ],
+      [
+        "4",
+        "Rank is an inner dimension, not the total parameter count."
+      ],
+      [
+        "It always adds zero because the base is frozen.",
+        "Freezing base weights does not remove the trainable adapter parameters."
+      ]
+    ],
+    [
+      "LC05",
+      "What does the lesson's DPO/PPO/GRPO arithmetic establish?",
+      "The stated objectives/signals on supplied values, not a trained improved policy.",
+      "A checked objective calculation is distinct from rollout collection, parameter updates and model evaluation.",
+      [
+        "All three methods use identical supervision and updates.",
+        "Preference pairs, advantages and grouped reward signals express different procedures."
+      ],
+      [
+        "A positive clipped surrogate is a loss to minimize without a sign decision.",
+        "The maximizing surrogate and minimizing loss must use a consistent sign convention."
+      ],
+      [
+        "The existing lab now supports every RL trainer.",
+        "No new preference/RL trainer was implemented by explaining these equations."
+      ]
+    ],
+    [
+      "LC06",
+      "At what point should the application exclude documents a user may not read?",
+      "Before exposing retrieved evidence to that user's model context/output.",
+      "Permission filtering must constrain what evidence can be used, not merely remove a citation afterward.",
+      [
+        "Only after the generated answer has quoted them.",
+        "Sensitive evidence may already have been exposed by then."
+      ],
+      [
+        "Never, because similarity scores are permissions.",
+        "Similarity does not grant access authority."
+      ],
+      [
+        "By updating model weights for each permission check.",
+        "Access control is an application boundary, not per-request retraining."
+      ]
+    ],
+    [
+      "LC07",
+      "A tool request passes a strict JSON schema. May it now perform any requested external action?",
+      "No; it still needs independent authorization and appropriate scope/approval.",
+      "Structural validation does not prove truth, safety or permission.",
+      [
+        "Yes, schema validity grants authority.",
+        "A valid argument object can still request an unauthorized operation."
+      ],
+      [
+        "Yes, if the model says it is urgent.",
+        "Model-generated urgency cannot override the host's permission policy."
+      ],
+      [
+        "No structured request can ever be useful.",
+        "Validated requests are useful when combined with actual authorization and controlled execution."
+      ]
+    ],
+    [
+      "LC08",
+      "The HTTPX example uses MockTransport and FastAPI TestClient. What does it contact?",
+      "In-process test handlers, not the real external hostname.",
+      "The fixture exercises request/response handling without opening a public service or spending API credits.",
+      [
+        "A paid LLM provider automatically",
+        "The configured mock transport handles those requests locally."
+      ],
+      [
+        "Every server named in a string",
+        "A URL string alone does not bypass the selected test transport."
+      ],
+      [
+        "A GPU worker just because an async function exists",
+        "Async coordination does not itself schedule or accelerate blocking model computation."
+      ]
+    ],
+    [
+      "LC09",
+      "A 100-million-parameter model at two bytes per weight needs 200 MB for weights. What is excluded?",
+      "Caches, activations, allocator overhead and other state.",
+      "A weights-only estimate is not total runtime or training memory.",
+      [
+        "Nothing; that is guaranteed peak process memory.",
+        "Real execution requires resources beyond the stored weights."
+      ],
+      [
+        "The distinction between query heads and KV heads disappears.",
+        "Grouped-query cache calculations still depend on KV-head count."
+      ],
+      [
+        "Any need to measure speed after quantization",
+        "Smaller storage does not guarantee a faster supported kernel on every device."
+      ]
+    ],
+    [
+      "LC10",
+      "Two batches have NLL sums 4 and 3 with valid-token counts 2 and 3. What is their combined mean NLL?",
+      "1.4",
+      "Add losses and divide by all five scored tokens: (4+3)/(2+3).",
+      [
+        "1.5",
+        "That averages the unequal-size batch means and overweights the smaller batch."
+      ],
+      [
+        "7.0",
+        "That is the sum, not a per-token mean."
+      ],
+      [
+        "Proof that every generated answer is faithful",
+        "Token likelihood alone does not establish source support or safe tool behavior."
+      ]
+    ],
+    [
+      "OL01",
+      "A progress bar shows 5/5 and one INFO line names d2 as empty. What was recorded about the kept rows?",
+      "Their count, not their text.",
+      "The lesson logs the rejected ID and reason, and prints how many rows were kept.",
+      [
+        "The full text of every kept row.",
+        "The checked log line does not contain the kept wording."
+      ],
+      [
+        "A trained quality score.",
+        "Counting kept rows does not fit a model."
+      ],
+      [
+        "Proof that the corpus has no other empty rows.",
+        "The log covers the five records in the example."
+      ]
+    ],
+    [
+      "OL02",
+      "The profiler reports one call to clean, and tracemalloc prints True. What do those two facts measure?",
+      "How many times clean ran, and that Python allocation tracing is on.",
+      "Call count and tracing state are portable facts. A duration or a byte total is a separate measurement.",
+      [
+        "The exact number of microseconds clean will take next time.",
+        "The lesson does not record a duration."
+      ],
+      [
+        "Total GPU memory.",
+        "tracemalloc traces Python allocations, not GPU memory."
+      ],
+      [
+        "That the empty string was a model error.",
+        "clean dropped an empty string by a written rule."
+      ]
+    ],
+    [
+      "OL03",
+      "Why does the grouped count query include ORDER BY group_name?",
+      "So the checked row order is part of the query, not an accident of storage.",
+      "SQLite may return equal-group aggregates in another order unless the query asks for one.",
+      [
+        "To train a classifier on the group names.",
+        "The query counts joined rows."
+      ],
+      [
+        "Because SQL rejects a GROUP BY without ORDER BY.",
+        "GROUP BY is valid alone; the order would then be unspecified."
+      ],
+      [
+        "To commit the transaction.",
+        "commit ends the inserts. ORDER BY orders the selected rows."
+      ]
+    ],
+    [
+      "OL04",
+      "The Parquet file holds scores 2, 4 and 6. The query keeps scores of at least 4. Which rows come back?",
+      "d2 with 4, then d3 with 6.",
+      "The filter removes d1, and ORDER BY doc_id puts d2 first.",
+      [
+        "All three scores, because the column read printed them.",
+        "The column read and the filtered query answer different questions."
+      ],
+      [
+        "Only d1, because it is first in the file.",
+        "d1 has score 2, so it fails the comparison score >= 4."
+      ],
+      [
+        "A learned ranking of the documents.",
+        "The query applies a comparison the lesson wrote."
+      ]
+    ],
+    [
+      "OL05",
+      "A tensor shaped (1, 2, 3) holds 5 at batch 0, head 1, token 2. After rearrange to batch, tokens, heads, where is 5?",
+      "At batch 0, token 2, head 1.",
+      "The named pattern swaps heads and tokens and keeps the value 5 at the renamed position.",
+      [
+        "At the same indexes [0, 1, 2].",
+        "Those indexes now name batch, token, head, so [0, 1, 2] is a different item."
+      ],
+      [
+        "Wherever reshape(1, 3, 2) put it.",
+        "reshape follows storage order. rearrange follows the axis names."
+      ],
+      [
+        "It was replaced by a learned feature.",
+        "Rearranging moves existing numbers."
+      ]
+    ],
+    [
+      "OL06",
+      "A safetensors file loads a weight and a bias that match what was saved. What else does the file establish?",
+      "The names, shapes and values of those tensors.",
+      "The format returns tensors. It does not rebuild an architecture or certify a model.",
+      [
+        "The optimizer state and the training loss.",
+        "Those objects were not in the file."
+      ],
+      [
+        "That the weight belongs to a linear layer.",
+        "A name such as weight is not a layer definition."
+      ],
+      [
+        "That the numbers are safe to deploy.",
+        "A safer parser is not a quality or license verdict."
+      ]
+    ],
+    [
+      "OL07",
+      "MLflow prints the parameter 2 and the metric 0.5. What happened?",
+      "A local run stored the values the lesson logged, and the search read them back.",
+      "Logging a fixture metric does not launch training or prove the metric is a real score.",
+      [
+        "A model was trained to an overlap of 0.5.",
+        "No fitting call ran; the lesson only stored a number."
+      ],
+      [
+        "The run ID will be the same on every machine.",
+        "The ID is generated and is not part of the checked output."
+      ],
+      [
+        "The dashboard published the result.",
+        "The lesson used a local SQLite file and did not open a service."
+      ]
+    ],
+    [
+      "OL08",
+      "unique_in_order(['d1','d2','d1']) prints ['d1','d2'], and the property checks pass. What was proved?",
+      "The shown list kept the first d1, and 15 drawn integer lists matched dict.fromkeys.",
+      "A passing property test is evidence about the cases it drew, not a proof for every list.",
+      [
+        "Every possible list was checked.",
+        "Hypothesis drew 15 lists."
+      ],
+      [
+        "Sorting the items would satisfy the same property.",
+        "The property keeps first-seen order. Sorting [2, 1] would fail it."
+      ],
+      [
+        "pytest collected this function from the module automatically.",
+        "The example calls the test function directly."
+      ]
+    ],
+    [
+      "OL09",
+      "claim and premise point at each other, and claim points at evidence. Why is is_directed_acyclic_graph false while has_path to evidence is true?",
+      "The mutual edges are a cycle, and claim still has a direct edge to evidence.",
+      "A cycle rejects the acyclic check. A different pair of nodes can still have a path.",
+      [
+        "A path can exist only in an acyclic graph.",
+        "The path and the cycle are answers about different structure."
+      ],
+      [
+        "NetworkX trained a graph neural network.",
+        "The lesson built a directed graph and asked two questions."
+      ],
+      [
+        "The cycle means evidence cannot be read.",
+        "The graph does not encode permission."
+      ]
+    ],
+    [
+      "DA01",
+      "On ['d1','d2','d1','d3'], the pair scan stops at d1 after 2 checks. Which result is a different contract?",
+      "keep_first returns ['d1','d2','d3'], the first copy of each id in first-seen order.",
+      "The scan reports whether a repeat exists. keep_first reports the surviving first copies, which is a different output.",
+      [
+        "Both lines report the repeated values.",
+        "The scan returns True, 2, and d1. It does not return the kept list."
+      ],
+      [
+        "4999950000 is how many comparisons the four-id list performed.",
+        "That number is the pair count for 100000 distinct ids, not for this short list."
+      ],
+      [
+        "A hash set promises that pair count for every collision pattern.",
+        "The lesson calls the hash-set count expected amortized behavior, and a long key still costs its length."
+      ]
+    ],
+    [
+      "DA02",
+      "The second loop prints four lists and then 10. What does the 10 count?",
+      "The number of cells written into the snapshot lists that loop created.",
+      "The second loop builds ['d1'], then a two-cell list, then three, then four. Those lengths add to 10.",
+      [
+        "The number of cells copied by the first append loop.",
+        "The first loop only appends into one list. The snapshot lists belong to the second loop."
+      ],
+      [
+        "The capacity printed by the doubling model.",
+        "The doubling model prints 4 3 and 8 7. The 10 is the snapshot total."
+      ],
+      [
+        "The character count in the string model.",
+        "The string model prints 20 and then 8. The 10 counts list cells, not characters."
+      ]
+    ],
+    [
+      "DA03",
+      "The toy buckets of cat, dog, and act are 0, 2, and 0. What does the shared 0 mean?",
+      "cat and act collide, so that one bucket has to distinguish both keys.",
+      "The illustrative sum sends both words to bucket 0. A lookup still has to tell the keys apart.",
+      [
+        "CPython stores every string in bucket 0.",
+        "The modulo-4 sum is labeled as an illustration, not as CPython's layout."
+      ],
+      [
+        "The two words have been scored as similar.",
+        "A shared bucket is not a similarity score and not a cryptographic digest."
+      ],
+      [
+        "d9 was stored at position 0.",
+        "d1 is at position 0, and the membership line says d9 is absent."
+      ]
+    ],
+    [
+      "DA04",
+      "Insertion and merge both print d b a c. Partition of [1, 2, 3, 4] puts the pivot at index 3. What does that index say?",
+      "The last-element pivot left a piece of length n-1, so this cut did not halve the list.",
+      "Index 3 means the other three values stay on one side. That is the unbalanced shape.",
+      [
+        "Every quicksort pivot lands in the middle.",
+        "This pivot is the largest value, so the left piece still has three values."
+      ],
+      [
+        "a moved ahead of c because their scores differed.",
+        "Both scores are 4. The <= rule keeps the earlier tag a."
+      ],
+      [
+        "The 8 slice copies are a measured duration.",
+        "Eight counts items copied into slices on this four-item list."
+      ]
+    ],
+    [
+      "DA05",
+      "In the half-open search, lo is 0, hi is 1, and mid is 0. The value is below the target. Which update is required?",
+      "Set lo to mid + 1.",
+      "mid is already equal to lo, so assigning lo = mid reads the same cell forever. Adding one is what makes the interval shrink.",
+      [
+        "Set lo to mid.",
+        "That writes the same value of lo again, so the loop does not finish."
+      ],
+      [
+        "Set hi to mid - 1.",
+        "hi moves to mid only when the inspected value is not below the target. This value is below it."
+      ],
+      [
+        "Return mid without moving a bound.",
+        "The result is the meeting point of lo and hi. This comparison still has to move lo."
+      ]
+    ],
+    [
+      "DA06",
+      "The sorted search finds indexes (1, 2). The same rule on [5, 1, 4, 2] prints None while the last line is True. What is true?",
+      "A pair summing to 3 exists, and moving inward is justified only when the list is sorted.",
+      "The brute-force line finds 1+2. Discarding an end because the sum looks too large needs sorted order.",
+      [
+        "None means no pair of values sums to 3.",
+        "The last line is True, so some pair does sum to 3."
+      ],
+      [
+        "Any program with two loops has quadratic cost.",
+        "This search moves each index inward a bounded number of times."
+      ],
+      [
+        "The unsorted list has no indexes.",
+        "The list has four values. The movement rule is what misses the pair."
+      ]
+    ],
+    [
+      "DA07",
+      "fixed_window([1, 2], 3) prints an empty list. Why is that the result?",
+      "A width of 3 does not fit in a list of length 2, and the function refuses to invent a window.",
+      "Width 0, a width past the end, and a width on an empty list all return []. The function no longer sums a slice that is not a legal window.",
+      [
+        "The function should have returned [3].",
+        "Summing past the end and reporting that total was the old bug. The repaired function returns an empty list."
+      ],
+      [
+        "An empty list means the costs summed to zero.",
+        "The empty list means there is no legal window. It is not a numeric total of the costs."
+      ],
+      [
+        "The one-way window dropped a negative value.",
+        "That counterexample belongs to the other function. It prints 2 and 3, not this empty list."
+      ]
+    ],
+    [
+      "DA08",
+      "pop(0) prints d1 and leaves 2 items. The linked list then prints ['a', 'c']. Which reference had to change?",
+      "The predecessor a had to point at c.",
+      "In this singly linked list, deleting b means updating the node that points at b.",
+      [
+        "Holding only b is enough to unlink it.",
+        "b can see c, and it cannot see which node points at b."
+      ],
+      [
+        "pop(0) and popleft move the same later items.",
+        "pop(0) slides the later items. The deque popleft is the operation that avoids that slide."
+      ],
+      [
+        "The empty delimiter string is an error.",
+        "It prints True because no opener was left unmatched."
+      ]
+    ],
+    [
+      "DA09",
+      "The trace returns 6, then the branching function prints 8 and 15. What does the 15 count?",
+      "Every call made when each problem launches two subproblems and nothing is reused.",
+      "Eight counts base results. Fifteen counts every call, including the calls that only branch.",
+      [
+        "The maximum depth of the factorial stack.",
+        "The factorial stack reaches three frames and then returns. Fifteen is the branching count."
+      ],
+      [
+        "A stored answer reused for the same subproblem.",
+        "The two recursive calls do not share a stored result."
+      ],
+      [
+        "The permutations of a corpus.",
+        "The input is the integer 3, chosen so the doubling stays small enough to count."
+      ]
+    ],
+    [
+      "DA10",
+      "subsets([4, -2], 3) prints rejected, while 4 + -2 is 2. Why is the search refused?",
+      "A prune on a partial sum above the limit is safe only when later items cannot reduce the sum.",
+      "4 is already over the limit, but -2 brings the total to 2. The function rejects the input instead of pruning away that valid subset.",
+      [
+        "The subset 4, -2 is over the limit.",
+        "4 and -2 sum to 2, which is within 3. Only the partial sum 4 is over the limit."
+      ],
+      [
+        "Every recursive search rejects a negative number.",
+        "The rejection is this function's stated assumption. Another search could allow negatives with a different bound."
+      ],
+      [
+        "The undo line failed to run.",
+        "The nonnegative trace still pairs each choose with an undo. The rejection happens before that search starts."
+      ]
+    ],
+    [
+      "DA11",
+      "A tree has root 5, left child 1, and 6 to the right of 1. The bound check prints False. What fails?",
+      "6 is in the left subtree of 5, so it breaks the subtree bound even though it is larger than its parent.",
+      "Checking 1 against 5 and 6 against 1 accepts the tree. The subtree rule rejects it because every key to the left of 5 must be smaller than 5.",
+      [
+        "1 is not smaller than 5.",
+        "1 is smaller than its parent. The failure is the key farther down that subtree."
+      ],
+      [
+        "The height is larger than 2.",
+        "The false result is the order check. The height 3 belongs to the separate line-shaped tree."
+      ],
+      [
+        "In-order cannot read a tree with three nodes.",
+        "The inserted keys 2, 1, 3 still print in order. This counterexample is a different tree."
+      ]
+    ],
+    [
+      "DA12",
+      "Distinct scores make the heap and argpartition agree on b d c. The tie prints c a and then b c. Why can those sets differ?",
+      "argpartition can drop one side of a tie, and sorting the survivors cannot restore the dropped id.",
+      "The stated policy keeps the smaller id a. This partition kept b and c, so a is already gone.",
+      [
+        "The picture line is the sorted order of the five scores.",
+        "b:5 appears before d:4, so a left-to-right read is not sorted order."
+      ],
+      [
+        "A request for k of 0 returns every id.",
+        "It prints none because the contract keeps nothing."
+      ],
+      [
+        "The root of this min-heap is the largest score.",
+        "Index 0 of the picture holds a:1, the smallest score."
+      ]
+    ],
+    [
+      "DA13",
+      "Breadth-first order includes claim, evidence, warrant, and detail. The missed line is note. Why was note left out?",
+      "No edge from the component that started at claim reaches note.",
+      "The search marks neighbors of the started nodes. note is a separate component.",
+      [
+        "A queue cannot store a graph neighbor.",
+        "The queue lines are the frontier. note is absent because it was never enqueued."
+      ],
+      [
+        "Depth-first order must match the breadth-first order.",
+        "Depth-first prints detail before warrant, which is a different walk."
+      ],
+      [
+        "Marking a node on enqueue deletes the edge that pointed back to it.",
+        "The edge can remain. The visited set is what blocks a repeated enqueue."
+      ]
+    ],
+    [
+      "DA14",
+      "D settles at 3 along A B C D, the stale entries are skipped, and a negative edge reports 1 when the true cost is -6. What broke?",
+      "Once B is settled, this program will not reopen it for a later negative improvement.",
+      "The path through C would cost -6. Refusing to reopen a settled node keeps the direct cost 1.",
+      [
+        "C:4 is the final distance of C.",
+        "C is settled at 2. C:4 is a stale heap entry and is skipped."
+      ],
+      [
+        "The word cycle means A B C D is an illegal order.",
+        "A B C D is one legal order of the acyclic graph. cycle is the separate two-node example."
+      ],
+      [
+        "A queue of node names already computes these unequal edge weights.",
+        "Unequal weights need tentative distances and relaxation. Equal weights were the breadth-first case."
+      ]
+    ],
+    [
+      "DA15",
+      "The cell for source prefix ca and target prefix cu is 1. Which earlier cell supplies that chosen cost?",
+      "The diagonal, whose stored cost is 0 plus one substitution.",
+      "Deletion from the cell above costs 2, and insertion from the left also costs 2. The diagonal's 0 plus one substitution is the candidate the cell keeps.",
+      [
+        "The cell above, which gives a deletion of cost 2.",
+        "The deletion candidate is 2. The chosen candidate is the diagonal's 1."
+      ],
+      [
+        "The cell to the left, which gives an insertion of cost 2.",
+        "The insertion candidate is also 2. It is not the minimum for this cell."
+      ],
+      [
+        "The finished corner, which is also 1.",
+        "The corner is the cost of the whole strings. This question is about the earlier ca to cu cell."
+      ]
+    ],
+    [
+      "DA16",
+      "With capacity 3 the corner is 6 and the names are b c. What does one cell in this table mean?",
+      "The best value available from a prefix of the items at one capacity.",
+      "The row says how many items may be used. The column says how much capacity those items may spend.",
+      [
+        "The same state as a cell in the edit-distance table.",
+        "These columns are capacities. The edit table's columns were prefixes of a target string."
+      ],
+      [
+        "c is taken only because it is the lightest item.",
+        "c is taken because its row differs from the skipped row at the capacity being rebuilt."
+      ],
+      [
+        "A capacity of 0 still selects b.",
+        "The last printed line is 0. Nothing is taken when no capacity remains."
+      ]
+    ],
+    [
+      "DA17",
+      "The third printed line is ['z'] for the interval from -3 to -2. Why is that interval selected?",
+      "The clock starts unset, so the first interval is accepted even when its start is negative.",
+      "The objective is the number of non-overlapping intervals. z is a valid first interval. A clock fixed at -1 would have rejected a start of -3.",
+      [
+        "The objective adds the lengths, and this interval is long.",
+        "The objective counts intervals. It does not add their lengths or rank them by a value."
+      ],
+      [
+        "A clock that starts at -1 accepts every negative start.",
+        "A clock fixed at -1 would reject a start of -3. The working clock starts unset."
+      ],
+      [
+        "Earliest start is the only rule that can select z.",
+        "z is the only interval, so either sort would take it. The point of the line is the negative start."
+      ]
+    ],
+    [
+      "DA18",
+      "The stream prints seen 4, stored 2, and peak 3. What does the 3 count?",
+      "The largest heap size after a push and before the matching pop.",
+      "The push can make the heap hold k+1 entries. The pop then brings it back to 2. The printed 2 is the size after that update.",
+      [
+        "The number of chunks the caller stored at once.",
+        "The caller yields one chunk at a time. 3 is the brief heap size, not a count of stored chunks."
+      ],
+      [
+        "The number of scores that remain after the last pop.",
+        "The stored size after the update is 2. The peak is the size before that pop."
+      ],
+      [
+        "A duration in seconds.",
+        "The page does not print a duration. 3 is a count of heap entries."
+      ]
+    ],
+    [
+      "DA19",
+      "The checks cover an empty list, a duplicate d1, a rejected empty string, and an append of d9 that leaves the original unchanged. What isolation is the last line testing?",
+      "The returned list is a new object, so appending d9 does not change the caller's list.",
+      "The original still prints d1 and d2. A function that returned the input object would have shown d9 there too.",
+      [
+        "pytest collected these checks from a separate test file.",
+        "The lesson calls the checks directly, which is why the four lines are the output."
+      ],
+      [
+        "An empty string is kept as a blank id.",
+        "The function raises ValueError, and the example prints rejected."
+      ],
+      [
+        "Sorting the kept ids would satisfy the same contract.",
+        "The contract keeps first-seen order. A sorted result would be a different function."
+      ]
+    ],
+    [
+      "DA20",
+      "The capstone prints d1 d2, then d2 d3, then claim evidence detail. Why is d5 absent from the second line?",
+      "Three ids share the score 5, and the tie policy keeps the two smaller ids.",
+      "d2 and d3 come before d5 under that policy. d4 also loses because its score is lower.",
+      [
+        "d5 was removed as a duplicate of d2.",
+        "The first line is the duplicate contract. d5 is a distinct id with a tied score."
+      ],
+      [
+        "The graph walk dropped d5 because it is not a neighbor of claim.",
+        "The third line is the graph. The second line is the score selection."
+      ],
+      [
+        "The three lines estimate the chance of an interview offer.",
+        "They check three stated contracts. They are not an offer probability."
+      ]
+    ]
+  ]
+}

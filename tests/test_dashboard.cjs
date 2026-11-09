@@ -89,16 +89,17 @@ async function exercise(empty){
   else throw Error('Unexpected request '+url);
   assert.ok(data,'Fixture exists for '+url);return {ok:true,json:async()=>data};
  }};
- vm.createContext(context);for(const file of ['visuals.js','ml_visuals.js','architecture_math.js','architecture_lessons.js','explorer_lessons.js','explorer_ml.js','explorer_dl.js','explorer_llm.js','nlp_math.js','explorer_nlp.js','nlp_figures.js','explorer_figures.js','metrics.js','architecture_explorer.js','learning.js','readouts.js','models.js','course.js','app.js'])vm.runInContext(fs.readFileSync(path.join(web,file),'utf8'),context);await settle();
+ vm.createContext(context);for(const file of ['visuals.js','ml_visuals.js','architecture_math.js','architecture_lessons.js','explorer_lessons.js','explorer_ml.js','explorer_dl.js','explorer_llm.js','nlp_math.js','explorer_nlp.js','nlp_figures.js','explorer_figures.js','metrics.js','architecture_explorer.js','dsa_scenes.js','learning.js','readouts.js','lab_setup.js','models.js','course.js','app.js'])vm.runInContext(fs.readFileSync(path.join(web,file),'utf8'),context);await settle();
  const go=async name=>{all.find(e=>e.dataset.page===name).onclick();await settle();};
  assert.equal(elements.home.hidden,false);assert.equal(elements['home-visual'],undefined);const homeHTML=html.match(/<section id="home"[\s\S]*?<\/section>/)[0];assert.doesNotMatch(homeHTML,/<a\b|<svg\b|<canvas\b/);assert.equal((homeHTML.match(/<button\b/g)||[]).length,1);assert.match(homeHTML,/Explore the menu/);assert.match(homeHTML,/Interactive mode/);
  assert.match(homeHTML,/There is no required starting point/);assert.ok(homeHTML.indexOf('Site map')<homeHTML.indexOf('Choose how to explore'));
- const mapNodes=descendants(elements['home-sitemap']);assert.equal(elements['home-sitemap'].children.length,5);
+ const mapNodes=descendants(elements['home-sitemap']);assert.equal(elements['home-sitemap'].children.length,7);
  const mapLessons=mapNodes.filter(n=>n.dataset.mapLesson);assert.equal(mapLessons.length,course.index.lessons.length);
- assert.equal(new Set(mapLessons.map(n=>n.dataset.mapLesson)).size,79,'Every sidebar lesson appears once in the map');
+ assert.equal(new Set(mapLessons.map(n=>n.dataset.mapLesson)).size,174,'Every sidebar lesson appears once in the map');
  for(const lesson of course.index.lessons){
   const b=mapLessons.find(n=>n.dataset.mapLesson===lesson.id);assert.ok(b,lesson.id+' map entry');
-  const expected=[...new Set([...course.docs[lesson.id].reader.reading.steps.map(s=>s.title),...course.docs[lesson.id].reader.notes.map(n=>n.title)])];
+  const reader=course.docs[lesson.id].reader;
+  const expected=reader.type==='code'?(reader.topics.length?reader.topics:['Code and output','Explanation and sources']):[...new Set([...reader.reading.steps.map(s=>s.title),...reader.notes.map(n=>n.title)])];
   assert.deepEqual(lesson.topics,expected,lesson.id+' map follows the live student view');
   const topics=descendants(b.parent).find(n=>n.className==='map-topics');assert.deepEqual(topics.children.map(n=>n.textContent),expected);
  }
@@ -109,11 +110,11 @@ async function exercise(empty){
  await mapNodes.find(n=>n.dataset.mapQuestion).onclick();await settle();assert.equal(elements['question-title'].textContent,course.questions[mapNodes.find(n=>n.dataset.mapQuestion).dataset.mapQuestion].title);
  await go('home');
  assert.match(document.title,/Machine Learning Study Lab/);assert.match(html,/<title>Machine Learning Study Lab<\/title>/);
- assert.equal(elements['adapt-controls'].children.length,8);assert.equal(elements['scratch-controls'].children.length,22);assert.equal(elements.guide.options.length,20);
+ assert.equal(elements['adapt-controls'].children.length,8);assert.equal(elements['scratch-controls'].children.length,10);assert.equal(elements['scratch-advanced-controls'].children.length,12);assert.equal(elements.guide.options.length,20);
  assert.equal(requests.filter(r=>r.body&&r.url!='/api/preview').length,0,'Opening a lesson never starts training');
  for(const id of ['journal','page-next','page-guide','practice-answer','reference','section-next'])assert.equal(elements[id],undefined,'Removed '+id);
  assert.equal(elements['course-lesson'],undefined,'No course topic dropdown');
- await go('interactive');assert.equal(elements.interactive.hidden,false);assert.equal(elements['interactive-paths'].children.length,5);
+ await go('interactive');assert.equal(elements.interactive.hidden,false);assert.equal(elements['interactive-paths'].children.length,6);
  const visitedGuided=new Set();let checkedGuided=0;
  const topicButtons=()=>descendants(elements['interactive-outline']).filter(n=>n.className==='journey-topic-link');
  for(const p of guided.index.paths){
@@ -146,12 +147,12 @@ async function exercise(empty){
   await elements['interactive-outline'].children.at(-1).children[0].onclick();await settle();topicButtons().at(-1).onclick();await elements['interactive-next'].onclick();assert.equal(elements['interactive-complete'].hidden,false);assert.match(content(elements['interactive-complete-content']),/not proof of independent skill/);assert.match(content(elements['interactive-complete-content']),/unvisited step/);
   elements['interactive-finish-paths'].onclick();
  }
- assert.equal(visitedGuided.size,79);assert.equal(checkedGuided,183);assert.ok(stored.has('model-lab.interactive.v1'));assert.equal(elements['interactive-error'].textContent,'');
+ assert.equal(visitedGuided.size,174);assert.equal(checkedGuided,278);assert.ok(stored.has('model-lab.interactive.v1'));assert.equal(elements['interactive-error'].textContent,'');
  await elements['interactive-paths'].children.find(c=>c.children.at(-1).dataset.path==='llm').children.at(-1).onclick();await settle();
  const llm=guided.index.paths.find(p=>p.id==='llm'),loopIndex=llm.lessons.findIndex(l=>l.id==='T0');await elements['interactive-outline'].children[loopIndex].children[0].onclick();await settle();
  topicButtons()[guided.docs.T0.steps.findIndex(s=>s.kind==='lab')].onclick();const labButton=descendants(elements['interactive-body']).find(n=>n.tag==='button');assert.ok(labButton);labButton.onclick();await settle();assert.equal(elements.train.hidden,false,'Deliberate lab handoff opens controls without starting a job');
  assert.equal(requests.filter(r=>r.body&&r.url!='/api/preview').length,0,'Every guided screen, answer and full-lesson handoff is read-only');
- for(const [page,count] of [['basics',5],['ml',16],['dl',14],['language',2],['nlp',24],['training',9],['post',9]]){
+ for(const [page,count] of [['basics',5],['python-basics',14],['python-data',10],['python-ml',12],['python-dl',12],['python-nlp',8],['python-llm',10],['python-libraries',9],['python-dsa',20],['ml',16],['dl',14],['language',2],['nlp',24],['training',9],['post',9]]){
   await go(page);assert.equal(elements.course.hidden,false);
   const menu=elements['course-menu-'+page],toggle=elements['course-toggle-'+page];
   assert.equal(menu.children.length,count);assert.equal(menu.hidden,false);assert.equal(toggle.getAttribute('aria-expanded'),'true');
@@ -164,6 +165,48 @@ async function exercise(empty){
   await vm.runInContext(`LabLearning.openDocument(${JSON.stringify(lesson.id)})`,context);
   assert.equal(elements['page-title'].textContent,lesson.title,'Actual lesson title is the single page H1');
   const children=elements['course-content'].children;
+  if(course.docs[lesson.id].reader.type==='code'){
+   const codeReaders=descendants(elements['course-content']).filter(n=>n.className==='code-lesson');
+   assert.equal(codeReaders.length,1,lesson.id+' one code reader');
+   assert.ok(content(codeReaders[0]).length>500,lesson.id+' authored explanation visible');
+   const examples=descendants(codeReaders[0]).filter(n=>n.dataset.example);
+   const expected=course.docs[lesson.id].reader.blocks.filter(b=>b.kind==='example');
+   assert.equal(examples.length,expected.length);
+   for(const block of expected){const example=examples.find(n=>n.dataset.example===block.id);assert.ok(content(example).includes(block.code));assert.ok(content(example).includes(block.output));}
+   const sceneBlock=course.docs[lesson.id].reader.blocks.find(block=>block.kind==='scene');
+   if(sceneBlock){
+    const teaching=course.docs[lesson.id].reader.teaching;
+    const recipes=descendants(codeReaders[0]).filter(n=>n.className==='dsa-recipe');
+    assert.equal(recipes.length,teaching.recipes.length,lesson.id+' all short recipes served');
+    assert.ok(descendants(codeReaders[0]).find(n=>n.className==='dsa-definition').textContent.includes(teaching.definition));
+    for(let i=0;i<recipes.length;i++){
+     const nodes=descendants(recipes[i]).filter(n=>n.className==='dsa-flow-node');
+     assert.equal(nodes.length,teaching.recipes[i].nodes.length);
+     nodes.at(-1).onclick();
+     assert.equal(recipes[i].dataset.selectedNode,teaching.recipes[i].nodes.at(-1).id);
+     assert.ok(descendants(recipes[i]).find(n=>n.className==='dsa-code-line active'),'flow selection highlights code');
+    }
+    const scene=descendants(codeReaders[0]).find(n=>n.className==='dsa-scene');
+    assert.ok(scene,lesson.id+' picture is visible');
+    assert.equal(scene.dataset.scene,lesson.id);
+    const alt=descendants(scene).find(n=>n.className==='dsa-alt');
+    const before=alt.textContent;
+    assert.match(before,/^Text alternative: /);
+    descendants(scene).find(n=>n.tag==='button'&&n.textContent==='Next').onclick();
+    assert.notEqual(alt.textContent,before,lesson.id+' next picture changes');
+    descendants(scene).find(n=>n.tag==='button'&&n.textContent==='Reset').onclick();
+    assert.equal(alt.textContent,before,lesson.id+' reset restores the picture');
+    if(lesson.id==='DA05'){
+     const select=descendants(scene).find(n=>n.tag==='select');
+     const prompt=descendants(scene).find(n=>n.className==='dsa-prompt');
+     const firstPrompt=prompt.textContent;
+     select.value=String(select.children.length-1);
+     select.onchange();
+     assert.notEqual(prompt.textContent,firstPrompt,'case selection changes the picture');
+    }
+   }
+   continue;
+  }
   const explorers=descendants(elements['course-content']).filter(n=>n.className?.split(' ').includes('architecture-explorer'));
   assert.equal(explorers.length,1,lesson.id+' one canonical reader');
   if(course.docs[lesson.id].reader.reading){
@@ -188,18 +231,19 @@ async function exercise(empty){
  const before=content(elements['course-content']);await vm.runInContext('refresh()',context);assert.equal(content(elements['course-content']),before,'Polling preserves lesson');
  for(const q of Object.values(course.questions))vm.runInContext(`LabLearning.markdown(${JSON.stringify(q.markdown)},document.getElementById('question-answer'))`,context);
  assert.equal(elements['question-select'],undefined,'No question dropdown');assert.equal(elements['question-category'],undefined,'No topic dropdown');
- await go('interview');assert.equal(elements['interview-menu'].children.length,5);assert.equal(elements['interview-menu'].hidden,false);assert.ok(content(elements['question-answer']).length>100);
- const questionLinks=descendants(elements['interview-menu']).filter(n=>n.dataset.question);assert.equal(questionLinks.length,66);
+ await go('interview');assert.equal(elements['interview-menu'].children.length,new Set(course.index.questions.map(q=>q.category)).size);assert.equal(elements['interview-menu'].hidden,false);assert.ok(content(elements['question-answer']).length>100);
+ const questionLinks=descendants(elements['interview-menu']).filter(n=>n.dataset.question);assert.equal(questionLinks.length,course.index.questions.length);
  for(const [category,count] of Object.entries(course.index.questions.reduce((a,q)=>(a[q.category]=(a[q.category]||0)+1,a),{}))){
-  if(['ml','dl','nlp'].includes(category)){
-   await go(category+'-interview');const list=elements[category+'-interview-menu'];assert.equal(list.children.length,count);assert.equal(elements.interview.hidden,false);const last=list.children.at(-1);await last.onclick();await settle();assert.equal(last.getAttribute('aria-current'),'page');assert.equal(elements['question-title'].textContent,course.questions[last.dataset.question].title);continue;
-  }
   const list=elements['question-menu-'+category],toggle=elements['question-topic-'+category];assert.equal(list.children.length,count);
   if(list.hidden)toggle.onclick();const last=list.children.at(-1);await last.onclick();await settle();
   assert.equal(last.getAttribute('aria-current'),'page');assert.equal(list.hidden,false);assert.equal(elements['question-title'].textContent,course.questions[last.dataset.question].title);
   const answer=content(elements['question-answer']);toggle.onclick();assert.equal(list.hidden,true);toggle.onclick();assert.equal(list.hidden,false);assert.equal(content(elements['question-answer']),answer,'Topic collapse preserves answer');
  }
  const chosenQuestion=elements['question-title'].textContent;await go('interview');assert.equal(elements['interview-menu'].hidden,true);await go('interview');assert.equal(elements['interview-menu'].hidden,false);assert.equal(elements['question-title'].textContent,chosenQuestion);
+ elements['interview-search'].value='question 138';vm.runInContext('LabLearning.searchInterviews()',context);assert.equal(elements['interview-search-results'].children.length,1);await elements['interview-search-results'].children[0].onclick();await settle();assert.match(elements['question-title'].textContent,/Attention/);
+ elements['interview-search'].value='question 329';vm.runInContext('LabLearning.searchInterviews()',context);assert.equal(elements['interview-search-results'].children.length,1);await elements['interview-search-results'].children[0].onclick();await settle();assert.equal(elements['page-title'].textContent,course.docs.LC04.title);
+ elements['interview-search'].value='';vm.runInContext('LabLearning.searchInterviews()',context);
+ await vm.runInContext(`LabLearning.openQuestion(${JSON.stringify(Object.values(course.questions).find(q=>q.title===chosenQuestion).id)})`,context);
  await go('home');assert.ok(questionLinks.every(n=>n.getAttribute('aria-current')===undefined));await go('interview');assert.equal(elements['question-title'].textContent,chosenQuestion,'Returning remembers question');
  await go('visuals');assert.equal(elements['visual-select'].options.length,12);
  for(const item of elements['visual-select'].options){elements['visual-select'].value=item.value;elements['visual-select'].onchange();assert.equal(descendants(elements['visual-stage']).filter(n=>n.className==='architecture-explorer').length,1,item.value+' uses linked explorer');}
@@ -217,7 +261,7 @@ async function exercise(empty){
   vm.runInContext('scene.updateSettings({...options.settings,heads:2});scene.destroy()',context);assert.equal(host.children.length,0,id+' removes listeners/root');
  }
  await go('train');elements['read-training-loop'].onclick({preventDefault(){}});await settle();assert.equal(elements['page-title'].textContent,course.docs.T0.title);assert.equal(elements['course-menu-training'].children[0].getAttribute('aria-current'),'page');
- await go('train');all.find(e=>e.dataset.engine==='scratch').onclick();assert.equal(elements['scratch-setup'].hidden,false);assert.ok(content(elements['architecture-preview']).length>150);all.find(e=>e.dataset.engine==='lora').onclick();assert.equal(elements['language-setup'].hidden,false);
+ await go('train');all.find(e=>e.dataset.engine==='scratch').onclick();assert.equal(elements['scratch-setup'].hidden,false);assert.equal(elements['architecture-preview'],undefined);assert.equal(elements['language-structure'],undefined);assert.match(content(elements['language-experiment-review']),/make_plan/);all.find(e=>e.dataset.engine==='lora').onclick();assert.equal(elements['language-setup'].hidden,false);assert.match(content(elements['language-experiment-review']),/train\("my-adapter-experiment"/);
  await go('explore');if(empty){assert.equal(elements['empty-run'].hidden,false);assert.equal(elements['run-content'].hidden,true);}else{
   assert.equal(elements['run-content'].hidden,false);assert.match(content(elements.scores),/Development/);
   for(const t of ['tokens','inside','generate','results','curves']){all.find(e=>e.dataset.tab===t).onclick();assert.equal(elements['tab-'+t].hidden,false);}
@@ -262,6 +306,6 @@ async function exercise(empty){
  vm.runInContext('LabLearning.markdown("<script>alert(1)</script> [bad](javascript:alert) **safe** `literal`",document.getElementById("course-content"))',context);assert.match(content(elements['course-content']),/<script>/);assert.ok(!all.some(n=>n.href?.startsWith('javascript:')));
  assert.ok(equations>=80,'All lessons/answers/static diagrams exercised actual equation parsing: '+equations);assert.deepEqual(mathErrors,[],'All course, interview and diagram equations parse');
  assert.doesNotMatch(html,/brand-icon|A working notebook/,'No logo or decorative tagline');
- console.log(`PASS ${empty?'empty':'saved'} state: 79 canonical lessons, all guided steps and 183 checks, 102 interview answers, 18 static diagrams, ${equations} equation renders; guided navigation/review/resume/lab handoffs, ML/DL/LLM controls, real-result fixtures, tabs, traces, safety and no auto-training. DOM stand-ins only.`);
+ console.log(`PASS ${empty?'empty':'saved'} state: 174 canonical lessons, all guided steps and 278 checks, 62 interview topics, 18 static diagrams, ${equations} equation renders; Python code/output delivery, unified interview navigation/search/code handoffs, guided navigation/review/resume/lab handoffs, ML/DL/LLM controls, real-result fixtures, tabs, traces, safety and no auto-training. DOM stand-ins only.`);
 }
 (async()=>{await exercise(false);await exercise(true);})().catch(e=>{console.error(e);process.exitCode=1;});

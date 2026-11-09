@@ -150,7 +150,7 @@ def main():
           f"(shortest {min_words}), {len(params)} control cards, {len(datasets)} data cards, "
           f"{len(experiments)} experiment contracts, {len(sources)} sources, "
           f"{links} local links, acyclic prerequisites and selected arithmetic.")
-    print("This validator checks authored content only. Runtime/measurement checks live in projects/llm_training_lab/tests and its implementation report.")
+    print("This validator checks authored content only. Runtime checks are in the repository tests directory.")
 
 if __name__=="__main__":
     main()

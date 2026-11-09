@@ -48,7 +48,7 @@ function serialize(n){
  return '<'+n.tag+Object.entries(a).map(([k,v])=>' '+k+'="'+escape(v)+'"').join('')+'>'+escape(n.textContent)+n.children.filter(c=>c.getAttribute('class')!=='ax-edge-hit').map(serialize).join('')+'</'+n.tag+'>';
 }
 const markerIds=[];
-const materials=path.resolve(__dirname,'../learning_materials');
+const materials=fs.existsSync(path.resolve(__dirname,'../learning_materials'))?path.resolve(__dirname,'../learning_materials'):path.resolve(__dirname,'../../../learning_materials');
 const profiles=JSON.parse(fs.readFileSync(path.join(materials,'reader_profiles.json'),'utf8')).lessons;
 for(const type of ['transformer','cnn']){
  const host=new Element('div');context.host=host;

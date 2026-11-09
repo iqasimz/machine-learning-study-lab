@@ -12,10 +12,10 @@ class CurriculumTests(unittest.TestCase):
     def test_stage_coverage(self):
         index = c.catalog()
         self.assertEqual({s:sum(l["stage"]==s for l in index["lessons"]) for s in index["stages"]},
-                         {"basics":5,"ml":16,"dl":14,"language":2,"nlp":24,"training":9,"post":9})
-        self.assertEqual(len({l["id"] for l in index["lessons"]}),79)
-        self.assertEqual(len(index["questions"]),102)
-        self.assertEqual(len({q["id"] for q in index["questions"]}),102)
+                         {"basics":5,"python-basics":14,"python-data":10,"python-ml":12,"python-dl":12,"python-nlp":8,"python-llm":10,"python-libraries":9,"python-dsa":20,"ml":16,"dl":14,"language":2,"nlp":24,"training":9,"post":9})
+        self.assertEqual(len({l["id"] for l in index["lessons"]}),174)
+        self.assertEqual(len(index["questions"]),62)
+        self.assertEqual(len({q["id"] for q in index["questions"]}),62)
         self.assertGreaterEqual(len(index["glossary"]),30)
 
     def test_all_documents_are_complete_originals(self):
@@ -24,6 +24,10 @@ class CurriculumTests(unittest.TestCase):
             with self.subTest(document=entry["id"]):
                 doc = c.document(entry["id"])
                 original = (c.MATERIALS / entry["source"]).read_text(encoding="utf-8")
+                if entry.get("stage", "").startswith("python-"):
+                    self.assertIn(doc["markdown"].split("\n",1)[1].strip(), original)
+                    self.assertEqual(doc["sha256"],hashlib.sha256(doc["markdown"].encode()).hexdigest())
+                    continue
                 self.assertEqual(doc["markdown"],original)
                 self.assertEqual(doc["sha256"],hashlib.sha256(original.encode()).hexdigest())
                 self.assertTrue(doc["sections"])
@@ -35,7 +39,7 @@ class CurriculumTests(unittest.TestCase):
             doc = c.interview(entry["id"])
             self.assertGreater(len(doc["markdown"]),100)
             self.assertIn(doc["markdown"],(c.MATERIALS / doc["source"]).read_text())
-        self.assertEqual(c.interview("P16")["category"],"practice")
+        self.assertEqual(c.interview("P16")["id"],"B69")
 
     def test_no_arbitrary_path_endpoint(self):
         for name in ["../../secret", "..%2Fsecret", "README.md", "", "P1/../P2", "P1?path=secret"]:
@@ -62,6 +66,9 @@ class CurriculumTests(unittest.TestCase):
     def test_advanced_walkthroughs_and_sources_are_in_every_lesson(self):
         for entry in c.catalog()["lessons"]:
             text=c.document(entry["id"])["markdown"]
+            if entry["stage"].startswith("python-"):
+                self.assertEqual(c.document(entry["id"])["reader"]["type"],"code")
+                continue
             with self.subTest(lesson=entry["id"]):
                 if entry["stage"]=="nlp":self.assertEqual(len(c.document(entry["id"])["reader"]["notes"]),2)
                 elif entry["id"]=="P8":self.assertIn("ROC",text)
@@ -80,6 +87,7 @@ class CurriculumTests(unittest.TestCase):
         for entry in c.catalog()["lessons"]:
             doc = c.document(entry["id"])
             self.assertTrue(doc["markdown"].startswith(f'# {entry["id"]}. {entry["title"]}\n'))
+            if entry["stage"].startswith("python-"):continue
             if entry["id"]=="P8" or entry["stage"]=="nlp":continue
             if entry["stage"] in {"ml","dl"}:
                 self.assertLess(doc["markdown"].index("**Key terms.**"),doc["markdown"].index("**Process.**"))
@@ -102,13 +110,16 @@ class CurriculumTests(unittest.TestCase):
 
     def test_common_foundations_and_subject_specific_questions(self):
         self.assertEqual(c.document("P5")["next"],"P8")
-        self.assertEqual(c.document("P8")["next"],"ML01")
+        self.assertEqual(c.document("P8")["next"],"PY01")
+        self.assertEqual(c.document("LC10")["next"],"OL01")
+        self.assertEqual(c.document("OL09")["next"],"DA01")
+        self.assertEqual(c.document("DA20")["next"],"ML01")
         self.assertEqual(c.document("ML16")["next"],"DL01")
         self.assertEqual(c.document("DL14")["next"],"P6")
         self.assertEqual(c.interview("IML01")["category"],"ml")
-        self.assertEqual(c.interview("IDL12")["category"],"dl")
-        self.assertEqual(sum(q["category"]=="ml" for q in c.catalog()["questions"]),12)
-        self.assertEqual(sum(q["category"]=="dl" for q in c.catalog()["questions"]),12)
+        self.assertEqual(c.interview("IDL12")["id"],"B69")
+        self.assertEqual(sum(q["category"]=="ml" for q in c.catalog()["questions"]),9)
+        self.assertEqual(sum(q["category"]=="dl" for q in c.catalog()["questions"]),7)
 
 
 if __name__ == "__main__": unittest.main()

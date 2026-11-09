@@ -12,6 +12,145 @@ Browse any subject in the sidebar or follow the same lessons in Interactive mode
 | P5 | [How models learn: loss and optimization](pre_llm/05_NEURAL_NETWORKS_AND_OPTIMIZATION.md) |
 | P8 | [Evaluation metrics](pre_llm/08_EVALUATION_METRICS.md) |
 
+## Python and code
+
+These 95 lessons connect library interfaces to the theory below. Examples show checked outputs, not a browser Python runtime. Full training walkthroughs link to the existing local labs rather than duplicating them.
+
+### Python basics
+
+| Lesson | Topic |
+| --- | --- |
+| PY01 | [Reading a program](python/01_PYTHON_BASICS.md) |
+| PY02 | [Values, types and operators](python/01_PYTHON_BASICS.md) |
+| PY03 | [Conditions and loops](python/01_PYTHON_BASICS.md) |
+| PY04 | [Data structures](python/01_PYTHON_BASICS.md) |
+| PY05 | [Names, mutation and copies](python/01_PYTHON_BASICS.md) |
+| PY06 | [Functions and arguments](python/01_PYTHON_BASICS.md) |
+| PY07 | [Iteration and generators](python/01_PYTHON_BASICS.md) |
+| PY08 | [Text, bytes and files](python/01_PYTHON_BASICS.md) |
+| PY09 | [Exceptions and debugging](python/01_PYTHON_BASICS.md) |
+| PY10 | [Modules and environments](python/01_PYTHON_BASICS.md) |
+| PY11 | [Classes](python/01_PYTHON_BASICS.md) |
+| PY12 | [Tests and type hints](python/01_PYTHON_BASICS.md) |
+| PY13 | [Configuration and randomness](python/01_PYTHON_BASICS.md) |
+| PY14 | [A complete label report](python/01_PYTHON_BASICS.md) |
+
+### Data and plotting
+
+| Lesson | Topic |
+| --- | --- |
+| DS01 | [NumPy arrays](python/02_DATA_AND_PLOTTING.md) |
+| DS02 | [NumPy indexing and copies](python/02_DATA_AND_PLOTTING.md) |
+| DS03 | [Axes and broadcasting](python/02_DATA_AND_PLOTTING.md) |
+| DS04 | [Sampling with NumPy and SciPy](python/02_DATA_AND_PLOTTING.md) |
+| DS05 | [pandas tables](python/02_DATA_AND_PLOTTING.md) |
+| DS06 | [Selecting and updating rows](python/02_DATA_AND_PLOTTING.md) |
+| DS07 | [Grouping and joins](python/02_DATA_AND_PLOTTING.md) |
+| DS08 | [Matplotlib figures](python/02_DATA_AND_PLOTTING.md) |
+| DS09 | [Diagnostic plots](python/02_DATA_AND_PLOTTING.md) |
+| DS10 | [A small checked analysis](python/02_DATA_AND_PLOTTING.md) |
+
+### Machine learning code
+
+| Lesson | Topic |
+| --- | --- |
+| SK01 | [Estimators](python/03_MACHINE_LEARNING.md) |
+| SK02 | [Pipelines](python/03_MACHINE_LEARNING.md) |
+| SK03 | [Linear regression](python/03_MACHINE_LEARNING.md) |
+| SK04 | [Thresholds](python/03_MACHINE_LEARNING.md) |
+| SK05 | [Neighbours](python/03_MACHINE_LEARNING.md) |
+| SK06 | [Trees](python/03_MACHINE_LEARNING.md) |
+| SK07 | [Boosting](python/03_MACHINE_LEARNING.md) |
+| SK08 | [Splits](python/03_MACHINE_LEARNING.md) |
+| SK09 | [Clustering](python/03_MACHINE_LEARNING.md) |
+| SK10 | [Calibration](python/03_MACHINE_LEARNING.md) |
+| SK11 | [Time and ranking](python/03_MACHINE_LEARNING.md) |
+| SK12 | [The fitting workflow](python/03_MACHINE_LEARNING.md) |
+
+### Deep learning code
+
+| Lesson | Topic |
+| --- | --- |
+| PT01 | [PyTorch](python/04_DEEP_LEARNING.md) |
+| PT02 | [Gradients](python/04_DEEP_LEARNING.md) |
+| PT03 | [Modules](python/04_DEEP_LEARNING.md) |
+| PT04 | [Batches](python/04_DEEP_LEARNING.md) |
+| PT05 | [The training loop](python/04_DEEP_LEARNING.md) |
+| PT06 | [Losses](python/04_DEEP_LEARNING.md) |
+| PT07 | [Convolution](python/04_DEEP_LEARNING.md) |
+| PT08 | [Recurrent models](python/04_DEEP_LEARNING.md) |
+| PT09 | [Attention](python/04_DEEP_LEARNING.md) |
+| PT10 | [Generative models](python/04_DEEP_LEARNING.md) |
+| PT11 | [Graph layers](python/04_DEEP_LEARNING.md) |
+| PT12 | [Saved weights](python/04_DEEP_LEARNING.md) |
+
+### NLP code
+
+| Lesson | Topic |
+| --- | --- |
+| NC01 | [Tokenization](python/05_NLP.md) |
+| NC02 | [Word counts](python/05_NLP.md) |
+| NC03 | [Embeddings](python/05_NLP.md) |
+| NC04 | [Token IDs and masks](python/05_NLP.md) |
+| NC05 | [Aligning labels](python/05_NLP.md) |
+| NC06 | [Retrieval](python/05_NLP.md) |
+| NC07 | [Text metrics](python/05_NLP.md) |
+| NC08 | [A fixed prediction report](python/05_NLP.md) |
+
+### LLM code and systems
+
+| Lesson | Topic |
+| --- | --- |
+| LC01 | [Model, weights and tokenizer](python/06_LLMS.md) |
+| LC02 | [Labels](python/06_LLMS.md) |
+| LC03 | [The scratch training loop](python/06_LLMS.md) |
+| LC04 | [LoRA](python/06_LLMS.md) |
+| LC05 | [Preference signals](python/06_LLMS.md) |
+| LC06 | [Retrieval](python/06_LLMS.md) |
+| LC07 | [Validating actions](python/06_LLMS.md) |
+| LC08 | [Service boundaries](python/06_LLMS.md) |
+| LC09 | [Memory and latency](python/06_LLMS.md) |
+| LC10 | [System evaluation](python/06_LLMS.md) |
+
+### Other libraries
+
+| Lesson | Topic |
+| --- | --- |
+| OL01 | [Logging](python/07_OTHER_LIBRARIES.md) |
+| OL02 | [Profiling](python/07_OTHER_LIBRARIES.md) |
+| OL03 | [SQL](python/07_OTHER_LIBRARIES.md) |
+| OL04 | [Columnar tables](python/07_OTHER_LIBRARIES.md) |
+| OL05 | [Rearranging tensors](python/07_OTHER_LIBRARIES.md) |
+| OL06 | [Tensor files](python/07_OTHER_LIBRARIES.md) |
+| OL07 | [Experiment records](python/07_OTHER_LIBRARIES.md) |
+| OL08 | [Property tests](python/07_OTHER_LIBRARIES.md) |
+| OL09 | [Graph objects](python/07_OTHER_LIBRARIES.md) |
+
+### Data structures and algorithms
+
+| Lesson | Topic |
+| --- | --- |
+| DA01 | [Contracts and cost](python/08_DSA.md) |
+| DA02 | [Lists and copies](python/08_DSA.md) |
+| DA03 | [Hash tables](python/08_DSA.md) |
+| DA04 | [Sorting](python/08_DSA.md) |
+| DA05 | [Binary search](python/08_DSA.md) |
+| DA06 | [Two pointers](python/08_DSA.md) |
+| DA07 | [Prefix sums and windows](python/08_DSA.md) |
+| DA08 | [Stacks, queues and links](python/08_DSA.md) |
+| DA09 | [Recursion](python/08_DSA.md) |
+| DA10 | [Backtracking](python/08_DSA.md) |
+| DA11 | [Trees and tries](python/08_DSA.md) |
+| DA12 | [Heaps](python/08_DSA.md) |
+| DA13 | [Graph search](python/08_DSA.md) |
+| DA14 | [Topological order and Dijkstra](python/08_DSA.md) |
+| DA15 | [Edit distance](python/08_DSA.md) |
+| DA16 | [Zero-one knapsack](python/08_DSA.md) |
+| DA17 | [Greedy choices](python/08_DSA.md) |
+| DA18 | [A bounded stream](python/08_DSA.md) |
+| DA19 | [Tests for a change](python/08_DSA.md) |
+| DA20 | [Dedup, top scores and a walk](python/08_DSA.md) |
+
 ## Machine learning
 
 | Lesson | Topic |

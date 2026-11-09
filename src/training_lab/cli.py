@@ -36,7 +36,7 @@ def main(argv=None):
     model_fit.add_argument("--name",required=True)
     model_fit.add_argument("--settings",required=True)
     data_prepare=commands.add_parser("model-prepare",help="Explicitly download an allowlisted public dataset")
-    data_prepare.add_argument("dataset",choices=["fashion_mnist","wine_quality"])
+    data_prepare.add_argument("dataset",choices=["fashion_mnist","mnist","cifar10","wine_quality","sms_spam","uci_har","bike_sharing"])
     verify_parser = commands.add_parser("verify")
     verify_parser.add_argument("run")
     generate = commands.add_parser("generate")

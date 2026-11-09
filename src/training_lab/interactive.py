@@ -59,6 +59,6 @@ def export_run(identifier):
     names=["best.pt","tokenizer.json","manifest.json","evaluation.json","data.json"]
     for name in names:shutil.copy2(directory/name,target/name)
     write_json(target/"export.json",{"format":"training_lab_educational_v1","source_run":identifier,
-               "usable_as_general_assistant":False,"deployment_status":"NOT_VALIDATED",
+               "usable_as_general_assistant":False,"evidencedesk_promotion":"NOT_APPROVED",
                "files":{n:sha256(target/n) for n in names}})
     return {"run":identifier,"directory":str(target),"status":"EXPORTED","assistant_approved":False}

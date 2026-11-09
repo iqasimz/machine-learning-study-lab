@@ -247,12 +247,13 @@ def code_excerpt(reference):
 
 
 def catalog():
+    from .source_code import language
     parameters = copy.deepcopy(PARAMETERS)
     for p in parameters.values():
         p["source"] = code_excerpt(p["code"])
         p["lesson"] = {"Architecture":"attention","Data":"tokenization","Optimization":"optimization",
                        "Reproducibility":"generalization"}[p["group"]]
-    return {"version":VERSION,"parameters":parameters,"defaults":DEFAULTS,"guides":GUIDES,
+    return {"version":VERSION,"parameters":parameters,"defaults":DEFAULTS,"guides":GUIDES,"sources":language("scratch"),
             "lessons":{k:{"title":v[0]} for k,v in LESSONS.items()},
             "scope":"This registry configures the local random-initialized decoder. A separate lab supports pretrained LoRA adaptation. Full LLM preference/RL training is not implemented."}
 

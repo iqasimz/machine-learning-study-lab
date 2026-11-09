@@ -1,8 +1,8 @@
 {
-  "lessons": 79,
-  "questions": 102,
-  "interactive_paths": 5,
-  "snapshot_endpoints": 290,
+  "lessons": 174,
+  "questions": 62,
+  "interactive_paths": 6,
+  "snapshot_endpoints": 440,
   "training_enabled": false,
   "user_runs_exported": 0
 }

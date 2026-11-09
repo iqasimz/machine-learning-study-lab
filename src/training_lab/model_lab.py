@@ -15,7 +15,8 @@ from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor, IsolationForest, RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import ElasticNet, Lasso, LogisticRegression, Ridge
 from sklearn.mixture import GaussianMixture
-from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import GaussianNB, MultinomialNB
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import RobustScaler, StandardScaler
@@ -35,6 +36,16 @@ def control(label, choices, default, definition, effect, equation=""):
 
 
 CONTROLS = {
+ "max_tokens": control("Maximum tokens per message", [32, 64, 128, 256], 128, "Keep this many leading word/punctuation tokens; shorter messages get masked right padding.", "A longer limit keeps more text but increases computation. This is not a pretrained model's subword tokenizer."),
+ "vocab_size": control("Maximum vocabulary entries", [2000, 5000, 10000], 5000, "Keep the most frequent training tokens. Neural vocabularies reserve PAD=0 and UNK=1; TF-IDF uses this as its feature cap.", "Rare or unseen words lose detail. Development/test texts never choose the vocabulary."),
+ "embedding_dim": control("Token embedding width", [16, 32, 64, 128], 64, "Number of learned coordinates representing each token.", "Embeddings start randomly and learn during this experiment; larger width increases parameters."),
+ "lookback": control("Past hours used", [12, 24, 48, 96], 24, "Predict the next hour using this many consecutive observed hourly counts.", "Longer history can capture daily patterns. All lookbacks use the same eligible target hours and chronological splits."),
+ "kernel_size": control("1D filter width", [3, 5, 7], 3, "Number of neighbouring sequence positions read by each convolution.", "Wider filters see more nearby steps. TCN uses causal filters with dilation doubling across blocks."),
+ "heads": control("Attention heads", [1, 2, 4, 8], 4, "Split the hidden coordinates into parallel attention heads; hidden width must divide evenly.", "More heads change how features are grouped, not the total hidden width or automatically the quality."),
+ "positions": control("Learn position embeddings", [True, False], True, "Add a trainable vector for each sequence or patch position before attention.", "Without positions, mean-pooled attention cannot distinguish permutations of otherwise identical tokens/patches."),
+ "patch_size": control("ViT patch side in pixels", [2, 4, 7, 8], 4, "A square patch is projected to one vector. Patch side must divide both image dimensions.", "Smaller patches retain finer layout but create more tokens and quadratic attention cost.", "patch tokens = (image height / patch side) × (image width / patch side)"),
+ "ngrams": control("TF-IDF word features", [1, 2], 1, "One uses individual tokens; two adds adjacent two-token combinations.", "Bigrams add local order but consume the same feature budget."),
+ "alpha": control("Naive Bayes smoothing α", [.1, 1.0, 10.0], 1.0, "Adds pseudo-counts when estimating class-conditional word weights.", "Avoids zero-probability features; excessive smoothing can erase distinctions."),
  "train_limit": control("Maximum training rows", [500, 1500, 5000, 15000, 60000], 5000, "Cap only fitting examples; development and test remain fixed.", "More examples cost more computation. Different caps are data-budget comparisons, not isolated model changes."),
  "seed": control("Model seed", [7, 17, 29], 17, "Initializes model weights, fitting randomness and minibatch order, not the split.", "Repeat seeds to measure variation. The split seed stays fixed at 20261102."),
  "scaling": control("Feature scaling", ["none", "standard", "robust"], "standard", "Fit a feature transform using training rows only, then apply it unchanged to development/test.", "Scaling changes distances and the effective strength of regularization; trees usually do not need it.", "standard: z = (x − training mean) / training standard deviation"),
@@ -103,25 +114,74 @@ METHODS = {
  "cnn": method("Convolutional network", "dl", ["classification"], ["width", "activation", "dropout", "normalization"], "Two spatial convolution blocks share filters across image positions, pool locally, then classify the retained feature map."),
  "residual": method("Residual convolutional network", "dl", ["classification"], ["width", "activation", "dropout", "normalization"], "Add an identity shortcut around two same-shape convolutions so each block can learn a correction."),
  "autoencoder": method("Dense autoencoder", "dl", ["representation"], ["width", "activation"], "Compress images into a learned bottleneck and reconstruct the original pixel values. Targets are input pixels, not class labels."),
+ "residual_mlp": method("Residual MLP", "dl", ["classification", "regression"], ["width", "layers", "activation", "dropout", "normalization"], "Project inputs to a hidden vector, then refine it with additive two-layer residual blocks. A tabular/image comparison with a plain MLP; not parameter matched."),
+ "lenet": method("LeNet-style CNN", "dl", ["classification"], ["width", "activation", "dropout", "normalization"], "Two 5×5 convolution/pooling stages and a small dense head. Adapted to 8×8, 28×28 or 32×32 inputs; not an exact reproduction of historical LeNet-5."),
+ "conv_autoencoder": method("Convolutional autoencoder", "dl", ["representation"], ["width", "activation"], "Downsample pixels into a smaller spatial representation, then reconstruct with transposed convolutions. No class labels enter the loss."),
+}
+
+SEQUENCE_NAMES = {"rnn":"RNN", "birnn":"Bidirectional RNN", "lstm":"LSTM", "bilstm":"Bidirectional LSTM", "gru":"GRU", "bigru":"Bidirectional GRU"}
+for identifier, label in SEQUENCE_NAMES.items():
+    mechanism = ("Keep a separate cell state, controlled by input, forget and output gates." if "lstm" in identifier else
+                 "Use reset and update gates to mix remembered state with a candidate update." if "gru" in identifier else
+                 "Apply a tanh update to the current input and previous hidden state, without LSTM/GRU gates.")
+    METHODS[identifier] = method(label, "dl", ["classification", "regression"], ["width", "layers", "dropout"],
+        mechanism + " " + ("Read the supplied history in both directions, then concatenate the final forward/backward states. This never exposes future target hours." if identifier.startswith("bi") else "Use the final recurrent state for prediction.") + " Text padding is excluded with packed sequences; images are read one horizontal row at a time.")
+METHODS.update({
+    "cnn1d": method("1D convolutional encoder", "dl", ["classification", "regression"], ["width", "layers", "kernel_size", "dropout"], "Learn local patterns along token positions or sensor/time steps. Mask text padding after each layer; pool valid positions for classification, read the last position for forecasting."),
+    "tcn": method("Temporal convolutional network", "dl", ["classification", "regression"], ["width", "layers", "kernel_size", "dropout"], "Stack residual blocks with two causal convolutions each. Dilation doubles across blocks, expanding past context without recurrent updates. Forecasting reads the final history state."),
+    "transformer_encoder": method("Small Transformer encoder", "dl", ["classification", "regression"], ["width", "layers", "heads", "positions", "dropout"], "Use bidirectional self-attention over the supplied input only, followed by position-wise MLPs and residual paths. Mask padded text. This is trained from scratch, not a pretrained language model."),
+    "embedding_mean": method("Mean token embeddings", "dl", ["classification"], ["dropout"], "Average learned embeddings over real tokens, ignoring padding and word order, then classify. A simple baseline for sequence models on SMS."),
+    "vit": method("Tiny Vision Transformer", "dl", ["classification"], ["width", "layers", "heads", "patch_size", "positions", "dropout"], "Project non-overlapping image patches to vectors, add positions, apply self-attention blocks, mean-pool and classify. Small and trained from scratch; no pretrained ViT weights or foundation-model performance claims."),
+    "tfidf_logistic": method("TF-IDF + logistic regression", "ml", ["classification"], ["vocab_size", "ngrams", "C"], "Fit a sparse token/word-pair vocabulary and inverse-document frequencies on training texts, then learn a linear classifier. A strong low-cost text baseline."),
+    "tfidf_nb": method("TF-IDF + Multinomial Naive Bayes", "ml", ["classification"], ["vocab_size", "ngrams", "alpha"], "Fit training-only nonnegative TF-IDF features and a smoothed class-conditional word model. Compare with neural models before assuming sequence complexity helps."),
+})
+for identifier, spec in METHODS.items():
+    spec["input_kinds"] = (["text"] if identifier in {"tfidf_logistic", "tfidf_nb", "embedding_mean"} else
+                           ["image"] if identifier in {"cnn", "residual", "lenet", "autoencoder", "conv_autoencoder", "vit"} else
+                           ["image", "text", "sequence"] if identifier in {*SEQUENCE_NAMES, "cnn1d", "tcn", "transformer_encoder"} else
+                           ["table", "image", "sequence"])
+for identifier in ["tfidf_logistic", "tfidf_nb"]:
+    METHODS[identifier]["controls"].remove("scaling")
+for identifier in SEQUENCE_NAMES:
+    METHODS[identifier]["control_notes"] = {
+        "width":{"label":"Recurrent hidden width", "definition":"Hidden coordinates per direction; bidirectional models concatenate two such vectors.", "effect":"Doubling directions increases parameters and head input size."},
+        "layers":{"label":"Stacked recurrent layers", "definition":"Pass the sequence of hidden states into the next recurrent layer.", "effect":"Dropout applies between layers when depth exceeds one, and before the prediction head at every depth."}}
+for identifier in ["cnn1d", "tcn", "transformer_encoder", "vit"]:
+    METHODS[identifier]["control_notes"] = {
+        "width":{"label":"Hidden channels / coordinates", "definition":"Working width of sequence features or patch vectors.", "effect":"Larger width increases capacity and computation."},
+        "layers":{"label":"Encoder blocks" if identifier != "cnn1d" else "Convolution layers", "definition":"Repeated encoder transformations; TCN blocks contain two causal convolutions each.", "effect":"More blocks increase depth; no pretrained layers are used."}}
+
+METHODS["residual_mlp"]["control_notes"] = {
+    "layers":{"label":"Residual blocks", "definition":"Each block contains two dense transformations and an additive shortcut.", "effect":"More blocks add depth and parameters; this count is not the number of individual linear layers."}
+}
+METHODS["autoencoder"]["control_notes"] = {
+    "width":{"label":"Encoder hidden width", "definition":"Dense hidden width before and after the smaller bottleneck.", "effect":"The bottleneck has max(2, width / 4) units, rounded down. Larger widths increase capacity and reconstruction cost."}
+}
+METHODS["conv_autoencoder"]["control_notes"] = {
+    "width":{"label":"Encoder channels", "definition":"Channels in the first stride-2 convolution; the next layer has max(2, width / 16) channels, rounded down.", "effect":"The encoder halves the spatial size twice; transposed convolutions reconstruct the pixels. This is not the classifier CNN's doubled-channel second block."}
 }
 
 
-def control_keys(model, task):
+def control_keys(model, task, dataset=None):
     keys = list(METHODS[model]["controls"])
     if model == "svm" and task != "regression":
         keys.remove("epsilon")
+    if dataset == "sms_spam" and METHODS[model]["area"] == "dl":
+        keys += ["max_tokens", "vocab_size", "embedding_dim"]
+    if dataset == "bike_sharing": keys += ["lookback"]
     return keys
 
 
 def catalog():
     import torch
+    from .source_code import models as model_sources
     return {"methods": [{"id": k, **v} for k, v in METHODS.items()], "controls": CONTROLS,
-            "datasets": model_data.catalog(), "hardware": hardware_info(),
-            "scope": "Executable: tabular supervised models, clustering/PCA/anomaly diagnostics, dense networks, CNNs, residual CNNs and image autoencoders. RNNs, GNNs, diffusion, transfer learning and RL are course topics, not runnable trainers in this release.",
+            "datasets": model_data.catalog(), "hardware": hardware_info(), "sources":model_sources(),
+            "scope": "Executable: tabular ML, text TF-IDF baselines, MLP/CNN/autoencoders, RNN/BiRNN, LSTM/BiLSTM, GRU/BiGRU, 1D CNN, TCN, token-embedding mean, Transformer encoder and tiny ViT. All neural models here start from scratch. GNNs, diffusion, pretrained vision transfer and RL are not runnable trainers in this lab.",
             "protocol": "One local worker. Fixed split seed independent of model seed. Train-only preprocessing. Development selects neural checkpoints; test never selects weights. Repeated test viewing is exploratory."}
 
 
-def validate(settings, require_ready=True):
+def validate(settings, require_ready=True, data_root=model_data.DATA):
     if not isinstance(settings, dict) or set(settings) != {"area", "dataset", "task", "model", "controls"}:
         raise ValueError("Expected area, dataset, task, model and controls only.")
     area, dataset, task, model, selected = (settings[k] for k in ["area", "dataset", "task", "model", "controls"])
@@ -137,24 +197,36 @@ def validate(settings, require_ready=True):
         raise ValueError("Choose a classification image/tabular dataset or the authored clusters.")
     if task == "anomaly" and dataset != "clusters":
         raise ValueError("Anomaly reference labels are available only in the authored noise fixture.")
-    image = dataset in {"digits", "fashion_mnist"}
-    if model in {"cnn", "residual", "autoencoder"} and not image:
-        raise ValueError("This architecture requires an image dataset.")
-    if not isinstance(selected, dict) or set(selected) - set(control_keys(model, task)):
+    image = dataset in model_data.IMAGE_DATASETS
+    kind = model_data.CATALOG[dataset].get("kind", "image" if image else "table")
+    if kind not in spec["input_kinds"] or (kind in {"text", "sequence"} and task not in {"classification", "regression"}):
+        raise ValueError("This model/task is not compatible with this dataset's input type.")
+    if not isinstance(selected, dict) or set(selected) - set(control_keys(model, task, dataset)):
         raise ValueError("An irrelevant or unknown control was supplied.")
-    controls = {k: CONTROLS[k]["default"] for k in control_keys(model, task)}
+    controls = {k: CONTROLS[k]["default"] for k in control_keys(model, task, dataset)}
     for key, value in selected.items():
         if not any(((type(value) is type(choice)) or (type(value) in {int,float} and type(choice) in {int,float})) and value == choice for choice in CONTROLS[key]["choices"]):
             raise ValueError("Unsupported value for " + key)
-        controls[key] = value
+        # Normalize equivalent JSON numbers to the registered constructor type.
+        controls[key] = next(choice for choice in CONTROLS[key]["choices"] if type(value) is type(choice) and value == choice or type(value) in {int,float} and type(choice) in {int,float} and value == choice)
     if model in {"lasso", "elastic"} and controls["strength"] == 0:
         raise ValueError("Use ridge with λ=0 for ordinary least squares; coordinate descent needs a positive penalty here.")
-    if model == "pca" and controls["components"] > {"iris": 4, "clusters": 2}.get(dataset, 11 if dataset.startswith("wine_") else 64):
+    if "heads" in controls and controls["width"] % controls["heads"]:
+        raise ValueError("Hidden width must be divisible by attention heads.")
+    if model == "vit":
+        side = {"digits":8, "mnist":28, "fashion_mnist":28, "cifar10":32}[dataset]
+        if side % controls["patch_size"]: raise ValueError("Patch side must divide the image side.")
+        tokens = (side // controls["patch_size"]) ** 2
+    else:
+        tokens = controls.get("max_tokens", 128 if dataset == "uci_har" else controls.get("lookback", 32))
+    if model in {"vit", "transformer_encoder"} and controls["batch_size"] * controls["heads"] * tokens**2 > 32_000_000:
+        raise ValueError("Attention configuration is too large for this local lab; reduce batch size, token count or heads.")
+    if model == "pca" and controls["components"] > {"iris": 4, "clusters": 2, "diabetes":10, "breast_cancer":30, "wine":13}.get(dataset, 11 if dataset.startswith("wine_") else 64):
         raise ValueError("PCA components cannot exceed the input dimension.")
     # Quadratic kernel/distance workloads on 50k image rows are not a safe local default.
-    if dataset == "fashion_mnist" and model in {"svm", "knn", "gmm", "dbscan"} and controls["train_limit"] > 5000:
-        raise ValueError("This method is limited to 5,000 Fashion-MNIST fitting rows; use a scalable method for more.")
-    if require_ready and not model_data.ready(dataset):
+    if dataset in {"fashion_mnist", "mnist", "cifar10"} and model in {"svm", "knn", "gmm", "dbscan"} and controls["train_limit"] > 5000:
+        raise ValueError("This method is limited to 5,000 fitting rows on large image datasets; use a scalable method for more.")
+    if require_ready and not model_data.ready(dataset, data_root):
         raise ValueError("Prepare this dataset first; training never downloads silently.")
     return {"area": area, "dataset": dataset, "task": task, "model": model, "controls": controls}
 
@@ -162,7 +234,8 @@ def validate(settings, require_ready=True):
 def estimator(model, task, p):
     regression = task == "regression"
     if model == "dummy": return DummyRegressor() if regression else DummyClassifier(strategy="most_frequent")
-    if model == "logistic": return LogisticRegression(C=p["C"], max_iter=1500, random_state=p["seed"])
+    if model in {"logistic", "tfidf_logistic"}: return LogisticRegression(C=p["C"], max_iter=1500, random_state=p["seed"])
+    if model == "tfidf_nb": return MultinomialNB(alpha=p["alpha"])
     if model == "ridge": return Ridge(alpha=p["strength"])
     if model == "lasso": return Lasso(alpha=p["strength"], max_iter=3000)
     if model == "elastic": return ElasticNet(alpha=p["strength"], l1_ratio=p["l1_ratio"], max_iter=3000)
@@ -229,17 +302,30 @@ def _prediction_artifact(data, outputs, task):
             result[split]["per_class"]=[{"label":int(label),"precision":float(precision[i]),"recall":float(recall[i]),"f1":float(f1[i]),"support":int(support[i])} for i,label in enumerate(labels)]
             if prob is not None:
                 result[split]["confidence"] = prob.max(axis=1).tolist()
-        if split == "test": result[split]["interval"] = interval(y, pred, task, groups=None if data.get("groups") is None else data["groups"][ids])
+        if split == "test":
+            if data["info"]["id"] == "bike_sharing":
+                result[split]["interval"] = {"metric":"mae", "low":None, "high":None, "resamples":0,
+                    "note":"No independent-row bootstrap is reported for temporally dependent rolling forecasts. A time-block/retraining analysis is needed for uncertainty."}
+            else:
+                result[split]["interval"] = interval(y, pred, task, groups=None if data.get("groups") is None else data["groups"][ids])
+                if data["info"]["id"] == "uci_har":
+                    result[split]["interval"].update(resampling_unit="participant", note="95% percentile bootstrap resampling held-out participants together. Few test participants limit precision; this omits retraining and model-selection uncertainty.")
     return result
 
 
 def _classical(settings, data, directory, update):
     p = settings["controls"]; task = settings["task"]; name = settings["model"]
-    transform = {"none": None, "standard": StandardScaler(), "robust": RobustScaler()}[p["scaling"]]
+    transform = {"none": None, "standard": StandardScaler(), "robust": RobustScaler()}[p.get("scaling", "none")]
     train = data["indices"]["train"]; x, y = data["x"], data["y"]
     update(phase="Fitting training-only preprocessing and estimator")
     model = estimator(name, task, p)
     pipeline = Pipeline([("scale", transform or "passthrough"), ("model", model)])
+    if name in {"tfidf_logistic", "tfidf_nb"}:
+        from .sequence_data import word_tokens
+        x = data["texts"]
+        transform = TfidfVectorizer(tokenizer=word_tokens, token_pattern=None, lowercase=False,
+                                    max_features=p["vocab_size"], ngram_range=(1, p["ngrams"]))
+        pipeline = Pipeline([("tfidf", transform), ("model", model)])
     with warnings.catch_warnings(record=True) as caught, threadpool_limits(limits=2):
         warnings.simplefilter("always")
         pipeline.fit(x[train], y[train] if task in {"classification", "regression"} else None)
@@ -280,7 +366,10 @@ def _classical(settings, data, directory, update):
     import joblib
     joblib.dump(pipeline, directory / "estimator.joblib", compress=3)
     result["estimator_parameters"]=model.get_params(deep=False)
-    result["fitted_preprocessing"]={"kind":p["scaling"],"center":None if transform is None else getattr(transform,"mean_",getattr(transform,"center_",np.array([]))).tolist(),"scale":None if transform is None else transform.scale_.tolist()}
+    if name in {"tfidf_logistic", "tfidf_nb"}:
+        result["fitted_preprocessing"] = {"kind":"training-only TF-IDF", "features":len(transform.vocabulary_), "vocabulary":{k:int(v) for k,v in transform.vocabulary_.items()}}
+    else:
+        result["fitted_preprocessing"]={"kind":p["scaling"],"center":None if transform is None else getattr(transform,"mean_",getattr(transform,"center_",np.array([]))).tolist(),"scale":None if transform is None else transform.scale_.tolist()}
     result["persistence_note"] = "Trusted local sklearn/joblib artifact. Pickle-based files can execute code when loaded; never load a file from an untrusted source. The web API does not deserialize it."
     if hasattr(model, "feature_importances_"):
         result["feature_importance"] = model.feature_importances_.tolist()
@@ -291,9 +380,17 @@ def _classical(settings, data, directory, update):
     return result
 
 
-def network(name, p, features, outputs, image_shape):
+def network(name, p, features, outputs, image_shape, input_spec=None):
     import torch
     from torch import nn
+    from .sequence_models import SEQUENCE_MODELS, SequencePredictor, TinyViT
+    if name == "vit": return TinyViT(p, outputs, image_shape)
+    if name in SEQUENCE_MODELS:
+        if input_spec is None and image_shape:
+            c, h, w = image_shape
+            input_spec = {"kind":"image", "sequence_shape":[h, c*w]}
+        if not input_spec or input_spec["kind"] == "table": raise ValueError("Sequence models require ordered steps, text or image rows.")
+        return SequencePredictor(name, p, outputs, input_spec, image_shape)
     activation = {"relu": nn.ReLU, "gelu": nn.GELU, "tanh": nn.Tanh}[p.get("activation", "relu")]
     width = p.get("width", 64)
     def norm(n, spatial=False):
@@ -310,7 +407,22 @@ def network(name, p, features, outputs, image_shape):
         return nn.Sequential(*layers, nn.Linear(width, outputs))
     if name == "autoencoder":
         return nn.Sequential(nn.Flatten(), nn.Linear(features, width), activation(), nn.Linear(width, max(2, width // 4)), activation(), nn.Linear(max(2, width // 4), width), activation(), nn.Linear(width, features), nn.Sigmoid())
+    if name == "residual_mlp":
+        class DenseResidual(nn.Module):
+            def __init__(self):
+                super().__init__()
+                self.path = nn.Sequential(nn.Linear(width, width), norm(width), activation(), nn.Dropout(p["dropout"]), nn.Linear(width, width), norm(width))
+                self.act = activation()
+            def forward(self, x): return self.act(x + self.path(x))
+        return nn.Sequential(nn.Flatten(), nn.Linear(features, width), activation(), *[DenseResidual() for _ in range(p["layers"])], nn.Linear(width, outputs))
     if not image_shape: raise ValueError("Convolution requires spatial images.")
+    channels = image_shape[0]
+    if name == "conv_autoencoder":
+        latent = max(2, width // 16)
+        return nn.Sequential(nn.Unflatten(1, tuple(image_shape)), nn.Conv2d(channels, width, 3, stride=2, padding=1), activation(),
+                             nn.Conv2d(width, latent, 3, stride=2, padding=1), activation(),
+                             nn.ConvTranspose2d(latent, width, 4, stride=2, padding=1), activation(),
+                             nn.ConvTranspose2d(width, channels, 4, stride=2, padding=1), nn.Sigmoid(), nn.Flatten())
     class Residual(nn.Module):
         def __init__(self, channels):
             super().__init__()
@@ -318,11 +430,14 @@ def network(name, p, features, outputs, image_shape):
             self.act = activation()
         def forward(self, x): return self.act(x + self.path(x))
     side = image_shape[-1] // 4
-    blocks = [nn.Unflatten(1, tuple(image_shape)), nn.Conv2d(1, width, 3, padding=1), norm(width, True), activation()]
+    kernel = 5 if name == "lenet" else 3
+    blocks = [nn.Unflatten(1, tuple(image_shape)), nn.Conv2d(channels, width, kernel, padding=kernel//2), norm(width, True), activation()]
     if name == "residual": blocks.append(Residual(width))
-    blocks.extend([nn.MaxPool2d(2), nn.Conv2d(width, width * 2, 3, padding=1), norm(width * 2, True), activation()])
+    blocks.extend([nn.MaxPool2d(2), nn.Conv2d(width, width * 2, kernel, padding=kernel//2), norm(width * 2, True), activation()])
     if name == "residual": blocks.append(Residual(width * 2))
-    blocks.extend([nn.MaxPool2d(2), nn.Flatten(), nn.Dropout(p["dropout"]), nn.Linear(width * 2 * side * side, outputs)])
+    blocks.extend([nn.MaxPool2d(2), nn.Flatten(), nn.Dropout(p["dropout"])])
+    if name == "lenet": blocks.extend([nn.Linear(width * 2 * side * side, 84), activation(), nn.Linear(84, outputs)])
+    else: blocks.append(nn.Linear(width * 2 * side * side, outputs))
     return nn.Sequential(*blocks)
 
 
@@ -334,11 +449,9 @@ def _neural(settings, data, directory, update):
     torch.set_num_threads(2); torch.manual_seed(p["seed"])
     np.random.seed(p["seed"])
     device = choose_device(p["device"])
-    x = data["x"].copy(); y = data["y"].copy(); shape = data["info"]["image_shape"]
-    preprocess = {"kind": "fixed image range 0–1"}
-    if shape is None:
-        scaler = StandardScaler().fit(x[ids["train"]]); x = scaler.transform(x).astype(np.float32)
-        preprocess = {"kind": "training-only standardization", "mean": scaler.mean_.tolist(), "scale": scaler.scale_.tolist()}
+    from .sequence_data import neural_inputs
+    x, preprocess, input_spec = neural_inputs(data)
+    y = data["y"].copy(); shape = data["info"]["image_shape"]
     target_mean, target_scale = 0.0, 1.0
     if task == "regression":
         target_mean, target_scale = float(y[ids["train"]].mean()), max(float(y[ids["train"]].std()), 1e-6)
@@ -346,10 +459,20 @@ def _neural(settings, data, directory, update):
     else: y_train = y
     labels = np.unique(y) if task == "classification" else None
     n_outputs = len(labels) if labels is not None else 1
-    model = network(settings["model"], p, x.shape[1], n_outputs, shape).to(device)
+    model = network(settings["model"], p, x.shape[1], n_outputs, shape, input_spec).to(device)
     count = sum(t.numel() for t in model.parameters())
     if count > 3_000_000: raise ValueError("This local configuration exceeds three million parameters.")
     x_tensor = torch.from_numpy(x)
+    device_note = "Requested processor supports this configuration."
+    if device != "cpu" and settings["model"] in {*SEQUENCE_NAMES, "cnn1d", "tcn", "embedding_mean", "transformer_encoder", "vit"}:
+        # Probe actual model operations, not just a generic matrix multiplication.
+        from .sequence_models import probe_training_device
+        try:
+            probe_training_device(model, x_tensor[ids["train"][:2]], device)
+        except (RuntimeError, NotImplementedError) as exc:
+            if p["device"] != "auto": raise ValueError("This model is unsupported on the requested processor; select CPU. " + str(exc)[:180]) from exc
+            device_note = "Auto fell back to CPU after this model's processor check: " + str(exc)[:180]
+            device = "cpu"; model.to(device); model.zero_grad(set_to_none=True)
     y_tensor = torch.from_numpy(y_train.astype(np.int64 if task == "classification" else np.float32))
     criterion = nn.CrossEntropyLoss() if task == "classification" else nn.MSELoss()
     optimizer = torch.optim.AdamW(model.parameters(), lr=p["learning_rate"], weight_decay=p["weight_decay"]) if p["optimizer"] == "adamw" else torch.optim.SGD(model.parameters(), lr=p["learning_rate"], momentum=.9, weight_decay=p["weight_decay"])
@@ -357,9 +480,10 @@ def _neural(settings, data, directory, update):
     writer = SummaryWriter(str(directory / "tensorboard"))
     def evaluate(split):
         model.eval(); predictions = []; total = 0.; seen = 0
+        evaluation_batch = min(256, p["batch_size"])
         with torch.no_grad():
-            for start in range(0, len(ids[split]), 256):
-                rows = ids[split][start:start+256]; bx = x_tensor[rows].to(device)
+            for start in range(0, len(ids[split]), evaluation_batch):
+                rows = ids[split][start:start+evaluation_batch]; bx = x_tensor[rows].to(device)
                 target = bx if task == "representation" else y_tensor[rows].to(device)
                 output = model(bx)
                 if task == "regression": output = output.squeeze(-1)
@@ -367,7 +491,7 @@ def _neural(settings, data, directory, update):
                 total += float(loss) * len(rows); seen += len(rows)
                 predictions.append(output.detach().cpu().numpy())
         return total / seen, np.concatenate(predictions)
-    update(phase="Training neural network", model_parameters=count, architecture=str(model), hardware={"device": device}, versions={"python":platform.python_version(),"sklearn":sklearn.__version__,"numpy":np.__version__,"torch":str(torch.__version__)}, preprocessing=preprocess,
+    update(phase="Training neural network", model_parameters=count, architecture=str(model), hardware={"device": device, "note":device_note}, versions={"python":platform.python_version(),"sklearn":sklearn.__version__,"numpy":np.__version__,"torch":str(torch.__version__)}, preprocessing=preprocess,
            target_transform={"mean": target_mean, "scale": target_scale}, requested_epochs=p["epochs"], completed_epochs=0)
     started = time.monotonic()
     try:
@@ -405,7 +529,7 @@ def _neural(settings, data, directory, update):
             if p["patience"] and stale >= p["patience"]: break
         model.load_state_dict(best_state); model.to(device)
         torch.save({"state_dict": best_state, "settings": settings, "features": x.shape[1], "outputs": n_outputs, "image_shape": shape,
-                    "preprocessing": preprocess, "target_transform": {"mean": target_mean, "scale": target_scale}}, directory / "weights.pt")
+                    "input_spec":input_spec, "preprocessing": preprocess, "target_transform": {"mean": target_mean, "scale": target_scale}}, directory / "weights.pt")
         update(phase="Evaluating the best development checkpoint")
         result = {"history": history, "best_epoch": best_epoch, "parameters": count, "device": device,
                   "loss_units": "Class cross-entropy (natural-log units)" if task == "classification" else "Mean squared pixel error in 0–1 units" if task == "representation" else "Mean squared error of standardized training targets; final MAE/RMSE are restored to original target units"}
@@ -434,7 +558,7 @@ def _neural(settings, data, directory, update):
 
 
 def fit(identifier, settings, root=RUNS, data_root=model_data.DATA):
-    settings = validate(settings); directory = run_path(identifier, root)
+    settings = validate(settings, data_root=data_root); directory = run_path(identifier, root)
     if directory.exists(): raise ValueError("Run already exists; completed runs are immutable.")
     directory.mkdir(parents=True)
     manifest = {"id": identifier, "status": "RUNNING", "started_at": datetime.now(timezone.utc).isoformat(), "settings": settings,
@@ -445,7 +569,7 @@ def fit(identifier, settings, root=RUNS, data_root=model_data.DATA):
         manifest.update(values); write_json(directory / "manifest.json", manifest)
     update()
     try:
-        data = model_data.load(settings["dataset"], settings["controls"]["train_limit"], data_root)
+        data = model_data.load(settings["dataset"], settings["controls"]["train_limit"], data_root, settings["controls"])
         write_json(directory / "data.json", data["info"]); write_json(directory / "splits.json", data["split_ids"])
         update(data_fingerprint=data["info"]["fingerprint"], split_fingerprint=data["info"]["split_fingerprint"])
         result = _classical(settings, data, directory, update) if settings["area"] == "ml" else _neural(settings, data, directory, update)
@@ -454,11 +578,18 @@ def fit(identifier, settings, root=RUNS, data_root=model_data.DATA):
             baseline = DummyRegressor() if task == "regression" else DummyClassifier(strategy="most_frequent")
             ids = data["indices"]; baseline.fit(data["x"][ids["train"]], data["y"][ids["train"]])
             result["baseline"] = {split: scores(data["y"][rows], baseline.predict(data["x"][rows]), task, labels=np.unique(data["y"]) if task == "classification" else None) for split, rows in ids.items()}
+            if "persistence" in data:
+                result["persistence_baseline"] = {split:scores(data["y"][rows], data["persistence"][rows], task) for split, rows in ids.items()}
             # Deterministic, unedited test examples, including model errors when present.
             test = result["predictions"]["test"]; truth = np.array(test["truth"]); pred = np.array(test["prediction"])
             ranked = np.argsort(-np.abs(truth-pred)) if task == "regression" else np.concatenate([np.flatnonzero(truth != pred), np.flatnonzero(truth == pred)])
             result["examples"] = [{"row_id": int(ids["test"][i]), "truth": float(truth[i]), "prediction": float(pred[i]),
                                    "features": data["x"][ids["test"][i]].tolist()} for i in ranked[:12]]
+            for example in result["examples"]:
+                row = example["row_id"]
+                if "texts" in data: example["text"] = str(data["texts"][row]); example.pop("features")
+                if "subjects" in data: example["participant"] = int(data["subjects"][row])
+                if "target_times" in data: example["target_time"] = data["target_times"][row]
         write_json(directory / "result.json", result)
         update(status="MEASURED", phase="Completed", elapsed_seconds=time.monotonic()-started, completed_at=datetime.now(timezone.utc).isoformat())
         seal(directory)

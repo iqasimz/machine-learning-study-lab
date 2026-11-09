@@ -17,8 +17,8 @@ class AdvancedSectionsTests(unittest.TestCase):
     def test_exact_scope_and_canonical_reader(self):
         self.assertEqual(set(ADVANCED), {"ML07", "ML14", "ML15", "ML16", "DL05", "DL06", "DL10", "DL11", "DL12", "DL13"})
         self.assertEqual(sum(map(len, ADVANCED.values())), 27)
-        self.assertEqual(len(c.LESSONS), 79)
-        self.assertEqual(len({row[0] for row in c.LESSONS}), 79)
+        self.assertEqual(len(c.LESSONS), 174)
+        self.assertEqual(len({row[0] for row in c.LESSONS}), 174)
         all_ids = set()
         for identifier, declared in ADVANCED.items():
             doc = c.document(identifier)
@@ -39,7 +39,7 @@ class AdvancedSectionsTests(unittest.TestCase):
         additions = g._json("advanced_checks.json")["lessons"]
         self.assertEqual(set(additions), set(ADVANCED))
         self.assertEqual(sum(map(len, additions.values())), 25)
-        self.assertEqual(sum(map(len, g.checks().values())), 183)
+        self.assertEqual(sum(map(len, g.checks().values())), 278)
         for identifier in ADVANCED:
             steps = [s for s in g.lesson(identifier)["steps"] if s["kind"] == "question"]
             self.assertEqual(steps[0]["id"], identifier + ":check-a")

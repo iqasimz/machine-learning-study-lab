@@ -1,8 +1,14 @@
 # Interview preparation
 
-The website contains 102 stable interview items across ML, DL, NLP, language models and systems. This folder owns 66 of them; ML/DL and NLP have their own source files. These are realistic practice situations, not a prediction of any employer's exact questions or a claim about skills you already possess.
+The website has **62 concept-first topics in seven groups**. A topic explains what an idea means, gives a concrete example or calculation, and only then lists the questions an interviewer might ask about it. Underfitting, for example, is explained before presenting a poor-training-score question. Scenarios are examples at the end, not extra sidebar entries.
 
-## Choose a topic
+The seven groups are Machine learning, Statistics and metrics, Deep learning, NLP, LLMs, LLM applications, and Research and writing. Search by phrase or original question number. All 335 imported prompts retain a destination; related phrasings share an explanation, and ten implementation prompts link to existing code lessons. A destination is a study route, not a claim that every possible follow-up is exhaustively answered.
+
+Scientific/general writing is consolidated into seven topics: drafting, AI/contributions, explanation/methods, introduction/sources, results/discussion, revision/feedback and email.
+
+The complete readable question bank is [CONSOLIDATED_BANK.md](CONSOLIDATED_BANK.md). The files below offer additional practice; they are not separate website menus.
+
+## Preserved source files
 
 | Guide | What to practise |
 | --- | --- |
@@ -22,7 +28,7 @@ Follow-ups preserve specialist details without making every opening answer a che
 
 An example answer is not your biography. Distinguish what you designed, implemented, adapted, generated with assistance, reviewed and actually measured. Record assistance honestly and do not infer deployment or multi-GPU experience from a local simulation or a paper you read.
 
-The [readiness tracker](READINESS_TRACKER.md) can separate theory, calculation, coding, debugging and design. The [coverage matrix](COVERAGE_MATRIX.md) preserves deeper course/project links; internal milestone codes are not prerequisites for understanding these answers. No exercise is automatically passed by reading it.
+The [readiness tracker](READINESS_TRACKER.md) separates theory, calculation, coding, debugging and design. The [coverage map](COVERAGE_MATRIX.md) connects topics with lessons and questions. No exercise is automatically passed by reading it.
 
 Use disposable inputs for failure drills. Real API spending, cluster jobs, external actions and public release need their own authorization and preparation. The website remains a learning application, not a security or professional-readiness certification.
 

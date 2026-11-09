@@ -1,5 +1,7 @@
 "use strict";
 
+const PythonStages=["python-basics","python-data","python-ml","python-dl","python-nlp","python-llm","python-libraries","python-dsa"];
+
 const LabLearning = (() => {
   const $=id=>document.getElementById(id);
   const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n;};
@@ -7,7 +9,7 @@ const LabLearning = (() => {
   let index,navigate,stage="basics",selectedLesson=null,selectedQuestion=null,serial=0,questionSerial=0;
   const cache=new Map(),remembered={},scenes=[];
   const questionCache=new Map(),questionButtons=new Map(),questionGroups=new Map();
-  const stages=["basics","ml","dl","language","nlp","training","post"];
+  const stages=["basics",...PythonStages,"ml","dl","language","nlp","training","post"];
   const interviewPages=["interview","ml-interview","dl-interview","nlp-interview"];
   const modelFigurePlan={ML05:{"1":"selection"},ML08:{"1":"ensembles"},ML12:{"1":"pca"},DL02:{"1":"backprop"},DL05:{"1":"convolution"},DL07:{"1":"recurrence"}};
   function setPage(page,fromReader=false){
@@ -23,9 +25,7 @@ const LabLearning = (() => {
         if(active)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");
       }
     }
-    if(interviewPages.includes(page)||stages.includes(page)){
-      for(const p of interviewPages){const prefix=p==="interview"?"":p.split("-")[0]+"-";$(prefix+"interview-menu").hidden=page!==p;$(prefix+"interview-toggle").setAttribute("aria-expanded",String(page===p));}
-    }
+    $("interview-menu").hidden=!interviewPages.includes(page);$("interview-toggle").setAttribute("aria-expanded",String(interviewPages.includes(page)));
     const current=index?.questions.find(q=>q.id===selectedQuestion);
     for(const [category,group] of questionGroups){
       if(interviewPages.includes(page)){group.menu.hidden=category!==current?.category;group.toggle.setAttribute("aria-expanded",String(!group.menu.hidden));}
@@ -36,9 +36,9 @@ const LabLearning = (() => {
     }
   }
   function toggleMenu(name){
-    const prefix=name==="interview"?"":name.split("-")[0]+"-",isQuestion=interviewPages.includes(name);
-    const menu=$(isQuestion?prefix+"interview-menu":"course-menu-"+name);menu.hidden=!menu.hidden;
-    $(isQuestion?prefix+"interview-toggle":"course-toggle-"+name).setAttribute("aria-expanded",String(!menu.hidden));
+    const isQuestion=interviewPages.includes(name);
+    const menu=$(isQuestion?"interview-menu":"course-menu-"+name);menu.hidden=!menu.hidden;
+    $(isQuestion?"interview-toggle":"course-toggle-"+name).setAttribute("aria-expanded",String(!menu.hidden));
   }
   async function get(url){const r=await fetch(url),d=await r.json();if(!r.ok)throw Error(d.error||"Could not read this lesson.");return d;}
   function hide(){scenes.splice(0).forEach(s=>s?.destroy());}
@@ -49,9 +49,16 @@ const LabLearning = (() => {
     node.textContent=tex;node.className="math-error";
   }
   function localLink(target,label,source){
+    if(/^#interview-[A-Z]+\d+$/.test(target)){
+      const id=target.slice("#interview-".length);
+      if(!index?.questions.some(q=>q.id===id))return make("span",label);
+      const a=make("a",label);a.href=target;a.onclick=e=>{e.preventDefault();openQuestion(id);};return a;
+    }
     if(/^https?:\/\//i.test(target)){const a=make("a",label);a.href=target;a.target="_blank";a.rel="noopener noreferrer";return a;}
     let url;try{url=new URL(target,"https://course.invalid/"+source);}catch{return make("span",label);}
     if(url.origin!=="https://course.invalid")return make("span",label);
+    const asset=index?.course_assets?.find(a=>a.source===decodeURIComponent(url.pathname).slice(1));
+    if(asset){const a=make("a",label);a.href=asset.url;a.target="_blank";a.rel="noopener";return a;}
     const match=[...(index?.lessons||[]),...(index?.resources||[])].find(l=>l.source===decodeURIComponent(url.pathname).slice(1));
     if(!match)return make("span",label);
     const a=make("a",label);a.href="#lesson-"+match.id;
@@ -78,7 +85,12 @@ const LabLearning = (() => {
       const host=make("div");target.append(host);scenes.push(pendingFigure.explorer?ArchitectureExplorer.mount(host,pendingFigure.explorer):pendingFigure.model?ModelFigures.mount(host,pendingFigure.model):LabVisuals.mount(host,pendingFigure));pendingFigure=null;
     }
     while(i<lines.length){
-      const line=lines[i];if(!line.trim()){i++;continue;}
+      const line=lines[i];if(!line.trim()||line.trim().startsWith("<!--")){i++;continue;}
+      const disclosure=line.trim().match(/^<details><summary>(.*?)<\/summary>$/);
+      if(disclosure){
+        const body=[];i++;while(i<lines.length&&lines[i].trim()!=="</details>")body.push(lines[i++]);if(i<lines.length)i++;
+        const details=make("details"),summary=make("summary");inline(summary,disclosure[1],source);const content=make("div");markdown(body.join("\n"),content,source);details.append(summary,content);target.append(details);continue;
+      }
       if(/^\s*\\\[/.test(line)||line.trim()==="$$"){
         const marker=line.trim()==="$$"?"$$":"\\]",body=[];
         let first=line.trim()==="$$"?"":line.replace(/^\s*\\\[/,"");i++;
@@ -92,7 +104,12 @@ const LabLearning = (() => {
         const language=line.slice(3).trim(),body=[];i++;while(i<lines.length&&!lines[i].startsWith("```"))body.push(lines[i++]);i++;
         if(language==="mermaid")continue;
         if(["math","latex","tex"].includes(language)){const block=make("div",undefined,"math-block");formula(block,body.join("\n"),true);target.append(block);continue;}
-        const pre=make("pre"),code=make("code",body.join("\n"));pre.append(code);target.append(pre);placeFigure();continue;
+        const pre=make("pre"),code=make("code",body.join("\n"));pre.append(code);
+        if(language==="python walkthrough"){
+          const wrap=make("section",undefined,"code-walkthrough");
+          wrap.append(make("p","Read-only training walkthrough","code-label"),pre);target.append(wrap);
+        }else target.append(pre);
+        placeFigure();continue;
       }
       if(/^#{1,6} /.test(line)){
         placeFigure();
@@ -128,6 +145,7 @@ const LabLearning = (() => {
   }
   function renderLecture(doc,target){
     target.replaceChildren();
+    if(doc.reader?.type==="code"){renderCodeLecture(doc,target);return;}
     if(!doc.reader){markdown(doc.markdown,target,doc.source);return;}
     const host=make("div",undefined,"lesson-explorer-host");target.append(host);
     const scene=ArchitectureExplorer.mount(host,doc.reader.explorer,{showHeading:false,notes:doc.reader.notes,source:doc.source,sources:doc.reader.sources,reading:doc.reader.reading});
@@ -140,6 +158,69 @@ const LabLearning = (() => {
     }
     return scene;
   }
+  function renderCodeLecture(doc,target){
+    const article=make("div",undefined,"code-lesson");target.append(article);
+    const teaching=doc.reader.teaching;
+    let reference=article;
+    if(teaching){
+      article.dataset.dsa="true";
+      AlgorithmScenes.introduce(article,teaching);
+      const scene=doc.reader.blocks.find(block=>block.kind==="scene");
+      if(scene)AlgorithmScenes.mount(article,scene.scene);
+      AlgorithmScenes.teach(article,teaching);
+      reference=make("details",undefined,"dsa-reference");
+      reference.append(make("summary","Full worked programs, traces and sources"));
+      reference.append(make("p","These longer examples include tracing, alternative algorithms and edge cases. The short recipe above isolates the main idea; these programs let you inspect the additional details."));
+      article.append(reference);
+    }
+    for(const block of doc.reader.blocks){
+      if(block.kind==="prose"){
+        const prose=make("div",undefined,"code-prose");markdown(block.markdown,prose,doc.source);reference.append(prose);continue;
+      }
+      if(block.kind==="scene"){
+        if(teaching)continue;
+        const host=make("div");article.append(host);
+        if(typeof AlgorithmScenes!=="undefined")AlgorithmScenes.mount(host,block.scene);
+        continue;
+      }
+      const example=make("section",undefined,"code-example");example.dataset.example=block.id;
+      const code=make("code",block.code),pre=make("pre",undefined,"code-source");pre.append(code);
+      example.append(make("p","Python","code-label"),pre);
+      const output=make("pre",undefined,"code-output");output.append(make("code",block.output));
+      example.append(make("p",block.output_kind==="captured_pretrained_inference"?"Recorded pretrained-model output":"Output","code-label"),output);
+      for(const plot of block.plots||[]){
+        const figure=make("figure",undefined,"code-plot"),img=make("img");img.src=plot.url;img.alt=plot.alt;img.loading="lazy";
+        figure.append(img,make("figcaption",plot.alt));example.append(figure);
+      }
+      reference.append(example);
+    }
+    if(teaching&&doc.reader.sources?.length){
+      const sources=make("p",undefined,"dsa-sources");sources.append(make("span","Further reading: "));
+      doc.reader.sources.slice(0,3).forEach(([label,url],i)=>{if(i)sources.append(make("span"," · "));const a=make("a",label);a.href=url;a.target="_blank";a.rel="noopener noreferrer";sources.append(a);});
+      article.append(sources);
+    }
+    const links=make("nav",undefined,"lesson-related code-connections");links.setAttribute("aria-label","Related lessons and labs");
+    const addLesson=(id,label)=>{const b=make("button",label,"text-button");b.type="button";b.onclick=()=>openDocument(id);links.append(b);};
+    if(doc.reader.prerequisites.length){
+      links.append(make("p","Earlier code lessons","code-label"));
+      for(const id of doc.reader.prerequisites){const row=index?.lessons.find(l=>l.id===id);if(row)addLesson(id,row.title);}
+    }
+    if(doc.reader.related.length){
+      links.append(make("p","Related theory","code-label"));
+      for(const id of doc.reader.related){const row=index?.lessons.find(l=>l.id===id);if(row)addLesson(id,row.title);}
+    }
+    if(doc.reader.lab_handoff){
+      const handoff=doc.reader.lab_handoff;
+      links.append(make("p","Use the existing lab","code-label"));
+      for(const [page,label] of [[handoff.train,"Open training setup"],[handoff.results,"Saved results"],[handoff.compare,"Compare runs"]]){
+        const button=make("button",label,"text-button");button.type="button";
+        button.onclick=()=>openLab(page,page===handoff.train?handoff.mode:null);links.append(button);
+      }
+      links.append(make("p","These links open the existing pages. Training requires the local installation and a deliberate Train action.","plot-help"));
+    }
+    article.append(links);
+  }
+  function openLab(page,mode){navigate(page);if(mode&&typeof setEngine==="function")setEngine(mode);}
   async function openMetric(family="classification"){
     await openDocument("P8");
     const scene=scenes.find(s=>s.root?.dataset.architecture==="P8");scene?.configure({family});
@@ -160,20 +241,48 @@ const LabLearning = (() => {
     const request=++questionSerial;
     try{
       const q=questionCache.get(id)||await get("/api/learning/interview/"+encodeURIComponent(id));if(request!==questionSerial)return;
-      questionCache.set(id,q);selectedQuestion=id;navigate(["ml","dl","nlp"].includes(q.category)?q.category+"-interview":"interview",true);
-      const introductions={ml:"These questions use familiar data problems: leakage, rare events, model choice and deployment failures. Try a short answer first, then use the example and follow-up to check your reasoning.",dl:"These questions connect neural-network ideas to debugging and model choices. Explain the immediate problem first; use the equations and follow-ups when they help justify your answer.",nlp:"These scenarios cover text classification, retrieval, extraction and evaluation. Start with what the user needs and what the model can read. The course has numerical NLP examples, not a dedicated NLP benchmark-training lab."};
-      $("interview-intro").textContent=introductions[q.category]||"These questions cover language-model training, applications and system design. The answers are examples of sound reasoning, not scripts or claims about your experience. Describe what you actually built, measured or tested.";
-      $("question-title").textContent=q.title;markdown(q.markdown,$("question-answer"),q.source);$("question-error").textContent="";
+      questionCache.set(id,q);selectedQuestion=q.id;navigate("interview",true);
+      $("interview-intro").textContent="Understand the topic first. The questions at the end show how an interviewer might ask about it.";
+      $("page-context").textContent="Interview preparation · "+q.category_label;
+      $("question-title").textContent=q.title;renderInterview(q);$("question-error").textContent="";
     }catch(e){if(request===questionSerial)$("question-error").textContent=e.message;}
   }
-  function showInterview(scope="llm"){const match=q=>scope==="llm"?!["ml","dl","nlp"].includes(q.category):q.category===scope;return openQuestion(index.questions.find(q=>q.id===selectedQuestion&&match(q))?.id||index.questions.find(match).id);}
+  function showInterview(scope="llm"){return openQuestion(scope!=="llm"?index.questions.find(q=>q.category===scope)?.id||"B01":selectedQuestion||"B01");}
+
+  function renderInterview(q){
+    const target=$("question-answer");target.replaceChildren();
+    const marker="### How an interviewer might ask about this",parts=q.markdown.split(marker);
+    markdown(parts[0],target,q.source);
+    if(q.related_lessons?.length){
+      const links=make("div",undefined,"interview-related");links.append(make("h3","More detail in the course"));
+      for(const id of q.related_lessons){const row=index.lessons.find(l=>l.id===id);if(row){const b=make("button",row.title,"text-button");b.type="button";b.onclick=()=>openDocument(id);links.append(b);}}
+      target.append(links);
+    }
+    if(parts.length>1){const examples=make("div",undefined,"interview-examples");markdown(marker+parts.slice(1).join(marker),examples,q.source);target.append(examples);}
+  }
+
+  function searchInterviews(){
+    const query=$("interview-search").value.trim().toLowerCase(),results=$("interview-search-results");results.replaceChildren();results.hidden=!query;
+    if(!query){$("interview-search-status").textContent="Choose a topic from the menu, or search a concept, question wording or original question number.";return;}
+    const tokens=query.split(/\s+/),found=[];const numeric=query.match(/^(?:question\s*)?(\d+)$/)?.[1];
+    if(numeric){for(const p of index.interview_prompts)if(p.number===Number(numeric))found.push({label:p.number+". "+p.title,kind:p.kind,target:p.target});}
+    else{
+      for(const q of index.questions){const hay=[q.title,q.category_label,...(q.aliases||[]).map(p=>p.title)].join(" ").toLowerCase();if(tokens.every(t=>hay.includes(t)))found.push({label:q.title,kind:"question",target:q.id});}
+      for(const p of index.interview_prompts.filter(p=>p.kind==="lesson")){if(tokens.every(t=>p.title.toLowerCase().includes(t)))found.push({label:p.number+". "+p.title,kind:p.kind,target:p.target});}
+    }
+    $("interview-search-status").textContent=found.length?found.length+" matches"+(found.length>35?"; showing the first 35. Narrow the search for more.":"."):"No matching topic. Try a shorter term or an imported question number.";
+    for(const match of found.slice(0,35)){const button=make("button",match.label+(match.kind==="lesson"?" — worked code lesson":""),"interview-search-result");button.type="button";button.onclick=()=>match.kind==="lesson"?openDocument(match.target):openQuestion(match.target);results.append(button);}
+  }
+
   function renderSiteMap(){
     const groups=[
       {title:"Shared foundations",stages:["basics"]},
-      {title:"Machine learning",stages:["ml"],scope:"ml",tools:[["ml-lab","Training lab"],["ml-results","Saved results"],["ml-compare","Compare models"]]},
-      {title:"Deep learning",stages:["dl"],scope:"dl",tools:[["dl-lab","Training lab"],["dl-results","Saved results"],["dl-compare","Compare models"]]},
-      {title:"Natural language processing",stages:["language","nlp"],scope:"nlp"},
-      {title:"Large language models",stages:["training","post"],scope:"llm",tools:[["visuals","Model diagrams"],["train","Train a model"],["explore","Explore results"],["compare","Compare experiments"]]}
+      {title:"Machine learning",stages:["ml"],tools:[["ml-lab","Training lab"],["ml-results","Saved results"],["ml-compare","Compare models"]]},
+      {title:"Deep learning",stages:["dl"],tools:[["dl-lab","Training lab"],["dl-results","Saved results"],["dl-compare","Compare models"]]},
+      {title:"Natural language processing",stages:["language","nlp"]},
+      {title:"Large language models",stages:["training","post"],tools:[["visuals","Model diagrams"],["train","Train a model"],["explore","Explore results"],["compare","Compare experiments"]]},
+      {title:"Python",stages:PythonStages},
+      {title:"Interview questions and writing",stages:[],scope:"all"}
     ];
     const pageButton=(page,label)=>{const b=make("button",label,"text-button");b.type="button";b.dataset.mapPage=page;b.onclick=()=>navigate(page);return b;};
     $("home-sitemap").replaceChildren(...groups.map(group=>{
@@ -195,7 +304,7 @@ const LabLearning = (() => {
       if(group.scope){
         const questions=make("details",undefined,"map-questions");questions.append(make("summary","Interview questions"));
         const list=make("ul",undefined,"map-question-list");
-        for(const q of index.questions.filter(q=>group.scope==="llm"?!["ml","dl","nlp"].includes(q.category):q.category===group.scope)){
+        for(const q of index.questions){
           const li=make("li"),b=make("button",q.title,"text-button");b.type="button";b.dataset.mapQuestion=q.id;b.onclick=()=>openQuestion(q.id);li.append(b);list.append(li);
         }
         questions.append(list);card.append(questions);
@@ -214,11 +323,7 @@ const LabLearning = (() => {
       $("course-menu-"+name).replaceChildren(...buttons);
     }
     $("interview-menu").replaceChildren();
-    $("ml-interview-menu").replaceChildren();$("dl-interview-menu").replaceChildren();$("nlp-interview-menu").replaceChildren();
     for(const [category,label] of new Map(index.questions.map(q=>[q.category,q.category_label]))){
-      if(["ml","dl","nlp"].includes(category)){
-        for(const q of index.questions.filter(q=>q.category===category)){const button=make("button",q.title,"lesson-link question-link");button.type="button";button.dataset.question=q.id;button.onclick=()=>openQuestion(q.id);$(category+"-interview-menu").append(button);questionButtons.set(q.id,button);}continue;
-      }
       const wrapper=make("div",undefined,"question-group"),toggle=make("button",label,"course-toggle topic-toggle"),menu=make("div",undefined,"course-submenu question-list");
       toggle.type="button";toggle.id="question-topic-"+category;menu.id="question-menu-"+category;menu.hidden=true;
       toggle.setAttribute("aria-controls",menu.id);toggle.setAttribute("aria-expanded","false");menu.setAttribute("role","group");menu.setAttribute("aria-label",label+" questions");
@@ -228,6 +333,7 @@ const LabLearning = (() => {
       }
       wrapper.append(toggle,menu);$("interview-menu").append(wrapper);questionGroups.set(category,{toggle,menu});
     }
+    $("interview-search").addEventListener("input",searchInterviews);searchInterviews();
   }
-  return {init,showStage,openDocument,openMetric,renderLecture,openQuestion,showInterview,markdown,hide,formula,setPage,toggleMenu};
+  return {init,showStage,openDocument,openMetric,renderLecture,openQuestion,showInterview,searchInterviews,markdown,hide,formula,setPage,toggleMenu,openLab};
 })();

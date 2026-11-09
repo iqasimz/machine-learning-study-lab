@@ -143,7 +143,8 @@ console.log(vm.runInContext('JSON.stringify('+expression+')',c));
         paths={p["id"]:p for p in guided_course.catalog()["paths"]}
         self.assertIn("P6",{l["id"] for l in paths["nlp"]["lessons"]})
         self.assertNotIn("P6",{l["id"] for l in paths["llm"]["lessons"]})
-        self.assertEqual(sum(q["category"]=="nlp" for q in index["questions"]),12)
+        # The unified interview bank consolidated the former twelve NLP prompts.
+        self.assertEqual(sum(q["category"]=="nlp" for q in index["questions"]),7)
         for bad in ["N00","N25","N09/../../secret"]:
             with self.assertRaises(ValueError):curriculum.document(bad)
 

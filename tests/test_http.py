@@ -135,7 +135,7 @@ class HTTPTests(unittest.TestCase):
 
     def test_09_integrated_course_and_practice(self):
         code,index=self.request("/api/learning")
-        self.assertEqual(code,200);self.assertEqual(len(index["lessons"]),79);self.assertEqual(len(index["questions"]),102)
+        self.assertEqual(code,200);self.assertEqual(len(index["lessons"]),174);self.assertEqual(len(index["questions"]),62)
         code,doc=self.request("/api/learning/document/T3")
         self.assertEqual(code,200);self.assertIn("attention",doc["markdown"].lower());self.assertGreater(len(doc["sections"]),1)
         self.assertEqual(len(doc["sha256"]),64)
@@ -171,8 +171,8 @@ class HTTPTests(unittest.TestCase):
 
     def test_13_model_api_bounds_and_assets(self):
         code,catalog=self.request("/api/models/catalog")
-        self.assertEqual(code,200);self.assertEqual(len(catalog["methods"]),21)
-        for file in ["/ml_visuals.js","/models.js"]:self.assertEqual(self.request(file)[0],200)
+        self.assertEqual(code,200);self.assertEqual(len(catalog["methods"]),37)
+        for file in ["/ml_visuals.js","/models.js","/lab_setup.js"]:self.assertEqual(self.request(file)[0],200)
         for payload in [{"settings":{}},{"settings":{"model":"logistic","command":"ls"}}]:
             self.assertEqual(self.request("/api/models/train",payload)[0],400)
         self.assertEqual(self.request("/api/models/train",{"settings":{}},origin=False)[0],403)
@@ -201,9 +201,9 @@ class HTTPTests(unittest.TestCase):
     def test_16_guided_courses_are_read_only_and_allowlisted(self):
         self.assertEqual(self.request("/course.js")[0],200)
         code,index=self.request("/api/course/catalog")
-        self.assertEqual(code,200);self.assertEqual(len(index["units"]),79)
-        self.assertEqual([p["id"] for p in index["paths"]],["basics","ml","dl","nlp","llm"])
-        self.assertEqual([len(p["lessons"]) for p in index["paths"]],[5,16,14,26,18])
+        self.assertEqual(code,200);self.assertEqual(len(index["units"]),174)
+        self.assertEqual([p["id"] for p in index["paths"]],["basics","python","ml","dl","nlp","llm"])
+        self.assertEqual([len(p["lessons"]) for p in index["paths"]],[5,95,16,14,26,18])
         code,deck=self.request("/api/course/lesson/T3")
         self.assertEqual(code,200)
         self.assertEqual(len([s for s in deck["steps"] if s["kind"]=="question"]),2)

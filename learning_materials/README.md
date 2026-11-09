@@ -1,10 +1,13 @@
 # Course materials
 
-These sources support the website's 79 lessons: shared foundations, machine learning, deep learning, natural language processing, and LLM training and systems. Sidebar browsing and Interactive mode use the same explanations, diagrams and worked calculations.
+These sources support the website's 174 lessons: 79 theory lessons across shared foundations, machine learning, deep learning, natural language processing, and LLM training and systems, plus 95 Python/code lessons. Sidebar browsing and Interactive mode use the same explanations, code, diagrams and worked calculations.
+
+[Python and code](python/README.md) is integrated into the sidebar and Interactive mode, with checked non-training examples, recorded outputs, two plot images and four read-only training walkthroughs. Training happens only in the existing local labs. A worked example is not a promise of complete coverage of every library or architecture.
 
 ## Choose a subject
 
 - [Shared mathematics and learning foundations](pre_llm/README.md)
+- [Python, data libraries and model code](python/README.md)
 - [Machine learning and deep learning](ml_dl/README.md)
 - [Natural language processing](nlp/README.md)
 - [LLM training](llm_training/README.md)

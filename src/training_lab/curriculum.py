@@ -48,7 +48,10 @@ NLP_LESSONS=json.loads((MATERIALS/"nlp/metadata/lessons.json").read_text())["les
 for row in NLP_LESSONS:
     LESSONS.append((row["id"],"nlp","nlp/"+row["file"],row["title"],row["goal"],[],None))
 LESSONS = [(i,"language" if i in {"P6","P7"} else s,r,t,g,n,l) for i,s,r,t,g,n,l in LESSONS]
-_stage_order = {s:i for i,s in enumerate(["basics","ml","dl","language","nlp","training","post"])}
+from . import python_course
+PYTHON_LESSONS = python_course.rows()
+LESSONS.extend(PYTHON_LESSONS)
+_stage_order = {s:i for i,s in enumerate(["basics", *[s["id"] for s in python_course.metadata()["sections"]], "ml","dl","language","nlp","training","post"])}
 LESSONS.sort(key=lambda row:_stage_order[row[1]])
 LESSONS = [(i,s,r,READER_PROFILES[i]["title"],READER_PROFILES[i]["definition"],n,l)
            if i in READER_PROFILES else (i,s,r,t,g,n,l) for i,s,r,t,g,n,l in LESSONS]
@@ -62,13 +65,17 @@ STAGES = {
  "training":{"title":"LLM training","description":"Begin with the complete training loop, then follow the eight detailed training lessons. The scratch and pretrained-adapter paths have different purposes."},
  "post":{"title":"Post-training and systems","description":"Read nine lessons on adaptation and real-world systems. Local LoRA adaptation runs here; actual preference/RL training and deployed assistant systems are still planned."},
 }
+STAGES = {"basics": STAGES["basics"],
+          **{section["id"]: {"title": section["title"], "description": "Explained Python code and checked outputs. Fitting runs stay in the existing local labs."}
+             for section in python_course.metadata()["sections"]},
+          **{key: value for key, value in STAGES.items() if key != "basics"}}
 
 INTERVIEW_FILES = {
- "nlp":("NLP interviews","nlp/INTERVIEW_QUESTIONS.md"),
- "ml":("ML interviews","ml_dl/INTERVIEW_QUESTIONS.md"),
- "dl":("DL interviews","ml_dl/INTERVIEW_QUESTIONS.md"),
- "foundations":("Foundations and code","interview_preparation/FOUNDATIONS_AND_CODE.md"),
- "models":("Models and training","interview_preparation/MODELS_TRAINING_AND_ALIGNMENT.md"),
+ "nlp":("NLP scenarios","nlp/INTERVIEW_QUESTIONS.md"),
+ "ml":("ML scenarios","ml_dl/INTERVIEW_QUESTIONS.md"),
+ "dl":("DL scenarios","ml_dl/INTERVIEW_QUESTIONS.md"),
+ "foundations":("Code and experiment cases","interview_preparation/FOUNDATIONS_AND_CODE.md"),
+ "models":("LLM training scenarios","interview_preparation/MODELS_TRAINING_AND_ALIGNMENT.md"),
  "systems":("Applications and safety","interview_preparation/RAG_AGENTS_AND_SECURITY.md"),
  "design":("System-design conversations","interview_preparation/LLM_SYSTEM_DESIGN_CASEBOOK.md"),
  "practice":("Practical exercises","interview_preparation/PRACTICAL_ASSESSMENTS.md"),
@@ -148,7 +155,7 @@ def _text(relative):
     return path.read_text(encoding="utf-8")
 
 
-def interview_items():
+def _legacy_interview_items():
     items=[]
     for category,(label,relative) in INTERVIEW_FILES.items():
         text=_text(relative)
@@ -163,25 +170,49 @@ def interview_items():
     return items
 
 
+def interview_items():
+    from .interview_topics import items as topic_items, source_prompts
+    items = topic_items()
+    if len({item["id"] for item in items}) != len(items):
+        raise ValueError("Interview IDs must remain unique.")
+    prompts = source_prompts()
+    return [{**item, "aliases": [p for p in prompts if p["kind"] == "question" and p["target"] == item["id"]]}
+            for item in items]
+
+
 def catalog():
     lessons=[]
     for identifier,stage,relative,title,goal,nodes,lab in LESSONS:
         doc=document(identifier)
         reader=doc["reader"]
         # Match the student-facing lesson, not headings retained only in source Markdown.
-        topics=list(dict.fromkeys([s["title"] for s in reader.get("reading",{}).get("steps",[])]+
+        topics=list(dict.fromkeys(reader.get("topics", []) or
+                                  [s["title"] for s in reader.get("reading",{}).get("steps",[])]+
                                   [n["title"] for n in reader["notes"]]))
-        lessons.append({"id":identifier,"stage":stage,"source":relative,"title":title,"goal":goal,
+        if reader.get("type") == "code" and not topics:
+            topics = ["Code and output", "Explanation and sources"]
+        # Python titles are read from the current heading. The imported lesson list can be older than the file.
+        lessons.append({"id":identifier,"stage":stage,"source":relative,"title":doc["title"],"goal":doc.get("goal", goal),
                         "diagram":nodes,"lab":lab,"section_titles":[s["title"] for s in doc["sections"]],
                         "topics":topics})
     questions=[{k:v for k,v in q.items() if k!="markdown"} for q in interview_items()]
     resources=[{"id":key,"title":value[0],"source":value[1]} for key,value in RESOURCES.items()]
+    from .interview_topics import source_prompts
     return {"stages":STAGES,"lessons":lessons,"questions":questions,"resources":resources,
+            "interview_prompts":source_prompts(),
+            "course_assets": python_course.assets(),
             "glossary":[{"term":key,"meaning":value} for key,value in GLOSSARY.items()],
             "limits":"Reading/bookmarks are browser-local and self-reported, not proof of independent mastery. Post-training theory does not imply an executable trainer."}
 
 
 def document(identifier):
+    if identifier in python_course.metadata()["lessons"]:
+        result = python_course.document(identifier)
+        ids = [row[0] for row in LESSONS]; position = ids.index(identifier)
+        result.update(previous=ids[position-1] if position else None,
+                      next=ids[position+1] if position+1 < len(ids) else None,
+                      sections=sections(result["markdown"]))
+        return result
     lesson=next((row for row in LESSONS if row[0]==identifier),None)
     if lesson:
         _,stage,relative,title,goal,nodes,lab=lesson
@@ -208,6 +239,8 @@ def document(identifier):
 
 
 def interview(identifier):
+    from .interview_topics import canonical
+    identifier = canonical(identifier)
     item=next((q for q in interview_items() if q["id"]==identifier),None)
     if item is None:raise ValueError("Unknown practice question.")
     return item

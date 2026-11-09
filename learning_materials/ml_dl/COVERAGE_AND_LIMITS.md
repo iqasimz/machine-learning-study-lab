@@ -4,7 +4,7 @@
 
 Thirty integrated lessons: 16 ML and 14 DL, with definitions, process explanation, worked calculations, alternatives, scenarios, question/answers and official references. Twenty lessons add a deeper derivation or implementation walkthrough. The reader imports all relevant definitions from 98 teaching parameter cards. There are 24 practical ML/DL interview questions and six static method figures. Ten research data cards include held/conditional candidates; they are not all executable datasets.
 
-Model Lab runs 16 classical families and five neural architectures on eight selectable datasets/tasks, including prepared Fashion-MNIST and red/white Wine Quality. These are real training, evaluation and persistence paths, not evidence that every course topic has a trainer. See the live implementation report.
+The training labs offer classical methods, neural image and sequence models, a small vision transformer, a scratch decoder and pretrained LoRA adaptation on compatible datasets. The lab menus list current executable options. These are real training, evaluation and persistence paths in a local installation, not evidence that every course topic has a trainer.
 
 This is an independently authored first edition, not a Stanford-equivalent qualification or a certificate of proficiency. It is not exhaustive mathematical ML/DL coverage. Deeper proofs, additional coding assessments and independent human teaching review remain useful extensions.
 

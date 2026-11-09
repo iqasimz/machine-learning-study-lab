@@ -1400,4 +1400,3 @@ The reader can see what is known, what is not and what response is useful. This 
 
 - **How do you keep supervisors informed?** Explain a concise, decision-oriented update.
 - **How would you ask a collaborator for help?** State the problem, checks already made and the specific assistance needed.
-

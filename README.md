@@ -2,6 +2,8 @@
 
 Study machine learning, deep learning, NLP and LLMs, then test the ideas in a local training lab.
 
+[Open the live preview](https://iqasimz.github.io/machine-learning-study-lab/) — no installation needed. Browse the courses and explore lab settings online; training runs locally.
+
 The courses combine plain-language explanations, worked equations, selectable architecture diagrams, sources and practice questions. Browse the sidebar freely or follow Interactive mode. The two routes use the same lessons.
 
 Content is being updated to improve accuracy and make explanations more intuitive. Corrections are welcome.

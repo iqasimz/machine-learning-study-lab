@@ -1,0 +1,317 @@
+[
+  {
+    "id": "ml",
+    "title": "Machine Learning",
+    "description": "Prediction, classical algorithms, evaluation and reliable ML pipelines.",
+    "chapters": [
+      {
+        "id": "lecture-01",
+        "number": 1,
+        "title": "Learning From Data"
+      },
+      {
+        "id": "lecture-02",
+        "number": 2,
+        "title": "Model Complexity, Overfitting & Regularization"
+      },
+      {
+        "id": "lecture-03",
+        "number": 3,
+        "title": "Classification & Probabilistic Learning"
+      },
+      {
+        "id": "lecture-04",
+        "number": 4,
+        "title": "Evaluation, Metrics & Model Selection"
+      },
+      {
+        "id": "lecture-05",
+        "number": 5,
+        "title": "Nonlinear Learning: kNN, SVMs & Kernels"
+      },
+      {
+        "id": "lecture-06",
+        "number": 6,
+        "title": "Decision Trees, Bagging & Random Forests"
+      },
+      {
+        "id": "lecture-07",
+        "number": 7,
+        "title": "The Power of Boosting"
+      },
+      {
+        "id": "lecture-08",
+        "number": 8,
+        "title": "Unsupervised Learning & Clustering"
+      },
+      {
+        "id": "lecture-09",
+        "number": 9,
+        "title": "Dimensionality Reduction: PCA, SVD, t-SNE & UMAP"
+      },
+      {
+        "id": "lecture-10",
+        "number": 10,
+        "title": "Practical ML Engineering"
+      },
+      {
+        "id": "lecture-11",
+        "number": 11,
+        "title": "Reliability, Interpretability & Generalization"
+      },
+      {
+        "id": "lecture-12",
+        "number": 12,
+        "title": "From Data to Decisions: The Complete ML Workflow"
+      },
+      {
+        "id": "summary-and-interview-questions",
+        "number": 13,
+        "title": "Summary and interview questions"
+      }
+    ]
+  },
+  {
+    "id": "dl-basics",
+    "title": "Deep Learning Basics",
+    "description": "Tensors, gradients, optimization and the complete neural-network training loop.",
+    "chapters": [
+      {
+        "id": "chapter-1",
+        "number": 1,
+        "title": "From individual neurons to tensors and layers"
+      },
+      {
+        "id": "chapter-2",
+        "number": 2,
+        "title": "Batching: How neural networks process multiple examples"
+      },
+      {
+        "id": "chapter-3",
+        "number": 3,
+        "title": "How gradients from multiple examples become one learning step"
+      },
+      {
+        "id": "chapter-4",
+        "number": 4,
+        "title": "Learning Rates & the Loss Landscape"
+      },
+      {
+        "id": "chapter-5",
+        "number": 5,
+        "title": "Momentum & Adam: Smarter Gradient Descent"
+      },
+      {
+        "id": "chapter-6",
+        "number": 6,
+        "title": "Learning Rate Scheduling: Changing How Fast a Network Learns"
+      },
+      {
+        "id": "chapter-7",
+        "number": 7,
+        "title": "Weight Initialization: How a Neural Network Begins Learning"
+      },
+      {
+        "id": "chapter-8",
+        "number": 8,
+        "title": "Activation Functions: Why Neural Networks Need Nonlinearity"
+      },
+      {
+        "id": "chapter-9",
+        "number": 9,
+        "title": "Loss Functions: How a Neural Network Knows It's Wrong"
+      },
+      {
+        "id": "chapter-10",
+        "number": 10,
+        "title": "Depth, Width & Model Capacity"
+      },
+      {
+        "id": "chapter-11",
+        "number": 11,
+        "title": "Normalization: Keeping Neural Networks Stable"
+      },
+      {
+        "id": "chapter-12",
+        "number": 12,
+        "title": "Regularization: Preventing Neural Networks from Overfitting"
+      },
+      {
+        "id": "chapter-13",
+        "number": 13,
+        "title": "Residual Connections: Why Deep Neural Networks Need Shortcuts"
+      },
+      {
+        "id": "chapter-14",
+        "number": 14,
+        "title": "Gradient & Numerical Stability: Keeping Neural Networks from Breaking"
+      },
+      {
+        "id": "chapter-15",
+        "number": 15,
+        "title": "The whole training loop, in order"
+      },
+      {
+        "id": "summary-and-interview-questions",
+        "number": 16,
+        "title": "Summary and interview questions"
+      }
+    ]
+  },
+  {
+    "id": "architectures",
+    "title": "Deep Learning Architectures",
+    "description": "Convolution, recurrence, attention and the structures behind neural models.",
+    "chapters": [
+      {
+        "id": "chapter-1",
+        "number": 1,
+        "title": "Convolutional Neural Networks (CNNs)"
+      },
+      {
+        "id": "chapter-2",
+        "number": 2,
+        "title": "Recurrent Neural Networks (RNNs)"
+      },
+      {
+        "id": "chapter-3",
+        "number": 3,
+        "title": "LSTM & GRU: Teaching an RNN What to Remember"
+      },
+      {
+        "id": "chapter-4",
+        "number": 4,
+        "title": "Sequence-to-Sequence & Attention"
+      },
+      {
+        "id": "chapter-5",
+        "number": 5,
+        "title": "Transformer Encoder: From Attention to Contextual Understanding"
+      },
+      {
+        "id": "chapter-6",
+        "number": 6,
+        "title": "Transformer Decoder: Building a Tiny GPT"
+      },
+      {
+        "id": "chapter-7",
+        "number": 7,
+        "title": "The Remaining Architectures in One Lecture"
+      },
+      {
+        "id": "summary-and-interview-questions",
+        "number": 8,
+        "title": "Summary and interview questions"
+      }
+    ]
+  },
+  {
+    "id": "nlp",
+    "title": "Natural Language Processing",
+    "description": "Language, tokenization, representations, structured tasks and retrieval.",
+    "chapters": [
+      {
+        "id": "lesson-1",
+        "number": 1,
+        "title": "Why Is Human Language Difficult for Machines?"
+      },
+      {
+        "id": "lesson-2",
+        "number": 2,
+        "title": "Text Processing, Tokenization & Vocabulary Construction"
+      },
+      {
+        "id": "lesson-3",
+        "number": 3,
+        "title": "Bag-of-Words, N-grams & TF-IDF"
+      },
+      {
+        "id": "lesson-4",
+        "number": 4,
+        "title": "Statistical Language Modeling — Predicting the Next Word"
+      },
+      {
+        "id": "lesson-5",
+        "number": 5,
+        "title": "Distributional Semantics & Word Embeddings"
+      },
+      {
+        "id": "lesson-6",
+        "number": 6,
+        "title": "Fundamental NLP Tasks & Structured Prediction"
+      },
+      {
+        "id": "lesson-7",
+        "number": 7,
+        "title": "Information Retrieval — From TF-IDF to Semantic Search"
+      },
+      {
+        "id": "lesson-8",
+        "number": 8,
+        "title": "NLP Evaluation, Domain Shift & Robust Generalization"
+      },
+      {
+        "id": "summary-and-interview-questions",
+        "number": 9,
+        "title": "Summary and interview questions"
+      }
+    ]
+  },
+  {
+    "id": "llm",
+    "title": "Modern LLMs",
+    "description": "Modern transformers, training, serving, adaptation, security and evaluation.",
+    "chapters": [
+      {
+        "id": "ch-1",
+        "number": 1,
+        "title": "Anatomy of a Modern LLM"
+      },
+      {
+        "id": "ch-2",
+        "number": 2,
+        "title": "LLM Pretraining, Scaling Laws & Training Systems"
+      },
+      {
+        "id": "ch-3",
+        "number": 3,
+        "title": "LLM Inference, KV Caching & Quantization"
+      },
+      {
+        "id": "ch-4",
+        "number": 4,
+        "title": "Serving LLMs at Large Scale"
+      },
+      {
+        "id": "ch-5",
+        "number": 5,
+        "title": "Post-Training I — SFT, LoRA & QLoRA"
+      },
+      {
+        "id": "ch-6",
+        "number": 6,
+        "title": "Post-Training II — RLHF, DPO, GRPO & Reasoning Models"
+      },
+      {
+        "id": "ch-7",
+        "number": 7,
+        "title": "Jailbreaking, Prompt Injection & LLM Security"
+      },
+      {
+        "id": "ch-8",
+        "number": 8,
+        "title": "LLM Evaluation, Reliability & the Complete Model Lifecycle"
+      },
+      {
+        "id": "ch-9",
+        "number": 9,
+        "title": "The AI Frontier in November 2026"
+      },
+      {
+        "id": "summary-and-interview-questions",
+        "number": 10,
+        "title": "Summary and interview questions"
+      }
+    ]
+  }
+]

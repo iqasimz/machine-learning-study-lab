@@ -1,0 +1,135 @@
+:where(.reading-main){color-scheme:light;--ink:#192b36;--muted:#4d6370;--accent:#086a62;--line:#cfddd9;--paper:#fffefa;--wash:#f1f7f4;--gold:#956321;--color-text-primary:var(--ink);--color-text-prose:var(--ink);--color-text-secondary:var(--muted);--color-text-tertiary:#667a83;--color-border:var(--line);--color-surface-secondary:#eff5f3;--color-surface-tertiary:#e6eeeb;--dil-radius-md:8px;--dil-radius-lg:12px;--dil-radius-xl:14px}
+
+
+
+:where(.reading-main) a{color:var(--accent);text-underline-offset:.18em}
+:where(.reading-main) a:focus-visible,:where(.reading-main) button:focus-visible,:where(.reading-main) select:focus-visible,:where(.reading-main) input:focus-visible,:where(.reading-main) summary:focus-visible{outline:3px solid #b9781f;outline-offset:3px}
+:where(.reading-main) .layout{max-width:1320px;margin:auto;display:grid;grid-template-columns:248px minmax(0,1fr);gap:3rem;padding:0 3rem}
+:where(.reading-main) .sidebar{align-self:start;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow:auto;padding:1rem 1rem 1rem 0;border-right:1px solid var(--line)}
+:where(.reading-main) .sidebar a{display:block;margin:.15rem 0;padding:.42rem .55rem;text-decoration:none;border-radius:6px;font-size:.85rem;line-height:1.36}
+:where(.reading-main) .sidebar a:hover{background:var(--wash)}
+:where(.reading-main) .sidebar strong{display:block;font-size:1rem;padding:.4rem .55rem}
+:where(.reading-main){min-width:0;max-width:880px;padding-bottom:4rem}
+:where(.reading-main) .cover{margin:1.5rem 0 2.5rem;padding:clamp(1.5rem,5vw,4rem);border-radius:20px;background:#143c3b;color:#f7fbf3;position:relative;overflow:hidden}
+:where(.reading-main) .cover:after{content:"";position:absolute;width:320px;height:320px;border:1px solid #6eaba34f;border-radius:100%;right:-110px;top:-160px;box-shadow:0 0 0 35px #6eaba321,0 0 0 75px #6eaba31a;pointer-events:none}
+:where(.reading-main) .cover h1{font:500 clamp(2.7rem,6vw,5.1rem)/.98 "Instrument Serif",Georgia,serif;letter-spacing:-.045em;margin:.65rem 0 1rem;max-width:11ch}
+:where(.reading-main) .kicker{font-size:.72rem;text-transform:uppercase;letter-spacing:.17em;font-weight:700}
+:where(.reading-main) .cover p{max-width:52ch;margin:0;color:#d4e5db}
+
+:where(.reading-main) .contents a{display:flex;gap:.7rem;align-items:baseline;text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:.75rem .85rem;height:100%;line-height:1.28}
+:where(.reading-main) .contents b{font:700 .79rem ui-monospace,monospace;color:var(--gold)}
+:where(.reading-main) .lesson{margin:3.5rem 0 0;border-top:2px solid var(--accent);padding-top:1.3rem}
+:where(.reading-main) .lesson-header{margin-bottom:1.1rem}
+:where(.reading-main) .lesson-header h2{font:500 clamp(2.2rem,5vw,3.5rem)/1.05 "Instrument Serif",Georgia,serif;letter-spacing:-.035em;margin:.35rem 0}
+:where(.reading-main) .lesson-header .kicker{color:var(--accent)}
+:where(.reading-main) .lesson-body>h3{margin:1.7em 0 .48em;font:600 1.53rem/1.24 Georgia,serif;letter-spacing:-.02em}
+:where(.reading-main) .lesson-body>h4{margin:1.5em 0 .4em;font:600 1.13rem/1.3 Georgia,serif}
+:where(.reading-main) .lesson-body p{margin:.54em 0}
+:where(.reading-main) .lesson-body>ul,:where(.reading-main) .lesson-body>ol{padding-left:1.45rem}
+:where(.reading-main) .lesson-body [data-d-component=box]>p,:where(.reading-main) .lesson-body [data-d-component=grid-item]>p,:where(.reading-main) .lesson-body [data-d-component=row]>p{margin:0}
+:where(.reading-main) .lesson-body [data-d-component=box] h1,:where(.reading-main) .lesson-body [data-d-component=box] h2,:where(.reading-main) .lesson-body [data-d-component=box] h3,:where(.reading-main) .lesson-body [data-d-component=grid] h1,:where(.reading-main) .lesson-body [data-d-component=grid] h2{font-size:1.04em;margin:.1em 0;line-height:1.28}
+:where(.reading-main) .lesson-body>[data-d-component=box],:where(.reading-main) .lesson-body>[data-d-component=row],:where(.reading-main) .lesson-body>[data-d-component=grid]{margin:.7rem 0}
+:where(.reading-main) [data-d-direction=row]:not([data-d-inline]){display:flex;flex-wrap:wrap;align-items:center;gap:.45rem}
+:where(.reading-main) [data-d-direction=col]:not([data-d-inline]):not(.lesson-body){display:flex;flex-direction:column;gap:.2rem;min-width:0}
+:where(.reading-main) [data-d-component=grid]{display:grid;gap:.35rem;margin:.35rem 0}
+:where(.reading-main) [data-d-component=grid-item]{min-width:0;overflow-wrap:anywhere}
+:where(.reading-main) [data-d-justify=between]{justify-content:space-between}
+:where(.reading-main) [data-d-align=center]{align-items:center;text-align:center}
+:where(.reading-main) [data-d-default-strong],:where(.reading-main) [data-d-weight=semibold],:where(.reading-main) [data-d-weight=bold]{font-weight:700}
+:where(.reading-main) [data-d-font-style=italic]{font-style:italic}
+:where(.reading-main) [data-d-size=xs],:where(.reading-main) [data-d-size=sm],:where(.reading-main) [data-d-component=caption]{font-size:.88em}
+:where(.reading-main) [data-d-size=2xs],:where(.reading-main) [data-d-size=3xs]{font-size:.8em}
+:where(.reading-main) [data-d-component=caption],:where(.reading-main) figcaption{color:var(--muted);line-height:1.42}
+:where(.reading-main) [data-d-component=icon]{flex:none;max-width:1.35em;vertical-align:middle}
+:where(.reading-main) [data-d-component=badge]{display:inline-block;padding:.04em .4em;border-radius:.4em;background:var(--wash);font-size:.85em}
+:where(.reading-main) [data-d-has-border]{border-color:var(--line)!important}
+:where(.reading-main) hr{border:0;border-top:1px solid var(--line);margin:1.35em 0}
+:where(.reading-main) blockquote{margin:.75em 0;border-left:3px solid #61a397;padding:.35em .85em;background:var(--wash)}
+:where(.reading-main) code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.88em;overflow-wrap:anywhere}
+:where(.reading-main) :not(pre)>code{background:#edf3f0;padding:.09em .22em;border-radius:4px}
+:where(.reading-main) .example{margin:1rem 0;background:#f3f6f5;border:1px solid var(--line);border-radius:9px}
+:where(.reading-main) .code-head{display:flex;justify-content:space-between;align-items:center;padding:.4rem .8rem;border-bottom:1px solid var(--line);font-size:.78rem;color:var(--muted)}
+:where(.reading-main) pre{padding:.7rem .85rem;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;line-height:1.45;tab-size:4}
+:where(.reading-main) pre code{font-size:.84em}
+:where(.reading-main) button,:where(.reading-main) select{font:inherit;font-size:.87rem;color:var(--ink);border:1px solid #87a7a1;border-radius:6px;background:white;padding:.32rem .58rem}
+:where(.reading-main) button{cursor:pointer}
+:where(.reading-main) button:hover{background:#e5f2ec}
+:where(.reading-main) .tablewrap{overflow-x:auto}
+:where(.reading-main) table{width:100%;border-collapse:collapse;font-size:.88em;line-height:1.36;margin:.5rem 0;table-layout:auto}
+:where(.reading-main) th,:where(.reading-main) td{text-align:left;padding:.42em .55em;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+:where(.reading-main) th{background:#e5efeb;color:#234740}
+:where(.reading-main) tbody tr:nth-child(even){background:#f6f8f6}
+:where(.reading-main) math{font-size:1.05em;color:var(--ink)}
+:where(.reading-main) [data-d-component=math][data-d-block],:where(.reading-main) .display-math{overflow:auto;text-align:center;margin:.55rem 0;padding:.25rem}
+:where(.reading-main) figure{margin:1rem auto;text-align:center}
+:where(.reading-main) figure svg,:where(.reading-main) figure img,:where(.reading-main) .source-diagram{display:block;max-width:min(100%,560px);height:auto;margin:.35em auto}
+:where(.reading-main) .chart svg{width:min(100%,560px)}
+:where(.reading-main) .demo,:where(.reading-main) .quiz,:where(.reading-main) .edition{border:1px solid #b7d1c8;border-radius:10px;background:#eff7f3;margin:1rem 0;padding:.85rem 1rem}
+:where(.reading-main) .demo h3,:where(.reading-main) .edition h2{margin:0 0 .45rem;font:700 1.09rem/1.3 Georgia,serif}
+:where(.reading-main) .controls{display:flex;flex-wrap:wrap;gap:.6rem 1rem;margin:.55rem 0}
+:where(.reading-main) .controls label{display:flex;flex-wrap:wrap;gap:.3rem .5rem;align-items:center;font-size:.83rem;font-weight:650}
+:where(.reading-main) .controls input[type=range]{accent-color:var(--accent);width:8.5rem}
+:where(.reading-main) .controls select{max-width:100%}
+:where(.reading-main) .demo-result{min-height:2rem}
+:where(.reading-main) .snapshot{display:none}
+:where(.reading-main) .chips{display:flex;gap:.3rem;flex-wrap:wrap;margin:.35rem 0}
+:where(.reading-main) .chips span{background:#dcece6;border-radius:5px;padding:.1rem .4rem;font:600 .85em ui-monospace,monospace}
+:where(.reading-main) .quiz label{display:flex;align-items:baseline;gap:.45rem;margin:.28rem 0}
+:where(.reading-main) .quiz input{accent-color:var(--accent)}
+:where(.reading-main) .quiz summary{cursor:pointer;color:var(--accent);font-weight:700;margin-top:.35rem}
+:where(.reading-main) .quiz-status{margin-left:.5em}
+:where(.reading-main) .chapter-nav{display:flex;justify-content:space-between;margin-top:1.65rem;padding-top:.65rem;border-top:1px solid var(--line);font-size:.86rem}
+:where(.reading-main) .citation{font-size:.83em}
+@media (max-width:900px){:where(.reading-main) .layout{display:block;padding:0 1.5rem}:where(.reading-main) .sidebar{display:none}}
+@media (max-width:560px){:where(.reading-main) .layout{padding:0 .85rem}:where(.reading-main) .lesson-body>h3{font-size:1.3rem}}
+@page{size:A4;margin:15mm 16mm 17mm}
+@media  print{
+ 
+ :where(.reading-main) .layout{display:block;padding:0;max-width:none}:where(.reading-main){max-width:none;padding:0}
+ :where(.reading-main) .sidebar,:where(.reading-main) .controls,:where(.reading-main) .copy,:where(.reading-main) .check,:where(.reading-main) .quiz-status,:where(.reading-main) .chapter-nav,:where(.reading-main) .skip{display:none!important}
+ :where(.reading-main) .cover{padding:17mm 11mm;margin:0 0 8mm;border-radius:9px}
+ :where(.reading-main) .cover h1{font-size:47pt}
+ 
+ :where(.reading-main) .contents a{padding:2.5mm;font-size:9pt}
+ :where(.reading-main) .lesson{break-before:page;margin:0;padding-top:4mm}
+ :where(.reading-main) .lesson-header h2{font-size:28pt}
+ :where(.reading-main) .lesson-body>h3{font-size:16pt;margin-top:1.15em}
+ :where(.reading-main) .lesson-body>h4{font-size:12pt}
+ :where(.reading-main) h1,:where(.reading-main) h2,:where(.reading-main) h3,:where(.reading-main) h4,:where(.reading-main) caption,:where(.reading-main) summary,:where(.reading-main) .code-head{break-after:avoid}
+ :where(.reading-main) p,:where(.reading-main) li{orphans:2;widows:2}
+ :where(.reading-main) .snapshot{display:block;font-size:8.4pt;color:var(--muted);font-weight:700}
+ :where(.reading-main) .demo,:where(.reading-main) .quiz,:where(.reading-main) figure,:where(.reading-main) blockquote,:where(.reading-main) .lesson-body>[data-d-component=grid],:where(.reading-main) .lesson-body>[data-d-component=row]{break-inside:avoid}
+ :where(.reading-main) .example{break-inside:auto}
+ :where(.reading-main) pre{padding:.45rem .65rem;line-height:1.28}
+ :where(.reading-main) pre code{font-size:8pt}
+ :where(.reading-main) .tablewrap{overflow:visible}
+ :where(.reading-main) thead{display:table-header-group}
+ :where(.reading-main) tr{break-inside:avoid}
+ :where(.reading-main) table{font-size:8.5pt}
+ :where(.reading-main) figure svg,:where(.reading-main) .source-diagram{max-width:125mm;max-height:82mm}
+ :where(.reading-main) .chart svg{max-height:68mm}
+ :where(.reading-main) math{font-size:1.01em}
+}
+:where(.reading-main) .local-nav{color:var(--muted);font-size:.86rem}:where(.reading-main) .local-nav summary{cursor:pointer}:where(.reading-main) .local-nav ul{columns:2;gap:1.4rem;padding-left:1.2rem}:where(.reading-main) .local-nav li{break-inside:avoid;margin-bottom:.25rem}
+:where(.reading-main) .katex-display{display:block;text-align:center;margin:.65em 0}
+@media  print{:where(.reading-main) .local-nav{display:none}:where(.reading-main) .lesson-body .quiz label input{display:none}}
+
+:where(.reading-main) .wide-figure,:where(.reading-main) [data-d-component=table]{max-width:100%;overflow-x:auto}
+:where(.reading-main) .wide-figure:focus-visible{outline:3px solid #b9781f;outline-offset:2px}
+@media  print{:where(.reading-main) .wide-figure,:where(.reading-main) [data-d-component=table]{overflow:visible}:where(.reading-main) .wide-figure>div{min-width:0!important}}
+@media  print{
+ :where(.reading-main){font-size:14px}
+ :where(.reading-main) .lesson-body>p{margin:.45em 0}
+ :where(.reading-main) .lesson-body>hr{margin:1em 0}
+}
+
+:where(.reading-main) .card-title{font-size:1.04em;margin:.1em 0;line-height:1.28;font-weight:650}
+
+:where(.reading-main){--color-surface:#fffefa;--color-border-subtle:#cfddd9;--color-text-success:#086a62;--color-text-danger:#9e3125;--dil-radius-sm:6px;--dil-radius-xs:4px}
+:where(.reading-main) [data-d-component=grid] [data-d-component=box][style*="aspect-ratio: 1 / 1"]{aspect-ratio:auto!important;min-height:1.9em;justify-content:center}
+:where(.reading-main) .chart svg{font-family:system-ui,sans-serif}
+@media (max-width:560px){
+ :where(.reading-main) .lesson-body [data-d-component=grid-item]{font-size:.82rem}
+}
+
+@media (max-width:560px){:where(.reading-main) .wide-figure>.dense-grid{min-width:460px}}

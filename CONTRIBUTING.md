@@ -1,9 +1,9 @@
 # Contributing
 
-Open an issue describing a reproducible bug, unclear explanation or factual correction. For content changes, include the relevant primary source and a small worked example where useful.
+Report a correction with the course, chapter, quoted passage and a reliable source or worked example. For interface issues, include your browser, screen size and steps to reproduce.
 
-Preserve the single canonical lesson used by sidebar and Interactive mode. Explain terms before equations, show inputs and outputs, and distinguish teaching calculations from measured training results. Do not advertise an architecture as trainable unless an executable backend and tests exist.
+Course pages are in `site/courses/`. Keep explanations before notation, define symbols, preserve worked examples and check internal chapter links after edits. The shared reading layout is in `site/reader.css` and `site/reader.js`.
 
-Use Python 3.11 and install with `python -m pip install -e '.[language]'`. Run the Python suite and relevant Node tests. Tests must not download data, use paid APIs or depend on the maintainer's saved runs. Mark optional hardware/integration requirements explicitly.
+Run `python3 -m unittest discover -s tests -v` and `python3 scripts/check_release.py` before proposing a change. After an intentional, reviewed edit, update checksums with `python3 scripts/check_release.py --write-manifest`. Tests are not a substitute for technical review.
 
-Keep generated experiments, private documents, weights and credentials out of commits. Rebuild the static preview after changing student-facing content. Describe any untested platform or behavior honestly in the pull request.
+This repository publishes only the homepage and five courses. Do not add training services, datasets, credentials, personal documents or extra courses without discussing a scope change first.

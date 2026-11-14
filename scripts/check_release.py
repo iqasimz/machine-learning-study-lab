@@ -1,4 +1,4 @@
-"""Check courses-only scope and checksums; optionally create a clean archive."""
+"""Check public courses/lab-preview scope and checksums."""
 import argparse
 import hashlib
 import json
@@ -21,9 +21,9 @@ def collect():
         if any(part in IGNORE for part in relative.parts):continue
         if p.is_symlink():raise ValueError('Symlink: '+str(relative))
         if not p.is_file() or p.name=='RELEASE_MANIFEST.json':continue
-        if p.suffix not in {'.html','.css','.js','.json','.md','.py','.yml'} and p.name not in {'LICENSE','VERSION','.gitignore','.nojekyll'}:
+        if p.suffix not in {'.html','.css','.js','.cjs','.json','.md','.py','.yml','.woff','.woff2','.ttf'} and p.name not in {'LICENSE','VERSION','.gitignore','.nojekyll'}:
             raise ValueError('Unexpected file: '+str(relative))
-        text=p.read_text()
+        text=p.read_text() if p.suffix not in {'.woff','.woff2','.ttf'} else ''
         if re.search(r'/(?:Users|home)/[A-Za-z0-9._-]+/|sk-(?:proj-)?[A-Za-z0-9_-]{30,}|ghp_[A-Za-z0-9]{30,}',text):
             raise ValueError('Possible private path or credential: '+str(relative))
         records[str(relative)]=hashlib.sha256(p.read_bytes()).hexdigest()
@@ -37,7 +37,7 @@ def main():
     args=parser.parse_args();records=collect();version=(ROOT/'VERSION').read_text().strip()
     manifest=ROOT/'RELEASE_MANIFEST.json'
     if args.write_manifest:
-        manifest.write_text(json.dumps({'schema':2,'version':version,'scope':'home-and-five-courses','files':records},indent=2)+'\n')
+        manifest.write_text(json.dumps({'schema':2,'version':version,'scope':'courses-and-lab-preview','files':records},indent=2)+'\n')
     else:
         expected=json.loads(manifest.read_text())
         if expected['version']!=version or expected['files']!=records:raise ValueError('Release files or version differ from the reviewed manifest.')
@@ -46,7 +46,7 @@ def main():
         with zipfile.ZipFile(args.zip,'w',zipfile.ZIP_DEFLATED) as z:
             for name in [*records,'RELEASE_MANIFEST.json']:
                 z.write(ROOT/name,'machine-learning-study-lab/'+name)
-    print(json.dumps({'status':'PASS','version':version,'scope':'home-and-five-courses','files':len(records)},indent=2))
+    print(json.dumps({'status':'PASS','version':version,'scope':'courses-and-lab-preview','files':len(records)},indent=2))
 
 
 if __name__=='__main__':main()

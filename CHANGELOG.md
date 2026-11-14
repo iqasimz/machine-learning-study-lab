@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0 — 14 November 2026
+
+- Restored lab setup, results and comparison views beside the five courses, with the existing reader layout and sidebar.
+- Added read-only model/dataset catalogs and training-code excerpts. Training and all write operations remain local only.
+- Kept Python, private revision/writing material, saved runs, model weights, downloaded data and internal files out of the public release.
+- Added repository-subpath, lab-navigation and read-only API regression checks.
+
 ## 0.18.0 — 13 November 2026
 
 - Published a homepage and five full courses with one consistent chapter sidebar.

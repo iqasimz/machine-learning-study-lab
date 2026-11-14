@@ -1,18 +1,20 @@
 "use strict";
 (()=>{
   const toggle=document.querySelector('.menu-toggle');
-  const close=()=>{document.body.classList.remove('menu-open');toggle?.setAttribute('aria-expanded','false');};
   toggle?.addEventListener('click',()=>{const open=document.body.classList.toggle('menu-open');toggle.setAttribute('aria-expanded',String(open));});
-  document.addEventListener('keydown',event=>{if(event.key==='Escape')close();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.body.classList.remove('menu-open');toggle?.setAttribute('aria-expanded','false');}});
   const links=[...document.querySelectorAll('.site-sidebar a[href]')];
   function current(){
-    const here=new URL(location.href);
-    for(const link of links){
-      const target=new URL(link.href);
-      const active=target.pathname.replace(/index\.html$/,'')===here.pathname.replace(/index\.html$/,'')&&target.hash===here.hash;
-      if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');
+    const here=new URL(location.href),page=here.searchParams.get('page');
+    const course=here.searchParams.get('course')||document.body.dataset.course;
+    for(const a of links){
+      const u=new URL(a.href),samePath=u.pathname.replace(/index\.html$/,'')===here.pathname.replace(/index\.html$/,'');
+      const active=samePath&&(page?u.searchParams.get('page')===page&&(!u.searchParams.has('course')||u.searchParams.get('course')===course):u.hash===here.hash);
+      if(active)a.setAttribute('aria-current',page?'page':'location');else a.removeAttribute('aria-current');
     }
+    if(course){const group=document.querySelector('[data-course-nav="'+course+'"]');if(group)group.open=true;}
   }
+  window.StudyNavigation={refresh:current};
   addEventListener('hashchange',current);current();
-  document.querySelector('.site-sidebar')?.addEventListener('click',event=>{if(innerWidth<=800&&event.target.closest('a'))close();});
+  document.querySelector('.site-sidebar')?.addEventListener('click',e=>{if(innerWidth<=800&&e.target.closest('a,button')){document.body.classList.remove('menu-open');toggle?.setAttribute('aria-expanded','false');}});
 })();

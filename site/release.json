@@ -1,6 +1,8 @@
 {
-  "version": "0.18.0",
-  "scope": "home-and-five-courses",
+  "version": "0.19.0",
+  "scope": "courses-and-lab-preview",
   "courses": 5,
-  "chapters": 56
+  "chapters": 56,
+  "lab_views": 9,
+  "online_training": false
 }

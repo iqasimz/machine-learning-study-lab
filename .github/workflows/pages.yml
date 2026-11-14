@@ -24,7 +24,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Validate the courses-only release
+      - name: Validate the courses and read-only labs
         run: |
           python -m unittest discover -s tests -v
           python scripts/check_release.py

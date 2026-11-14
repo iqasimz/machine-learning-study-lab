@@ -6,4 +6,4 @@ Course pages are in `site/courses/`. Keep explanations before notation, define s
 
 Run `python3 -m unittest discover -s tests -v` and `python3 scripts/check_release.py` before proposing a change. After an intentional, reviewed edit, update checksums with `python3 scripts/check_release.py --write-manifest`. Tests are not a substitute for technical review.
 
-This repository publishes only the homepage and five courses. Do not add training services, datasets, credentials, personal documents or extra courses without discussing a scope change first.
+This repository publishes the homepage, five courses and their read-only lab setup/results/comparison views. Do not add training services, datasets, credentials, personal documents, Python lessons or extra courses without discussing a scope change first. Lab catalogs contain no private runs. Keep write operations blocked and training buttons disabled online.

@@ -1,8 +1,10 @@
 # Machine Learning Study Lab
 
-[Read the courses](https://iqasimz.github.io/machine-learning-study-lab/)
+[Read the courses and explore the labs](https://iqasimz.github.io/machine-learning-study-lab/)
 
 Five courses with explanations, worked calculations, diagrams, code examples and practice questions. Open a course from the homepage or expand its chapters in the sidebar.
+
+Each course menu also opens its **training lab, results view and comparison page**. Explore available datasets, compatible models, settings, experiment summaries and the actual training-code excerpts. The same sidebar and visual layout are used throughout.
 
 | Course | Chapters, including its final summary |
 | --- | ---: |
@@ -26,7 +28,9 @@ Then open `http://localhost:8000/`. Modern browsers render the embedded MathML e
 
 ## What this release contains
 
-Version **0.18.0** contains the homepage, five courses and their reading assets only. There is no training backend, Python course, personal revision material or separate interview bank. Course HTML, CSS and JavaScript live in `site/`; GitHub Pages publishes that directory.
+Version **0.19.0** contains the homepage, five courses and read-only ML/DL/NLP/LLM lab views. **Training is local only**: the online buttons are disabled, downloads and other write operations are blocked, and no private saved runs are published. Results and comparison pages explain the workflow but have no personal runs to display. This static release does not include a training server or installation package. It does not detect or use your GPU.
+
+Python/library/DSA pages, personal revision material, scientific-writing notes and the separate interview bank are not included. Course HTML, CSS and JavaScript live in `site/`; GitHub Pages publishes that directory. No downloaded models, datasets, credentials or internal audits are distributed.
 
 Explanations and examples were developed with AI assistance. The material is being reviewed for accuracy and clearer teaching; corrections with a source or worked counterexample are welcome. Automated checks verify structure and links, not every scientific claim or a student's mastery.
 

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ml-course-map",
+    "course": "ml",
+    "chapter": "summary-and-interview-questions",
+    "file": "assets/course-revision/ml-course-map.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "2eccae265013d23e267ad80610b63647df175f33850f3cc980894a36e1ae774e"
+  },
+  {
+    "id": "cnn-spatial-features",
+    "course": "architectures",
+    "chapter": "chapter-1",
+    "file": "assets/course-revision/cnn-spatial-features.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "4d8c3d10ce0419142b6ec97c29021addbf4d5087facb06d140d28b47b0729ba8"
+  },
+  {
+    "id": "attention-families",
+    "course": "architectures",
+    "chapter": "chapter-6",
+    "file": "assets/course-revision/attention-families.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "315fc70701744768e180c4e014fe9510b720dbd963271dafb6c09b2b765a3835"
+  },
+  {
+    "id": "architecture-overview",
+    "course": "architectures",
+    "chapter": "summary-and-interview-questions",
+    "file": "assets/course-revision/architecture-overview.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "7b33369ec52437ea06e32d87a63226014cb8b8e86fc87c0056485588eb36cf2a"
+  },
+  {
+    "id": "graph-generative-models",
+    "course": "architectures",
+    "chapter": "chapter-7",
+    "file": "assets/course-revision/graph-generative-models.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "a1e48a11efdb5999ac5470e92fb72766592f198fb6c68d15ab190b1640800a48"
+  },
+  {
+    "id": "nlp-foundations",
+    "course": "nlp",
+    "chapter": "summary-and-interview-questions",
+    "file": "assets/course-revision/nlp-foundations.png",
+    "width": 1536,
+    "height": 1024,
+    "sha256": "4e356586dfda759458dd4325c6534fe3c620975b1f39989f0ebbec3375ed723e"
+  },
+  {
+    "id": "decoder-forward-pass",
+    "course": "llm",
+    "chapter": "ch-1",
+    "file": "assets/course-revision/decoder-forward-pass.png",
+    "width": 1491,
+    "height": 1055,
+    "sha256": "c2dc144bdb476993025c75623173fa12372905eff5e234a562a066f1ebf70c85"
+  },
+  {
+    "id": "inference-serving",
+    "course": "llm",
+    "chapter": "ch-4",
+    "file": "assets/course-revision/inference-serving.png",
+    "width": 1491,
+    "height": 1055,
+    "sha256": "acae4945a7c7c342b65d21390c8bf649aa8122e164be8326f82020fadc3aa9f9"
+  }
+]

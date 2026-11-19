@@ -1,6 +1,7 @@
 """Structural and scope checks for the public courses and read-only lab views."""
 from html.parser import HTMLParser
 import json
+import hashlib
 from pathlib import Path
 import re
 import shutil
@@ -16,6 +17,9 @@ EXPECTED={'index.html','reader.css','reader.js','course-catalog.json','release.j
 LAB_ASSETS={'lab.html','style.css','api-data.json','app.js','preview.js','lab_reader.js',
     'visuals.js','readouts.js','models.js','lab_setup.js'}
 LAB_PAGES={'ml-lab','ml-results','ml-compare','dl-lab','dl-results','dl-compare','train','explore','compare'}
+FIGURE_IDS={'ml-course-map','cnn-spatial-features','attention-families','architecture-overview',
+            'graph-generative-models','nlp-foundations','decoder-forward-pass','inference-serving'}
+FIGURE_FILES={'assets/course-revision/'+name+'.png' for name in FIGURE_IDS}
 
 
 class Page(HTMLParser):
@@ -33,9 +37,29 @@ class Page(HTMLParser):
 class CourseReleaseTests(unittest.TestCase):
     def test_only_courses_and_lab_preview_assets(self):
         actual={str(p.relative_to(SITE)) for p in SITE.rglob('*') if p.is_file()}
-        self.assertEqual({p for p in actual if not p.startswith('vendor/katex/')},EXPECTED|LAB_ASSETS)
+        self.assertEqual({p for p in actual if not p.startswith('vendor/katex/')},EXPECTED|LAB_ASSETS|FIGURE_FILES|{'course-figures.json'})
         self.assertEqual(len(list(SITE.rglob('*.html'))),7)
         self.assertTrue((SITE/'vendor/katex/LICENSE').is_file())
+
+    def test_revision_images_notes_and_video_location(self):
+        assets=json.loads((SITE/'course-figures.json').read_text())
+        self.assertEqual({a['id'] for a in assets},FIGURE_IDS)
+        self.assertEqual(len(assets),8)
+        self.assertEqual({a['file'] for a in assets},FIGURE_FILES)
+        for asset in assets:
+            self.assertEqual(hashlib.sha256((SITE/asset['file']).read_bytes()).hexdigest(),asset['sha256'])
+            text=(SITE/'courses'/(asset['course']+'.html')).read_text()
+            self.assertEqual(text.count('id="revision-'+asset['id']+'"'),1)
+            self.assertIn('width="'+str(asset['width'])+'"',text)
+            self.assertIn('Open full-size image',text)
+            self.assertIn('class="revision-notes"',text)
+        dl=(SITE/'courses/dl-basics.html').read_text()
+        start=dl.index('<article');video=dl.index('id="backprop-video-title"')
+        self.assertGreater(video,start)
+        self.assertLess(video,dl.index('class="lesson"',start))
+        self.assertIn('https://youtu.be/VMj-3S1tku0',dl)
+        for forbidden in ('recurrent-models.png','training-and-alignment.png'):
+            self.assertFalse(any(p.name==forbidden for p in SITE.rglob('*.png')))
 
     def test_chapters_and_version(self):
         catalog=json.loads((SITE/'course-catalog.json').read_text())

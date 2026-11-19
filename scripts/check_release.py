@@ -8,6 +8,9 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
 IGNORE={'.git','__pycache__','.venv','.DS_Store'}
+FIGURE_FILES={f'site/assets/course-revision/{name}.png' for name in (
+    'ml-course-map','cnn-spatial-features','attention-families','architecture-overview',
+    'graph-generative-models','nlp-foundations','decoder-forward-pass','inference-serving')}
 
 
 def collect():
@@ -21,9 +24,11 @@ def collect():
         if any(part in IGNORE for part in relative.parts):continue
         if p.is_symlink():raise ValueError('Symlink: '+str(relative))
         if not p.is_file() or p.name=='RELEASE_MANIFEST.json':continue
-        if p.suffix not in {'.html','.css','.js','.cjs','.json','.md','.py','.yml','.woff','.woff2','.ttf'} and p.name not in {'LICENSE','VERSION','.gitignore','.nojekyll'}:
+        if p.suffix=='.png' and str(relative) not in FIGURE_FILES:
+            raise ValueError('Unapproved image: '+str(relative))
+        if p.suffix not in {'.html','.css','.js','.cjs','.json','.md','.py','.yml','.woff','.woff2','.ttf','.png'} and p.name not in {'LICENSE','VERSION','.gitignore','.nojekyll'}:
             raise ValueError('Unexpected file: '+str(relative))
-        text=p.read_text() if p.suffix not in {'.woff','.woff2','.ttf'} else ''
+        text=p.read_text() if p.suffix not in {'.woff','.woff2','.ttf','.png'} else ''
         if re.search(r'/(?:Users|home)/[A-Za-z0-9._-]+/|sk-(?:proj-)?[A-Za-z0-9_-]{30,}|ghp_[A-Za-z0-9]{30,}',text):
             raise ValueError('Possible private path or credential: '+str(relative))
         records[str(relative)]=hashlib.sha256(p.read_bytes()).hexdigest()

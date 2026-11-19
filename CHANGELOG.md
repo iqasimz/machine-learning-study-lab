@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.20.0 — 18 November 2026
+
+- Added eight selected course revision sheets, including the corrected ML map and CNN worked example, with visible technical corrections and full-size image links.
+- Excluded the recurrent gate and training/alignment revision sheets; no alternative versions are bundled.
+- Moved the recommended neural-networks/backpropagation video inside Chapter 1 of Deep Learning Basics.
+- Added explicit image-export, integrity, local asset-route and note-placement checks. Public labs remain read-only; private study material stays excluded.
+
 ## 0.19.0 — 14 November 2026
 
 - Restored lab setup, results and comparison views beside the five courses, with the existing reader layout and sidebar.

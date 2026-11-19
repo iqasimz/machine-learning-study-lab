@@ -8,4 +8,6 @@ Course mathematical markup uses static MathML. Lab settings use bundled **KaTeX 
 
 No model weights, training datasets, Python runtime, trained checkpoints or third-party textbook chapters are distributed in this release.
 
+Eight maintainer-supplied raster revision sheets accompany the courses. Their visible notes identify corrections and simplifying assumptions; the images do not replace those notes or the main explanations. Only the selected images are bundled. The linked neural-network video remains hosted by its creator; it is not embedded or redistributed here.
+
 Dataset and model catalog entries link their original sources and terms. These are descriptions and code excerpts, not downloaded copies. The language-model catalog discusses SmolLM2-360M-Instruct and Everyday Conversations; no weights or conversation records are bundled.
